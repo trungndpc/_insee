@@ -19,7 +19,6 @@ public class InseeUserDetail implements UserDetails {
         this.grantedAuthorities = grantedAuthorities;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.grantedAuthorities;

@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
-@RequestMapping("/dang-ky")
 public class AuthenController {
 
     @Autowired
@@ -44,7 +43,7 @@ public class AuthenController {
                 hookBuilder.append("?continueUrl=");
                 hookBuilder.append(continueUrl);
             }
-            StringBuilder urlAuthenZaloBuilder = new StringBuilder(AppCommon.AUTHEN_ZALO_URL);
+            StringBuilder urlAuthenZaloBuilder = new StringBuilder(AppCommon.INSTANCE.getAuthenZaloUrl());
             urlAuthenZaloBuilder.append("&redirect_uri=");
             urlAuthenZaloBuilder.append(HttpUtil.encodeUrl(hookBuilder.toString()));
             response.sendRedirect(urlAuthenZaloBuilder.toString());

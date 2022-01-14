@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.insee.common.Permission;
 import vn.insee.jpa.entity.CustomerEntity;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.repository.CustomerRepository;
 import vn.insee.retailer.service.CustomerService;
 import vn.insee.retailer.util.AuthenticationUtils;
 import vn.insee.retailer.util.RenderUtils;
@@ -20,6 +21,7 @@ import vn.insee.util.HttpUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 
 @RestController
@@ -54,7 +56,7 @@ public class Home {
         return userEntity.getRoleId() == Permission.RETAILER.getId();
     }
 
-    @GetMapping("/hello")
+    @GetMapping("/api")
     public String helloWorld() {
         return "hello module";
     }

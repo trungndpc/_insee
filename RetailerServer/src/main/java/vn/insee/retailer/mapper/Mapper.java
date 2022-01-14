@@ -4,6 +4,7 @@ import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
@@ -12,6 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class Mapper {
     private ModelMapper mapper;
     public static final Converter<Long, ZonedDateTime> LONG_2_ZONE_DATE_TIME =

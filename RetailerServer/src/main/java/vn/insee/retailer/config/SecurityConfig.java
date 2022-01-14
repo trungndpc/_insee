@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import vn.insee.retailer.filter.AuthenticationFilter;
 import vn.insee.retailer.security.InseeUserDetailService;
 
@@ -33,13 +34,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-//                .addFilterBefore(cookieAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(cookieAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/api/**").authenticated()
                 .antMatchers("/**").permitAll()
-//                .antMatchers("/api/admin/statistical/**").permitAll()
-//                .antMatchers(("/api/utility/**")).permitAll()
-//                .antMatchers("/api/admin/authen/**").permitAll()
-//                .antMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .csrf().disable()

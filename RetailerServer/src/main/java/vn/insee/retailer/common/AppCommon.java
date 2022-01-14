@@ -4,7 +4,10 @@ import vn.insee.common.Constant;
 
 public class AppCommon {
     public static final AppCommon INSTANCE = new AppCommon();
-    public static final String AUTHEN_ZALO_URL = "";
+
+    public String getAuthenZaloUrl() {
+        return String.format("https://oauth.zaloapp.com/v3/auth?app_id=%d&state=insee", getZaloAppId());
+    }
 
     public long getOAId() {
         //Todo
@@ -13,7 +16,8 @@ public class AppCommon {
 
     public String getDomain() {
         //Todo
-        return "https://cuahang.insee.udev.com.vn";
+//        return "https://cuahang.insee.udev.com.vn";
+        return "https://8df8-2402-800-63b8-e859-fb0e-3ea0-ae01-a76a.ngrok.io";
     }
 
     public long getZaloAppId() {
