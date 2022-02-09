@@ -8,11 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="SharedLibrary" />
         <module name="RetailerServer" />
+        <module name="AdminServer" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AdminServer" options="-parameters" />
       <module name="RetailerServer" options="-parameters" />
       <module name="SharedLibrary" options="-parameters" />
     </option>

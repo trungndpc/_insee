@@ -1,5 +1,6 @@
 package vn.insee.retailer.wrapper;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,16 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import vn.insee.common.Constant;
 import vn.insee.retailer.common.AppCommon;
+import vn.insee.retailer.wrapper.entity.ZaloMessage;
 import vn.insee.retailer.wrapper.entity.ZaloUserEntity;
 
 import java.nio.charset.StandardCharsets;
 
 
 public class ZaloService {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final ZaloService INSTANCE = new ZaloService();
-    private static final Logger LOGGER = LogManager.getLogger(ZaloService.class);
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private static final String GET_ACCESS_TOKEN_URL = "https://oauth.zaloapp.com/v3/access_token?app_id={1}&app_secret={2}&code={3}";
@@ -58,4 +59,18 @@ public class ZaloService {
         return entity;
     }
 
+    public boolean send(String followerId, ZaloMessage message) throws JsonProcessingException {
+        JSONObject msWrapper = new JSONObject();
+        JSONObject recipient =  new JSONObject();
+        recipient.put("user_id", followerId);
+        msWrapper.put("recipient", recipient);
+        String value = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(message);
+        msWrapper.put("message", new JSONObject(value));
+        ResponseEntity<String> zaloResponseResponseEntity = restTemplate.postForEntity(END_POINT,
+                msWrapper.toString(), String.class,
+                AppCommon.INSTANCE.getAccessToken());
+        LOGGER.info(AppCommon.INSTANCE.getAccessToken());
+        LOGGER.info(zaloResponseResponseEntity);
+        return zaloResponseResponseEntity.getStatusCode() == HttpStatus.OK;
+    }
 }

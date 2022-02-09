@@ -1,11 +1,14 @@
 package vn.insee.retailer.controller.form;
 
+import java.util.List;
+
 public class RegisterForm {
     private String phone;
     private String address;
-    private int city;
-    private int district;
-    private String storeName;
+    private Integer cityId;
+    private Integer districtId;
+    private String name;
+    private List<Integer> cements;
 
     public String getPhone() {
         return phone;
@@ -23,27 +26,35 @@ public class RegisterForm {
         this.address = address;
     }
 
-    public int getCity() {
-        return city;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public void setCity(int city) {
-        this.city = city;
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 
-    public int getDistrict() {
-        return district;
+    public Integer getDistrictId() {
+        return districtId;
     }
 
-    public void setDistrict(int district) {
-        this.district = district;
+    public void setDistrictId(Integer districtId) {
+        this.districtId = districtId;
     }
 
-    public String getStoreName() {
-        return storeName;
+    public String getName() {
+        return name;
     }
 
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Integer> getCements() {
+        return cements;
+    }
+
+    public void setCements(List<Integer> cements) {
+        this.cements = cements;
     }
 }

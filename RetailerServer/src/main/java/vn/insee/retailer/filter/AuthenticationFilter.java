@@ -1,6 +1,8 @@
 package vn.insee.retailer.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import vn.insee.jpa.repository.UserRepository;
 import vn.insee.retailer.common.BaseResponse;
 import io.jsonwebtoken.Claims;
@@ -14,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.security.InseeUserDetail;
 import vn.insee.retailer.security.InseeUserDetailService;
 import vn.insee.util.HttpUtil;
@@ -30,7 +33,7 @@ import java.util.List;
 @Component
 @Order(2)
 public class AuthenticationFilter extends OncePerRequestFilter {
-
+    private static final Logger LOGGER = LogManager.getLogger(AuthenticationFilter.class);
     @Autowired
     private InseeUserDetailService userService;
 
@@ -51,10 +54,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 int userId = Integer.parseInt(claims.getAudience());
                 UserDetails userDetail = userService.loadUserById(userId);
                 InseeUserDetail inseeUser = (InseeUserDetail) userDetail;
-                if (!inseeUser.getUser().isEnable()) {
+                if (inseeUser.getUser().getStatus() == UserStatus.DISABLED) {
                     throw new Exception(String.format("User is disable | userId: %d", userId));
                 }
-                List<String> lstSession = inseeUser.getUser().getLstSession();
+                List<String> lstSession = inseeUser.getUser().getSessions();
                 if (lstSession.contains(_inseeSS)) {
                     UsernamePasswordAuthenticationToken auth
                             = new UsernamePasswordAuthenticationToken(userDetail,
@@ -65,6 +68,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }   catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
             resp.setStatus(HttpStatus.UNAUTHORIZED.value());
             resp.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
             resp.setHeader("Content-Type", "application/json");

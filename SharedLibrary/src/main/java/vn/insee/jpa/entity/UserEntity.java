@@ -5,40 +5,39 @@ package vn.insee.jpa.entity;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import vn.insee.jpa.entity.base.BaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "user", schema="promotion")
+@Table(name = "user", schema = "public")
 @TypeDef(name = "list-array",typeClass = ListArrayType.class)
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     private String phone;
     private String password;
     private Integer status;
     private String zaloId;
-    private String followerZaloId;
-    private String avatar;
-    private Integer customerId;
+    private String followerId;
     private Integer roleId;
     private String name;
-    private boolean isEnable;
-    private String note;
+    private String avatar;
     private Integer birthday;
-    private Integer referralUser;
-    private Integer referralCode;
+    private Integer cityId;
+    private Integer districtId;
+    private String address;
+    private Integer pairingId;
 
     @Type(type = "list-array")
-    @Column(name = "lst_session",columnDefinition = "character varying[]")
-    private List<String> lstSession;
+    @Column(name = "products", columnDefinition = "integers[]")
+    private List<Integer> products;
 
-    public boolean isValid() {
-        //TODO
-        return false;
-    }
+    @Type(type = "list-array")
+    @Column(name = "sessions", columnDefinition = "character varying[]")
+    private List<String> sessions;
 
     public Integer getId() {
         return id;
@@ -64,14 +63,6 @@ public class UserEntity extends BaseEntity{
         this.password = password;
     }
 
-    public boolean isEnable() {
-        return isEnable;
-    }
-
-    public void setEnable(boolean enable) {
-        isEnable = enable;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -88,20 +79,12 @@ public class UserEntity extends BaseEntity{
         this.zaloId = zaloId;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getFollowerId() {
+        return followerId;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public Integer getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setFollowerId(String followerId) {
+        this.followerId = followerId;
     }
 
     public Integer getRoleId() {
@@ -120,28 +103,12 @@ public class UserEntity extends BaseEntity{
         this.name = name;
     }
 
-    public List<String> getLstSession() {
-        return lstSession;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setLstSession(List<String> lstSession) {
-        this.lstSession = lstSession;
-    }
-
-    public String getFollowerZaloId() {
-        return followerZaloId;
-    }
-
-    public void setFollowerZaloId(String followerZaloId) {
-        this.followerZaloId = followerZaloId;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public Integer getBirthday() {
@@ -152,19 +119,55 @@ public class UserEntity extends BaseEntity{
         this.birthday = birthday;
     }
 
-    public Integer getReferralUser() {
-        return referralUser;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public void setReferralUser(Integer referralUser) {
-        this.referralUser = referralUser;
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 
-    public Integer getReferralCode() {
-        return referralCode;
+    public Integer getDistrictId() {
+        return districtId;
     }
 
-    public void setReferralCode(Integer referralCode) {
-        this.referralCode = referralCode;
+    public void setDistrictId(Integer districtId) {
+        this.districtId = districtId;
+    }
+
+    public List<Integer> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Integer> products) {
+        this.products = products;
+    }
+
+    public List<String> getSessions() {
+        return sessions;
+    }
+
+    public void setSessions(List<String> sessions) {
+        this.sessions = sessions;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getPairingId() {
+        return pairingId;
+    }
+
+    public void setPairingId(Integer pairingId) {
+        this.pairingId = pairingId;
     }
 }

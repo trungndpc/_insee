@@ -1,0 +1,58 @@
+package vn.insee.jpa.entity;
+
+import vn.insee.jpa.entity.base.BaseEntity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "form", schema = "public")
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+public abstract class FormEntity extends BaseEntity {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private Integer promotionId;
+    private Integer userId;
+    private int status;
+    private int type;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(Integer promotionId) {
+        this.promotionId = promotionId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+}

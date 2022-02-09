@@ -12,6 +12,7 @@ public class ListUtils {
         if(lst.size() >=5){
             lst.remove(0);
         }
+        lst.add(item);
         return lst;
     }
 }
