@@ -1,8 +1,7 @@
 package vn.insee.retailer.webhook;
 
-import org.json.JSONObject;
+import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
 
 public abstract class ZaloEvent {
-    public abstract  boolean isAccepted(JSONObject json);
-    public abstract boolean process(JSONObject json);
+    public abstract boolean process(ZaloWebhookMessage zaloWebhookMessage);
 }

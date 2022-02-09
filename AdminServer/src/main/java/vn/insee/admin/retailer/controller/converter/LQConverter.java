@@ -24,6 +24,7 @@ import java.util.Optional;
 @Component
 public class LQConverter {
     private static final Logger LOGGER = LogManager.getLogger(LQConverter.class);
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -37,7 +38,7 @@ public class LQConverter {
     public LightingQuizPromotionEntity convert2Entity(LightingQuizPromotionEntity entity,
                                                       LightingQuizTopicForm quizTopicForm) throws JsonProcessingException {
         String strTopic = entity.getTopics();
-        if (strTopic == null) {
+        if (strTopic == null || strTopic.isEmpty()) {
             strTopic = "[]";
         }
         List<TopicDTO> topicDTOS = objectMapper.readValue(strTopic, new TypeReference<List<TopicDTO>>() {

@@ -1,6 +1,8 @@
 package vn.insee.retailer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,10 @@ import vn.insee.jpa.repository.LightingQuizPromotionRepository;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.message.SendBefore5MinMessage;
 import vn.insee.retailer.bot.script.LightingQuizScript;
+import vn.insee.retailer.controller.dto.TopicDTO;
 import vn.insee.retailer.webhook.ZaloEventManager;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,48 +31,115 @@ public class LightingQuizPromotionService {
     @Autowired
     private ZaloEventManager zaloEventManager;
 
-    public void sendMsgBeforeStart5Min(int promotionId) {
-        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
-        if (optionalLightingQuizPromotion.isPresent()) {
-            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
-            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
-            for (UserEntity userEntity: userEntities) {
-                User user = new User();
-                user.setUid(userEntity.getId());
-                user.setFollowerId(userEntity.getFollowerId());
-                user.setName(userEntity.getName());
-                SendBefore5MinMessage sendBefore5MinMessage = new SendBefore5MinMessage(user, lightingQuizPromotionEntity.getTitle(),
-                        lightingQuizPromotionEntity.getId());
-                sendBefore5MinMessage.send();
-            }
-        }
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    public void sendMsgBeforeStart5Min() {
     }
 
-    public void sendMsgToStart(int promotionId) throws JsonProcessingException {
-        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
-        if (optionalLightingQuizPromotion.isPresent()) {
-            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
-            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
-            for (UserEntity userEntity: userEntities) {
-                User user = new User();
-                user.setUid(userEntity.getId());
-                user.setFollowerId(userEntity.getFollowerId());
-                user.setName(userEntity.getName());
-                LightingQuizScript lightingQuizScript = new LightingQuizScript(user);
-                lightingQuizScript.start(promotionId);
-                zaloEventManager.put(user.getUid(), lightingQuizScript.getSession());
-            }
-        }
-    }
+//    public void sendMsgBeforeStart5Min(int promotionId) {
+//        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
+//        if (optionalLightingQuizPromotion.isPresent()) {
+//            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
+//            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+//            for (UserEntity userEntity: userEntities) {
+//                User user = new User();
+//                user.setUid(userEntity.getId());
+//                user.setFollowerId(userEntity.getFollowerId());
+//                user.setName(userEntity.getName());
+//                SendBefore5MinMessage sendBefore5MinMessage = new SendBefore5MinMessage(user, lightingQuizPromotionEntity.getTitle(),
+//                        lightingQuizPromotionEntity.getId());
+//                sendBefore5MinMessage.send();
+//            }
+//        }
+//    }
+
+//    public void sendMsgToStart(int promotionId) throws JsonProcessingException {
+//        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
+//        if (optionalLightingQuizPromotion.isPresent()) {
+//            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
+//            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+//            for (UserEntity userEntity: userEntities) {
+//                User user = new User();
+//                user.setUid(userEntity.getId());
+//                user.setFollowerId(userEntity.getFollowerId());
+//                user.setName(userEntity.getName());
+//                LightingQuizScript lightingQuizScript = new LightingQuizScript(user);
+////                lightingQuizScript.start(promotionId);
+//            }
+//        }
+//    }
 
 
-    public LightingQuizPromotionEntity getUpComing() throws Exception {
+    public LightingQuizPromotionEntity get() throws Exception {
         List<LightingQuizPromotionEntity> promotionList = lzQuizPromotionRepository.findAll();
         if (promotionList == null) {
             throw new Exception("not found lz promotion ");
         }
-        //Todo
-        return promotionList.get(0);
+        return getPromotionUpComing(promotionList);
+    }
+
+    public LightingQuizPromotionEntity getUpComing(int city) throws Exception {
+        List<LightingQuizPromotionEntity> promotionList = lzQuizPromotionRepository.findAll();
+        if (promotionList == null) {
+            throw new Exception("not found lz promotion ");
+        }
+        promotionList = promotionList.stream().filter(promotion -> promotion.getLocations().contains(city))
+                .collect(Collectors.toList());
+        if (promotionList == null) {
+            throw new Exception("not found lz promotion for city: " + city);
+        }
+        return getPromotionUpComing(promotionList);
+    }
+
+    public TopicDTO getTopicUpComing(LightingQuizPromotionEntity lightingQuizPromotionEntity) throws JsonProcessingException {
+        List<TopicDTO> listTopicDTO = getListTopicDTO(lightingQuizPromotionEntity);
+        if (listTopicDTO == null || listTopicDTO.isEmpty()) {
+            return null;
+        }
+        return getTopicUpComing(listTopicDTO);
+    }
+
+    private LightingQuizPromotionEntity getPromotionUpComing(List<LightingQuizPromotionEntity> lightingQuizPromotionEntities) throws JsonProcessingException {
+        Map<TopicDTO, LightingQuizPromotionEntity> map = new HashMap<>();
+        for (LightingQuizPromotionEntity lightingQuizPromotionEntity: lightingQuizPromotionEntities) {
+            TopicDTO topicUpComing = getTopicUpComing(lightingQuizPromotionEntity);
+            if (topicUpComing != null) {
+                map.put(topicUpComing, lightingQuizPromotionEntity);
+            }
+        }
+        TopicDTO topicUpComing = getTopicUpComing(new ArrayList<>(map.keySet()));
+        if (topicUpComing != null) {
+            return map.get(topicUpComing);
+        }
+        return null;
+    }
+
+    private TopicDTO getTopicUpComing(List<TopicDTO> listTopicDTO) {
+        long currentTime = System.currentTimeMillis();
+        Optional<TopicDTO> opIsComing = listTopicDTO.stream()
+                .filter(topic -> topic.getTimeStart() <= currentTime && topic.getTimeEnd() >= currentTime)
+                .findAny();
+        if (opIsComing.isPresent()) {
+            return opIsComing.get();
+        }
+
+        Optional<TopicDTO> opUpComing = listTopicDTO.stream().filter(topic -> topic.getTimeStart() >= currentTime)
+                .sorted((t1, t2) -> (int) (t1.getTimeStart() - t2.getTimeStart()))
+                .findFirst();
+        if (opIsComing.isPresent()) {
+            return opUpComing.get();
+        }
+        return null;
+    }
+
+    private List<TopicDTO> getListTopicDTO(LightingQuizPromotionEntity entity) throws JsonProcessingException {
+        String strTopic = entity.getTopics();
+        if (strTopic == null || strTopic.isEmpty()) {
+            strTopic = "[]";
+        }
+        return objectMapper.readValue(strTopic, new TypeReference<List<TopicDTO>>() {
+        });
     }
 
     public List<LightingQuizPromotionEntity> findByLocation(int location) {

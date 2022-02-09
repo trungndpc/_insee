@@ -10,6 +10,7 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
+import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
 
 @Component
 public class FollowZaloEvent extends ZaloEvent{
@@ -19,18 +20,12 @@ public class FollowZaloEvent extends ZaloEvent{
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+
 
     @Override
-    public boolean isAccepted(JSONObject json) {
-        return json.optString("event_name", "").equals("follow");
-    }
-
-    @Override
-    public boolean process(JSONObject json) {
+    public boolean process(ZaloWebhookMessage zaloWebhookMessage) {
         try{
-            FollowZaloWebhookMessage followZaloMsg = objectMapper.readValue(json.toString(), FollowZaloWebhookMessage.class);
+            FollowZaloWebhookMessage followZaloMsg = (FollowZaloWebhookMessage) zaloWebhookMessage;
             UserEntity userEntity = userService.findByZaloId(followZaloMsg.userIdByApp);
             if (userEntity == null) {
                 userEntity = new UserEntity();

@@ -33,16 +33,11 @@ public class LightingQuizScript  {
     private final LightingQuizPromotionService lightingQuizService = BeanUtil.getBean(LightingQuizPromotionService.class);
     private final LightingQuizFormService lightingQuizFormService = BeanUtil.getBean(LightingQuizFormService.class);
 
-    public LightingQuizScript(LightingSession session, User user) throws JsonProcessingException {
-        this.session = session;
-        this.user = user;
-    }
-
     public LightingQuizScript(User user) {
         this.user = user;
     }
 
-    public void start(int promotionId, TopicDTO topic) throws JsonProcessingException {
+    public void start() throws JsonProcessingException {
         this.session = new LightingSession();
         this.promotionId = promotionId;
         this.topic = topic;
@@ -79,7 +74,6 @@ public class LightingQuizScript  {
             lqQuestionSS.setJson(new JSONObject(jsonQuestion));
             mapSession.put(waitingQuestionId, lqQuestionSS);
             session.setQuestion(mapSession);
-
 
             if (isAccept) {
                 Question nextQuestion = getNextQuestion();

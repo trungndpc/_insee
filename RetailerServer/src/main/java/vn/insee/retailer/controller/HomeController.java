@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.insee.common.Permission;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
+import vn.insee.jpa.repository.LightingQuizPromotionRepository;
 import vn.insee.retailer.controller.converter.UserConverter;
 import vn.insee.retailer.controller.dto.UserDTO;
 import vn.insee.retailer.service.LightingQuizPromotionService;
@@ -43,16 +44,15 @@ public class HomeController {
     @Autowired
     private LightingQuizPromotionService lightingQuizPromotionService;
 
+    @Autowired
+    private LightingQuizPromotionRepository lightingQuizPromotionRepository;
+
     @GetMapping(value = "/test", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String test(Authentication auth) throws Exception {
-//        LightingQuizPromotionEntity upComing = lightingQuizPromotionService.getUpComing(8);
-//        System.out.println(upComing);
-//        List<UserEntity> byLocation = userService.findByLocation(Arrays.asList(50));
-//        LOGGER.info("size: " + byLocation.size());
-//        System.out.println(byLocation.size());
-//        lightingQuizPromotionService.sendMsgBeforeStart5Min(14);
-        lightingQuizPromotionService.sendMsgToStart(14);
+        LightingQuizPromotionEntity one = lightingQuizPromotionRepository.getOne(14);
+        one.setTopics("");
+        lightingQuizPromotionRepository.saveAndFlush(one);
         return "<<TEST>>";
     }
 
