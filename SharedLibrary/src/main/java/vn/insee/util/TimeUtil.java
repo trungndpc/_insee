@@ -1,5 +1,6 @@
 package vn.insee.util;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,4 +41,14 @@ public class TimeUtil {
         }
         return null;
     }
+
+    public static String formatDuration(long millis) {
+        return DurationFormatUtils.formatDuration(millis, "H giờ m phút s giây", true)
+                .replaceAll("0 giờ", "")
+                .replaceAll("0 phút", "")
+                .replaceAll("0 giây", "")
+                .replaceAll("giâ0", "giây")
+                .trim();
+    }
+
 }

@@ -6,6 +6,7 @@ import vn.insee.retailer.bot.Message;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.wrapper.ZaloService;
 import vn.insee.retailer.wrapper.entity.ZaloMessage;
+import vn.insee.util.TimeUtil;
 
 public class CompleteGameMessage extends Message {
     private static final Logger LOGGER = LogManager.getLogger(CompleteGameMessage.class);
@@ -43,6 +44,6 @@ public class CompleteGameMessage extends Message {
     }
 
     private String toDuration(long duration) {
-        return "10 giây";
+        return TimeUtil.formatDuration(duration);
     }
 }

@@ -47,7 +47,7 @@ public class LightingQuizPromotionService {
             for (UserEntity userEntity: userEntities) {
                 User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
                 Before5MinMessage sendBefore5MinMessage = new Before5MinMessage(user, topicUpComing.getTitle(),
-                        lightingQuizPromotionEntity.getId());
+                        lightingQuizPromotionEntity.getId(), topicUpComing.getTimeStart());
                 sendBefore5MinMessage.send();
             }
         }
@@ -115,7 +115,7 @@ public class LightingQuizPromotionService {
     private TopicDTO getTopicUpComing(List<TopicDTO> listTopicDTO) {
         long currentTime = System.currentTimeMillis();
         Optional<TopicDTO> opIsComing = listTopicDTO.stream()
-                .filter(topic -> topic.getTimeStart() <= currentTime && topic.getTimeEnd() >= currentTime)
+                .filter(topic -> topic.getTimeEnd() >= currentTime)
                 .findAny();
         if (opIsComing.isPresent()) {
             return opIsComing.get();

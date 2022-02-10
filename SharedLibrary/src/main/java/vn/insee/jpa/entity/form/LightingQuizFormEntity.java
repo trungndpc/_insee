@@ -11,6 +11,9 @@ public class LightingQuizFormEntity extends FormEntity {
 
     private String jsonDetail;
     private int point;
+    private String topicId;
+    private long timeStart;
+    private long timeEnd;
 
     public String getJsonDetail() {
         return jsonDetail;
@@ -26,5 +29,29 @@ public class LightingQuizFormEntity extends FormEntity {
 
     public void setPoint(int point) {
         this.point = point;
+    }
+
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
+    public long getTimeStart() {
+        return timeStart;
+    }
+
+    public void setTimeStart(long timeStart) {
+        this.timeStart = timeStart;
+    }
+
+    public long getTimeEnd() {
+        return timeEnd;
+    }
+
+    public void setTimeEnd(long timeEnd) {
+        this.timeEnd = timeEnd;
     }
 }

@@ -18,7 +18,9 @@ public class LightingQuizFormService {
         return lightingQuizFormRepository.saveAndFlush(lightingQuizFormEntity);
     }
 
-//    public LightingQuizFormEntity get(int uid, int promotionId, )
+    public LightingQuizFormEntity get(int uid, int promotionId, String topicId) {
+        return lightingQuizFormRepository.findByUserIdAndPromotionIdAndTopicId(uid, promotionId, topicId);
+    }
 
 
 }

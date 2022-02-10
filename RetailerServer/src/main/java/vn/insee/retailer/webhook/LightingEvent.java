@@ -5,10 +5,12 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.entity.form.LightingQuizFormEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.retailer.bot.LightingSession;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.message.Before5MinMessage;
+import vn.insee.retailer.bot.message.DoneFormMessage;
 import vn.insee.retailer.bot.message.NotFoundLQPromotionMessage;
 import vn.insee.retailer.bot.message.Time2StartGameMessage;
 import vn.insee.retailer.bot.script.LightingQuizScript;
@@ -53,7 +55,6 @@ public class LightingEvent extends ZaloEvent{
             }
 
             if (text.equals("#nhanh_nhu_chop")) {
-
                 LightingQuizPromotionEntity promotionEntity = lightingQuizPromotionService.getUpComing(userEntity.getCityId());
                 if (promotionEntity == null) {
                     NotFoundLQPromotionMessage notFoundLQPromotionMessage = new NotFoundLQPromotionMessage(user);
@@ -65,13 +66,18 @@ public class LightingEvent extends ZaloEvent{
                 TopicDTO topicUpComing = lightingQuizPromotionService.getTopicUpComing(promotionEntity);
                 long startTimeUpComing = topicUpComing.getTimeStart();
                 if (startTimeUpComing - currentTime <= 0) {
-                    //todo
-                    new LightingQuizScript(user).start(promotionEntity, topicUpComing);
+                    LightingQuizFormEntity lightingQuizFormEntity = lightingQuizFormService.get(user.getUid(), promotionEntity.getId(), topicUpComing.getId());
+                    if (lightingQuizFormEntity != null) {
+                        new DoneFormMessage(user).send();
+                    }else {
+                        new LightingQuizScript(user).start(promotionEntity, topicUpComing);
+                    }
                     return true;
                 }
 
                 if (startTimeUpComing - currentTime <= 5 * 60 * 1000) {
-                    Before5MinMessage before5MinMessage = new Before5MinMessage(user, topicUpComing.getTitle(), promotionEntity.getId());
+                    Before5MinMessage before5MinMessage = new Before5MinMessage(user, topicUpComing.getTitle(), promotionEntity.getId(),
+                            topicUpComing.getTimeStart());
                     before5MinMessage.send();
                 }else {
                     Time2StartGameMessage time2StartGameMessage = new Time2StartGameMessage(user, topicUpComing.getTitle(),

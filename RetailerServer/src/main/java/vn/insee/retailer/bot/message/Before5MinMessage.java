@@ -7,6 +7,7 @@ import vn.insee.retailer.bot.Message;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.wrapper.ZaloService;
 import vn.insee.retailer.wrapper.entity.ZaloMessage;
+import vn.insee.util.TimeUtil;
 
 import java.util.ArrayList;
 
@@ -14,11 +15,13 @@ public class Before5MinMessage extends Message {
     private static final Logger LOGGER = LogManager.getLogger(Before5MinMessage.class);
     private String title;
     private int id;
+    private long timeStart;
 
-    public Before5MinMessage(User user, String title, int id) {
+    public Before5MinMessage(User user, String title, int id, long timeStart) {
         super(user);
         this.title = title;
         this.id = id;
+        this.timeStart = timeStart;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class Before5MinMessage extends Message {
         ZaloMessage.Attachment attachment = new ZaloMessage.Attachment();
         attachment.type = "template";
         attachment.payload = payload;
-        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Còn 5 phút nữa để bắt đầu " + title);
+        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Còn " + TimeUtil.formatDuration(timeStart - System.currentTimeMillis()) + " nữa để bắt đầu " + title);
         zaloMessage.attachment = attachment;
         return zaloMessage;
     }

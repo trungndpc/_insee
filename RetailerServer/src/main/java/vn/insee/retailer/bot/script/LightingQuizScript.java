@@ -93,6 +93,11 @@ public class LightingQuizScript  {
             LightingSession.LQQuestionSS lqQuestionSS = new LightingSession.LQQuestionSS(question.getId(),
                     question.getClass(), new JSONObject(jsonQuestion));
             this.session.putQuestion(question.getId(), lqQuestionSS);
+
+            //start to count time
+            if (question instanceof ReadyToStartLightingQuizQuestion && isAccept) {
+                this.session.setTimeStart(System.currentTimeMillis());
+            }
             WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
 
 
@@ -118,17 +123,18 @@ public class LightingQuizScript  {
     }
 
     private void complete() throws JsonProcessingException {
-        Map<String, LightingSession.LQQuestionSS> question = session.getQuestions();
+        Map<String, LightingSession.LQQuestionSS> questions = session.getQuestions();
         LQDetailFormDTO lqDetailFormDTO = new LQDetailFormDTO();
         List<LQQuestionFormDTO> formDTOS = new ArrayList<>();
-        for (String id: question.keySet()) {
-            LightingSession.LQQuestionSS lqQuestionSS = question.get(id);
+
+        for (String id: questions.keySet()) {
+            LightingSession.LQQuestionSS lqQuestionSS = questions.get(id);
             if (lqQuestionSS.getZclass() == LightingQuizGameRatioQuestion.class) {
                 LightingQuizGameRatioQuestion lightingQuizGameRatioQuestion = this.objectMapper.readValue(lqQuestionSS.getJson().toString(),
                         LightingQuizGameRatioQuestion.class);
                 LQQuestionFormDTO lqQuestionFormDTO = new LQQuestionFormDTO();
                 lqQuestionFormDTO.setId(lightingQuizGameRatioQuestion.getQuestionId());
-                lqQuestionFormDTO.setTrue(lightingQuizGameRatioQuestion.getTrueAns().equals(lqQuestionFormDTO.getAnswer()));
+                lqQuestionFormDTO.setTrue(lightingQuizGameRatioQuestion.getTrueAns().equals(lightingQuizGameRatioQuestion.getUserAnswer()));
                 lqQuestionFormDTO.setAnswer(lightingQuizGameRatioQuestion.getUserAnswer().toString());
                 formDTOS.add(lqQuestionFormDTO);
             }
@@ -144,6 +150,7 @@ public class LightingQuizScript  {
         lightingQuizFormEntity.setType(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE);
         lightingQuizFormEntity.setStatus(StatusForm.INIT);
         lightingQuizFormEntity.setUserId(this.user.getUid());
+        lightingQuizFormEntity.setTopicId(topic.getId());
         long count = lqDetailFormDTO.getQuestions().stream().filter(q -> q.isTrue()).count();
         lightingQuizFormEntity.setPoint((int) count);
         LIGHTING_QUIZ_FORM_SERVICE.submit(lightingQuizFormEntity);
@@ -151,7 +158,7 @@ public class LightingQuizScript  {
 
         //send msg complete
         CompleteGameMessage completeGameMessage = new CompleteGameMessage(this.user, lightingQuizFormEntity.getPoint(),
-                lqDetailFormDTO.getQuestions().size(), lqDetailFormDTO.getTimeEnd() - lqDetailFormDTO.getTimeStart());
+                lqDetailFormDTO.getQuestions().size(), System.currentTimeMillis() - session.getTimeStart());
         completeGameMessage.send();
     }
 
