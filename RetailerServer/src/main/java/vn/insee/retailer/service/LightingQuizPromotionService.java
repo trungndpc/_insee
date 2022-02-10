@@ -11,7 +11,7 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.jpa.repository.LightingQuizPromotionRepository;
 import vn.insee.retailer.bot.User;
-import vn.insee.retailer.bot.message.SendBefore5MinMessage;
+import vn.insee.retailer.bot.message.Before5MinMessage;
 import vn.insee.retailer.bot.script.LightingQuizScript;
 import vn.insee.retailer.controller.dto.TopicDTO;
 import vn.insee.retailer.webhook.ZaloEventManager;
@@ -34,41 +34,38 @@ public class LightingQuizPromotionService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public void sendMsgBeforeStart5Min() {
+    public LightingQuizPromotionEntity get(int id) {
+        return lzQuizPromotionRepository.getOne(id);
     }
 
-//    public void sendMsgBeforeStart5Min(int promotionId) {
-//        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
-//        if (optionalLightingQuizPromotion.isPresent()) {
-//            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
-//            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
-//            for (UserEntity userEntity: userEntities) {
-//                User user = new User();
-//                user.setUid(userEntity.getId());
-//                user.setFollowerId(userEntity.getFollowerId());
-//                user.setName(userEntity.getName());
-//                SendBefore5MinMessage sendBefore5MinMessage = new SendBefore5MinMessage(user, lightingQuizPromotionEntity.getTitle(),
-//                        lightingQuizPromotionEntity.getId());
-//                sendBefore5MinMessage.send();
-//            }
-//        }
-//    }
+    public void sendMsgBeforeStart5Min(int promotionId) throws JsonProcessingException {
+        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
+        if (optionalLightingQuizPromotion.isPresent()) {
+            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
+            TopicDTO topicUpComing = getTopicUpComing(lightingQuizPromotionEntity);
+            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+            for (UserEntity userEntity: userEntities) {
+                User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
+                Before5MinMessage sendBefore5MinMessage = new Before5MinMessage(user, topicUpComing.getTitle(),
+                        lightingQuizPromotionEntity.getId());
+                sendBefore5MinMessage.send();
+            }
+        }
+    }
 
-//    public void sendMsgToStart(int promotionId) throws JsonProcessingException {
-//        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
-//        if (optionalLightingQuizPromotion.isPresent()) {
-//            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
-//            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
-//            for (UserEntity userEntity: userEntities) {
-//                User user = new User();
-//                user.setUid(userEntity.getId());
-//                user.setFollowerId(userEntity.getFollowerId());
-//                user.setName(userEntity.getName());
-//                LightingQuizScript lightingQuizScript = new LightingQuizScript(user);
-////                lightingQuizScript.start(promotionId);
-//            }
-//        }
-//    }
+    public void start(int promotionId) throws JsonProcessingException {
+        Optional<LightingQuizPromotionEntity> optionalLightingQuizPromotion = lzQuizPromotionRepository.findById(promotionId);
+        if (optionalLightingQuizPromotion.isPresent()) {
+            LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
+            TopicDTO topic = getTopicUpComing(lightingQuizPromotionEntity);
+            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+            for (UserEntity userEntity: userEntities) {
+                User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
+                LightingQuizScript lightingQuizScript = new LightingQuizScript(user);
+                lightingQuizScript.start(lightingQuizPromotionEntity, topic);
+            }
+        }
+    }
 
 
     public LightingQuizPromotionEntity get() throws Exception {
@@ -140,11 +137,6 @@ public class LightingQuizPromotionService {
         }
         return objectMapper.readValue(strTopic, new TypeReference<List<TopicDTO>>() {
         });
-    }
-
-    public List<LightingQuizPromotionEntity> findByLocation(int location) {
-        List<LightingQuizPromotionEntity> all = lzQuizPromotionRepository.findAll();
-        return all.stream().filter(a -> a.getLocations().contains(location)).collect(Collectors.toList());
     }
 
 }

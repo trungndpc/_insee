@@ -2,13 +2,14 @@ package vn.insee.retailer.bot;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class LightingSession {
     private long timeStart;
     private int promotionId;
     private String topicId;
-    private Map<String, LQQuestionSS> question;
+    private Map<String, LQQuestionSS> questions;
     private String waitingQuestionId;
 
     public int getPromotionId() {
@@ -27,12 +28,15 @@ public class LightingSession {
         this.topicId = topicId;
     }
 
-    public Map<String, LQQuestionSS> getQuestion() {
-        return question;
+    public void putQuestion(String id, LQQuestionSS question) {
+        if (questions == null) {
+            questions = new HashMap<>();
+        }
+        questions.put(id, question);
     }
 
-    public void setQuestion(Map<String, LQQuestionSS> question) {
-        this.question = question;
+    public Map<String, LQQuestionSS> getQuestions() {
+        return questions;
     }
 
     public String getWaitingQuestionId() {
@@ -52,23 +56,26 @@ public class LightingSession {
     }
 
     public static class LQQuestionSS {
-        private Class zclass;
-        private JSONObject json;
+        private final String id;
+        private final Class zclass;
+        private final JSONObject json;
+
+        public LQQuestionSS(String id, Class zclass, JSONObject json) {
+            this.id = id;
+            this.zclass = zclass;
+            this.json = json;
+        }
+
+        public String getId() {
+            return id;
+        }
 
         public Class getZclass() {
             return zclass;
         }
 
-        public void setZclass(Class zclass) {
-            this.zclass = zclass;
-        }
-
         public JSONObject getJson() {
             return json;
-        }
-
-        public void setJson(JSONObject json) {
-            this.json = json;
         }
     }
 }

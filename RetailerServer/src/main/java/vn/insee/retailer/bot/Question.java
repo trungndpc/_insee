@@ -5,12 +5,14 @@ import java.io.Serializable;
 
 public abstract class Question implements Serializable, Conversation {
     private User user;
+    private String id;
 
     public Question() {
     }
 
-    public Question(User user) {
+    public Question(User user, String id) {
         this.user = user;
+        this.id = id;
     }
 
     public abstract boolean ask();
@@ -23,5 +25,13 @@ public abstract class Question implements Serializable, Conversation {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -1,5 +1,5 @@
-vn/insee/admin/retailer/controller/dto/PromotionDTO.class
 vn/insee/admin/retailer/controller/converter/PostConverter.class
+vn/insee/admin/retailer/controller/dto/PromotionDTO.class
 vn/insee/admin/retailer/common/BaseResponse.class
 vn/insee/admin/retailer/mapper/Mapper.class
 vn/insee/admin/retailer/controller/dto/StockFormDTO.class
@@ -16,14 +16,14 @@ vn/insee/admin/retailer/Main.class
 vn/insee/admin/retailer/util/StringUtils.class
 vn/insee/admin/retailer/util/ListUtils.class
 vn/insee/admin/retailer/service/LightingQuizPromotionService.class
+vn/insee/admin/retailer/service/PostService.class
 vn/insee/admin/retailer/controller/HomeController.class
 vn/insee/admin/retailer/controller/PromotionController.class
-vn/insee/admin/retailer/service/PostService.class
 vn/insee/admin/retailer/controller/dto/FormDTO.class
 vn/insee/admin/retailer/controller/converter/UserConverter.class
 vn/insee/admin/retailer/controller/PostController.class
-vn/insee/admin/retailer/filter/CORSDomainFilter.class
 vn/insee/admin/retailer/service/StockPromotionService.class
+vn/insee/admin/retailer/filter/CORSDomainFilter.class
 vn/insee/admin/retailer/controller/converter/LQConverter.class
 vn/insee/admin/retailer/service/PromotionService.class
 vn/insee/admin/retailer/controller/form/PromotionForm.class

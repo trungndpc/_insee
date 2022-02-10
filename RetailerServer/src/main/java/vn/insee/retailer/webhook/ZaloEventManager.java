@@ -7,9 +7,11 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.retailer.bot.LightingSession;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.script.LightingQuizScript;
+import vn.insee.retailer.service.LightingQuizPromotionService;
 import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
 import vn.insee.retailer.webhook.zalo.UserSendMessage;
@@ -30,6 +32,9 @@ public class ZaloEventManager {
     private FollowZaloEvent followZaloEvent;
 
     @Autowired
+    private LightingEvent lightingEvent;
+
+    @Autowired
     private UserService userService;
 
     public void doing(JSONObject zaloMsg) throws Exception {
@@ -40,7 +45,6 @@ public class ZaloEventManager {
         if (userEntity == null) {
             throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);
         }
-        User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
 
         switch (eventName) {
             case "follow":
@@ -50,12 +54,13 @@ public class ZaloEventManager {
             case "user_send_text":
                 UserSendMessage userSendText = objectMapper.readValue(zaloMsg.toString(), UserSendMessage.class);
                 String text = userSendText.message.text;
-                Object session = webhookSessionManager.getCurrentSession(user.getUid());
+                Object session = webhookSessionManager.getCurrentSession(userEntity.getId());
 
                 if (text.equals("#nhanh_nhu_chop") || session instanceof LightingSession) {
-                        new LightingQuizScript(user).process(userSendText);
+                    lightingEvent.process(userSendText);
                     return;
                 }
+
                 break;
         }
     }

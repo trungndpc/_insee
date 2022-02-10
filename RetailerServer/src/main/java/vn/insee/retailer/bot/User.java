@@ -5,6 +5,10 @@ public class User {
     private String followerId;
     private String name;
 
+
+    public User() {
+    }
+
     public User(int uid, String followerId, String name) {
         this.uid = uid;
         this.followerId = followerId;

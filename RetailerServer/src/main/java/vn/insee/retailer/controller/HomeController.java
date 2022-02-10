@@ -3,6 +3,8 @@ package vn.insee.retailer.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -51,7 +53,8 @@ public class HomeController {
     @ResponseBody
     public String test(Authentication auth) throws Exception {
         LightingQuizPromotionEntity one = lightingQuizPromotionRepository.getOne(14);
-        one.setTopics("");
+        JSONArray sJsonObject = new JSONArray("[{\"id\":\"topic_id_e3dde64c-3246-4f5c-8563-8f7efe5cb962\",\"title\":\"Chủ đề 1\",\"questions\":[{\"id\":\"question_id_2c17300e-91e2-4c02-91b0-6a7ddd79f444\",\"content\":\"Câu 1\",\"options\":[{\"id\":\"answer_id_3a44546d-26e9-44fa-8cab-ff53fa8e39b5\",\"content\":\"Đáp án A\",\"right\":true},{\"id\":\"answer_id_76c1597f-c45a-4a83-80b9-1921e24e5aaf\",\"content\":\"Đáp án B\",\"right\":false}]},{\"id\":\"question_id_a7dc8a35-484e-49f6-8044-82faf4b0ee24\",\"content\":\"Câu 2\",\"options\":[{\"id\":\"answer_id_d75b5916-ec27-4dd8-9e17-5726efd0c6b1\",\"content\":\"Câu A\",\"right\":false},{\"id\":\"answer_id_0a304fd1-6bfd-406a-b42e-a168cf423044\",\"content\":\"Câu B\",\"right\":true}]}],\"timeStart\":1644486000000,\"timeEnd\":1644500400000}]");
+        one.setTopics(sJsonObject.toString());
         lightingQuizPromotionRepository.saveAndFlush(one);
         return "<<TEST>>";
     }

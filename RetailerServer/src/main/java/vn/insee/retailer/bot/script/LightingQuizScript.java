@@ -2,14 +2,17 @@ package vn.insee.retailer.bot.script;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import vn.insee.common.status.StatusForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.form.LightingQuizFormEntity;
+import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.retailer.bot.LightingSession;
 import vn.insee.retailer.bot.Question;
 import vn.insee.retailer.bot.User;
-import vn.insee.retailer.bot.question.LQQuestion;
+import vn.insee.retailer.bot.message.CompleteGameMessage;
 import vn.insee.retailer.bot.question.LightingQuizGameRatioQuestion;
 import vn.insee.retailer.bot.question.ReadyToStartLightingQuizQuestion;
 import vn.insee.retailer.controller.dto.QuestionDTO;
@@ -19,48 +22,67 @@ import vn.insee.retailer.controller.dto.lq.LQQuestionFormDTO;
 import vn.insee.retailer.service.LightingQuizFormService;
 import vn.insee.retailer.service.LightingQuizPromotionService;
 import vn.insee.retailer.util.BeanUtil;
+import vn.insee.retailer.util.StringUtils;
+import vn.insee.retailer.webhook.WebhookSessionManager;
 import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class LightingQuizScript  {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final static LightingQuizPromotionService LIGHTING_QUIZ_PROMOTION_SERVICE = BeanUtil.getBean(LightingQuizPromotionService.class);
+    private final static LightingQuizFormService LIGHTING_QUIZ_FORM_SERVICE = BeanUtil.getBean(LightingQuizFormService.class);
+    private final static WebhookSessionManager WEBHOOK_SESSION_MANAGER = BeanUtil.getBean(WebhookSessionManager.class);
+
     private LightingSession session;
     private User user;
     private ObjectMapper objectMapper = new ObjectMapper();
     private TopicDTO topic;
-    private int promotionId;
-    private final LightingQuizPromotionService lightingQuizService = BeanUtil.getBean(LightingQuizPromotionService.class);
-    private final LightingQuizFormService lightingQuizFormService = BeanUtil.getBean(LightingQuizFormService.class);
+    private LightingQuizPromotionEntity promotion;
 
-    public LightingQuizScript(User user) {
+
+    public LightingQuizScript(User user) throws JsonProcessingException {
         this.user = user;
+        initSession(user);
     }
 
-    public void start() throws JsonProcessingException {
-        this.session = new LightingSession();
-        this.promotionId = promotionId;
-        this.topic = topic;
-        ReadyToStartLightingQuizQuestion startQuestion = new ReadyToStartLightingQuizQuestion(user);
-        startQuestion.ask();
-        this.session.setWaitingQuestionId(startQuestion.getQuestionId());
-        Map<String, LightingSession.LQQuestionSS> questions = this.session.getQuestion();
-        if (questions == null) {
-            questions = new HashMap<>();
+    private void initSession(User user) throws JsonProcessingException {
+        Object currentSession = WEBHOOK_SESSION_MANAGER.getCurrentSession(user.getUid());
+        if (currentSession == null || !(currentSession instanceof LightingSession)) {
+            this.session = new LightingSession();
+        }else {
+            this.session = (LightingSession) currentSession;
         }
-        LightingSession.LQQuestionSS lqQuestionSS = new LightingSession.LQQuestionSS();
-        lqQuestionSS.setJson(new JSONObject(this.objectMapper.writeValueAsString(startQuestion)));
-        lqQuestionSS.setZclass(ReadyToStartLightingQuizQuestion.class);
-        questions.put(startQuestion.getQuestionId(), lqQuestionSS);
-        this.session.setQuestion(questions);
-        this.session.setPromotionId(promotionId);
-        this.session.setTimeStart(System.currentTimeMillis());
+        if (this.session.getPromotionId() != 0 && this.session.getTopicId() != null) {
+            LightingQuizPromotionEntity lightingQuizPromotionEntity = LIGHTING_QUIZ_PROMOTION_SERVICE.get(this.session.getPromotionId());
+            TopicDTO topic = LIGHTING_QUIZ_PROMOTION_SERVICE.getTopicUpComing(lightingQuizPromotionEntity);
+            this.promotion = lightingQuizPromotionEntity;
+            this.topic = topic;
+        }
+        WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
+    }
+
+    public void start(LightingQuizPromotionEntity promotion, TopicDTO topic) throws JsonProcessingException {
+        if (StringUtils.isEmpty(session.getWaitingQuestionId())) {
+            ReadyToStartLightingQuizQuestion startQuestion = new ReadyToStartLightingQuizQuestion(user);
+            startQuestion.ask();
+            this.session.setWaitingQuestionId(startQuestion.getId());
+            JSONObject json = new JSONObject(this.objectMapper.writeValueAsString(startQuestion));
+            this.session.putQuestion(startQuestion.getId(), new LightingSession.LQQuestionSS(startQuestion.getId(),
+                    ReadyToStartLightingQuizQuestion.class, json));
+            this.session.setPromotionId(promotion.getId());
+            this.session.setTopicId(topic.getId());
+            this.promotion = promotion;
+            this.topic = topic;
+            WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
+        }
     }
 
     public void process(ZaloWebhookMessage msg) throws Exception {
         String waitingQuestionId = session.getWaitingQuestionId();
         if (waitingQuestionId != null) {
-            Question question = getWaitingQuestion(waitingQuestionId);
+            Question question = initWaitingQuestion(waitingQuestionId);
             if (question == null) {
                 throw new Exception("can not init waiting question | " + waitingQuestionId);
             }
@@ -68,36 +90,35 @@ public class LightingQuizScript  {
 
             //store session
             String jsonQuestion = this.objectMapper.writeValueAsString(question);
-            Map<String, LightingSession.LQQuestionSS> mapSession = session.getQuestion();
-            LightingSession.LQQuestionSS lqQuestionSS = new LightingSession.LQQuestionSS();
-            lqQuestionSS.setZclass(question.getClass());
-            lqQuestionSS.setJson(new JSONObject(jsonQuestion));
-            mapSession.put(waitingQuestionId, lqQuestionSS);
-            session.setQuestion(mapSession);
+            LightingSession.LQQuestionSS lqQuestionSS = new LightingSession.LQQuestionSS(question.getId(),
+                    question.getClass(), new JSONObject(jsonQuestion));
+            this.session.putQuestion(question.getId(), lqQuestionSS);
+            WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
+
 
             if (isAccept) {
                 Question nextQuestion = getNextQuestion();
                 if (nextQuestion == null) {
                     //submit
-                    submit();
+                    complete();
+                    WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
                 }else {
                     boolean ask = nextQuestion.ask();
                     if (ask) {
                         //store session
-                        session.setWaitingQuestionId(((LQQuestion)nextQuestion).getQuestionId());
-                        LightingSession.LQQuestionSS nextLqQuestionSS = new LightingSession.LQQuestionSS();
-                        nextLqQuestionSS.setZclass(nextQuestion.getClass());
-                        nextLqQuestionSS.setJson(new JSONObject(this.objectMapper.writeValueAsString(nextQuestion)));
-                        mapSession.put(session.getWaitingQuestionId(), nextLqQuestionSS);
-                        session.setQuestion(mapSession);
+                        this.session.setWaitingQuestionId(nextQuestion.getId());
+                        LightingSession.LQQuestionSS nextLqQuestionSS = new LightingSession.LQQuestionSS(nextQuestion.getId(), nextQuestion.getClass(),
+                                new JSONObject(this.objectMapper.writeValueAsString(nextQuestion)));
+                        this.session.putQuestion(nextQuestion.getId(), nextLqQuestionSS);
+                        WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
                     }
                 }
             }
         }
     }
 
-    private void submit() throws JsonProcessingException {
-        Map<String, LightingSession.LQQuestionSS> question = session.getQuestion();
+    private void complete() throws JsonProcessingException {
+        Map<String, LightingSession.LQQuestionSS> question = session.getQuestions();
         LQDetailFormDTO lqDetailFormDTO = new LQDetailFormDTO();
         List<LQQuestionFormDTO> formDTOS = new ArrayList<>();
         for (String id: question.keySet()) {
@@ -119,35 +140,48 @@ public class LightingQuizScript  {
 
         LightingQuizFormEntity lightingQuizFormEntity = new LightingQuizFormEntity();
         lightingQuizFormEntity.setJsonDetail(this.objectMapper.writeValueAsString(lqDetailFormDTO));
-        lightingQuizFormEntity.setPromotionId(promotionId);
+        lightingQuizFormEntity.setPromotionId(this.promotion.getId());
         lightingQuizFormEntity.setType(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE);
         lightingQuizFormEntity.setStatus(StatusForm.INIT);
         lightingQuizFormEntity.setUserId(this.user.getUid());
-        lightingQuizFormService.submit(lightingQuizFormEntity);
+        long count = lqDetailFormDTO.getQuestions().stream().filter(q -> q.isTrue()).count();
+        lightingQuizFormEntity.setPoint((int) count);
+        LIGHTING_QUIZ_FORM_SERVICE.submit(lightingQuizFormEntity);
+        LOGGER.info(lightingQuizFormEntity.getJsonDetail());
+
+        //send msg complete
+        CompleteGameMessage completeGameMessage = new CompleteGameMessage(this.user, lightingQuizFormEntity.getPoint(),
+                lqDetailFormDTO.getQuestions().size(), lqDetailFormDTO.getTimeEnd() - lqDetailFormDTO.getTimeStart());
+        completeGameMessage.send();
     }
 
+
     private Question getNextQuestion() {
-        Set<String> topics = session.getQuestion().keySet();
-        Optional<QuestionDTO> opQuestion = topic.getQuestions().stream().filter(t -> !topics.contains(t.getId()))
+        Set<String> questionIds = session.getQuestions().values().stream()
+                .map(LightingSession.LQQuestionSS::getId).collect(Collectors.toSet());
+        Optional<QuestionDTO> opQuestion = topic.getQuestions().stream()
+                .filter(t -> !questionIds.contains(t.getId()))
                 .findAny();
+
         if (!opQuestion.isPresent()) {
             return null;
         }
+
         QuestionDTO question = opQuestion.get();
         List<String> options = question.getOptions().stream().map(o -> o.getContent()).collect(Collectors.toList());
         String trueAns = question.getOptions().stream().filter(o -> o.isRight()).findAny().get().getContent();
 
-        LightingQuizGameRatioQuestion ratioQuestion = new LightingQuizGameRatioQuestion(user);
+        LightingQuizGameRatioQuestion ratioQuestion = new LightingQuizGameRatioQuestion(user, question.getId());
+        ratioQuestion.setPromotionId(this.promotion.getId());
         ratioQuestion.setQuestionId(question.getId());
-        ratioQuestion.setPromotionId(promotionId);
         ratioQuestion.setTrueAns(trueAns);
         ratioQuestion.setContent(question.getContent());
         ratioQuestion.setOptions(options);
         return ratioQuestion;
     }
 
-    private Question getWaitingQuestion(String id) throws JsonProcessingException {
-        LightingSession.LQQuestionSS lqQuestionSS = session.getQuestion().get(id);
+    private Question initWaitingQuestion(String id) throws JsonProcessingException {
+        LightingSession.LQQuestionSS lqQuestionSS = session.getQuestions().get(id);
         switch (lqQuestionSS.getZclass().getSimpleName()) {
             case "ReadyToStartLightingQuizQuestion":
                 return this.objectMapper.readValue(lqQuestionSS.getJson().toString(),

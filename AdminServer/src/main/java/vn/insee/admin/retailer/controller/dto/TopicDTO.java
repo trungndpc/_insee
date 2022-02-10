@@ -15,10 +15,8 @@ public class TopicDTO {
     private Long timeEnd;
 
     private void checkAndGenID(String id) {
-        LOGGER.error("check and gen id: " + id);
         if (this.id == null || this.id.isEmpty() || !this.id.startsWith("topic_id_")) {
             this.id = "topic_id_" + NoiseUtil.random();
-
         }else {
             this.id = id;
         }

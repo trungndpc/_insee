@@ -12,13 +12,16 @@ import vn.insee.retailer.wrapper.entity.ZaloMessage;
 
 import java.util.ArrayList;
 
-public class ReadyToStartLightingQuizQuestion extends Question implements LQQuestion{
+public class ReadyToStartLightingQuizQuestion extends Question{
     private static final Logger LOGGER = LogManager.getLogger(ReadyToStartLightingQuizQuestion.class);
     private static final String QUESTION_ID = "START";
     private String userAnswer;
 
+    public ReadyToStartLightingQuizQuestion() {
+    }
+
     public ReadyToStartLightingQuizQuestion(User user) {
-        super(user);
+        super(user, QUESTION_ID);
     }
 
     @Override
@@ -45,11 +48,6 @@ public class ReadyToStartLightingQuizQuestion extends Question implements LQQues
         return this.userAnswer;
     }
 
-    @Override
-    public String getQuestionId() {
-        return QUESTION_ID;
-    }
-
     private ZaloMessage buildMsg() {
         ZaloMessage.Attachment.Payload payload = new ZaloMessage.Attachment.Payload();
         payload.buttons = new ArrayList<>();
@@ -67,7 +65,4 @@ public class ReadyToStartLightingQuizQuestion extends Question implements LQQues
         return zaloMessage;
     }
 
-    public void setUserAnswer(String userAnswer) {
-        this.userAnswer = userAnswer;
-    }
 }

@@ -17,7 +17,7 @@ public class WebhookSessionManager {
         SESSIONS.put(uid, session);
     }
 
-    public void clearSession(int uid, Object session) {
+    public void clearSession(int uid) {
         SESSIONS.remove(uid);
     }
 

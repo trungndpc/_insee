@@ -13,7 +13,7 @@ import vn.insee.retailer.wrapper.entity.ZaloMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightingQuizGameRatioQuestion extends Question implements LQQuestion{
+public class LightingQuizGameRatioQuestion extends Question {
     private static final Logger LOGGER = LogManager.getLogger(LightingQuizGameRatioQuestion.class);
     private int promotionId;
     private String topicId;
@@ -28,8 +28,8 @@ public class LightingQuizGameRatioQuestion extends Question implements LQQuestio
         super();
     }
 
-    public LightingQuizGameRatioQuestion(User user) {
-        super(user);
+    public LightingQuizGameRatioQuestion(User user, String questionId) {
+        super(user, questionId);
     }
 
     @Override
@@ -74,11 +74,6 @@ public class LightingQuizGameRatioQuestion extends Question implements LQQuestio
         return zaloMessage;
     }
 
-    @Override
-    public String getQuestionId() {
-        return questionId;
-    }
-
     public int getPromotionId() {
         return promotionId;
     }
@@ -95,8 +90,14 @@ public class LightingQuizGameRatioQuestion extends Question implements LQQuestio
         this.topicId = topicId;
     }
 
+    public String getQuestionId() {
+        return questionId;
+    }
+
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+        this.setId(this.getQuestionId());
+
     }
 
     public String getContent() {

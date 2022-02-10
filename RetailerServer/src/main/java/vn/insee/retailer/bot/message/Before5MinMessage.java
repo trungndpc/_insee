@@ -10,12 +10,12 @@ import vn.insee.retailer.wrapper.entity.ZaloMessage;
 
 import java.util.ArrayList;
 
-public class SendBefore5MinMessage extends Message {
-    private static final Logger LOGGER = LogManager.getLogger(SendBefore5MinMessage.class);
+public class Before5MinMessage extends Message {
+    private static final Logger LOGGER = LogManager.getLogger(Before5MinMessage.class);
     private String title;
     private int id;
 
-    public SendBefore5MinMessage(User user, String title, int id) {
+    public Before5MinMessage(User user, String title, int id) {
         super(user);
         this.title = title;
         this.id = id;
