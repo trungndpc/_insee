@@ -1,4 +1,4 @@
-package vn.insee.retailer.wrapper.entity;
+package vn.insee.admin.retailer.wrapper.entity;
 
 public class ZaloUserEntity {
     private String id;

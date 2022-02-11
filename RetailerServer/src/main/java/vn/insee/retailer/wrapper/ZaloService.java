@@ -69,7 +69,6 @@ public class ZaloService {
         ResponseEntity<String> zaloResponseResponseEntity = restTemplate.postForEntity(END_POINT,
                 msWrapper.toString(), String.class,
                 AppCommon.INSTANCE.getAccessToken());
-        LOGGER.info(AppCommon.INSTANCE.getAccessToken());
         LOGGER.info(zaloResponseResponseEntity);
         return zaloResponseResponseEntity.getStatusCode() == HttpStatus.OK;
     }

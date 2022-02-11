@@ -1,6 +1,5 @@
 package vn.insee.admin.retailer.controller;
 
-import org.apache.commons.collections4.queue.PredicatedQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +12,20 @@ import vn.insee.admin.retailer.controller.dto.LQPromotionDTO;
 import vn.insee.admin.retailer.controller.dto.TopicDTO;
 import vn.insee.admin.retailer.controller.form.LightingQuizTopicForm;
 import vn.insee.admin.retailer.controller.form.QuestionForm;
+import vn.insee.admin.retailer.service.LightingQuizFormService;
 import vn.insee.admin.retailer.service.LightingQuizPromotionService;
+import vn.insee.common.status.StatusTopicLightingQuizPromotion;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 
 @RestController
 @RequestMapping("/api/promotion/lighting-quiz")
-public class LQPromotionController {
-    private static final Logger LOGGER = LogManager.getLogger(LQPromotionController.class);
+public class LightingQuizPromotionController {
+    private static final Logger LOGGER = LogManager.getLogger(LightingQuizPromotionController.class);
     @Autowired
     private LightingQuizPromotionService lightingQuizPromotionService;
+
+    @Autowired
+    private LightingQuizFormService lightingQuizFormService;
 
     @Autowired
     private LQConverter lqConverter;
@@ -30,6 +34,7 @@ public class LQPromotionController {
     public ResponseEntity<BaseResponse> create(@RequestBody LightingQuizTopicForm form, @RequestParam(required = true) int promotionId) {
         BaseResponse response = new BaseResponse();
         try{
+            form.setStatus(StatusTopicLightingQuizPromotion.INIT);
             LightingQuizPromotionEntity promotionEntity = lightingQuizPromotionService.get(promotionId);
             promotionEntity = lqConverter.convert2Entity(promotionEntity, form);
             promotionEntity = lightingQuizPromotionService.update(promotionEntity);
@@ -89,6 +94,23 @@ public class LQPromotionController {
             if (topicDTO != null) {
                 response.setData(topicDTO);
             }
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/end-topic")
+    public ResponseEntity<BaseResponse> endTopic(@RequestParam(required = true) int id,
+                                                 @RequestParam(required = true) String topicId) {
+        BaseResponse response = new BaseResponse();
+        try{
+            LightingQuizPromotionEntity lightingQuizPromotionEntity = lightingQuizPromotionService.get(id);
+            TopicDTO topicDTO = lqConverter.getTopicDTO(lightingQuizPromotionEntity, topicId);
+            lightingQuizPromotionService.updateStatusTopic(lightingQuizPromotionEntity.getId(), topicId, StatusTopicLightingQuizPromotion.APPROVED);
+            lightingQuizFormService.summary2Ranking(lightingQuizPromotionEntity.getId(), topicDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);

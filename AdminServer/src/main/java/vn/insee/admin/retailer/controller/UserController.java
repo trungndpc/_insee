@@ -13,6 +13,7 @@ import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.UserDTO;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.service.UserService;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 
 
@@ -69,6 +70,20 @@ public class UserController {
             response.setData(customerDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int uid,
+                                                     @RequestParam(required = true) int status) {
+        BaseResponse response = new BaseResponse();
+        try{
+            userService.updateStatus(uid, status);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);
             response.setMsg(e.getMessage());
         }

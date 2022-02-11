@@ -1,8 +1,8 @@
-package vn.insee.retailer.bot;
+package vn.insee.admin.retailer.message;
 
 import java.io.Serializable;
 
-public abstract class Message implements Serializable, Conversation {
+public abstract class Message implements Serializable {
     private User user;
 
     public Message(User user) {

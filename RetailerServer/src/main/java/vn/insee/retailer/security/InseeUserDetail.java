@@ -2,8 +2,8 @@ package vn.insee.retailer.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.retailer.common.UserStatus;
 
 import java.util.Collection;
 
@@ -52,6 +52,6 @@ public class InseeUserDetail implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus() != UserStatus.DISABLED;
+        return user.getStatus() != StatusUser.DISABLED;
     }
 }

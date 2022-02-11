@@ -6,10 +6,10 @@ import vn.insee.admin.retailer.wrapper.ZaloService;
 import vn.insee.admin.retailer.wrapper.entity.ZaloMessage;
 
 
-public class ApprovedUserMessage extends Message {
-    private static final Logger LOGGER = LogManager.getLogger(ApprovedUserMessage.class);
+public class ApprovedStockPromotionMessage extends Message {
+    private static final Logger LOGGER = LogManager.getLogger(ApprovedStockPromotionMessage.class);
     private String title;
-    public ApprovedUserMessage(User user, String name) {
+    public ApprovedStockPromotionMessage(User user, String name) {
         super(user);
         this.title = name;
     }
@@ -27,8 +27,8 @@ public class ApprovedUserMessage extends Message {
     }
 
     private ZaloMessage buildMsg() {
-        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Chúc mừng anh " + title + " đã được xác nhận là khách hàng của INSEE. " +
-                "Giờ đây anh chỉ có thể tham gia các chương trình khuyến mãi độc quyền của INSEE");
+        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Chúc mừng anh " + title + " hình ảnh tham gia chương trình của anh " +
+                "đã được xác nhận. Chúng tối sẽ gửi phần quà cho anh chị trong thời gian tới.");
         return zaloMessage;
     }
 }

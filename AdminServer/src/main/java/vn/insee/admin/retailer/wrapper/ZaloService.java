@@ -1,4 +1,4 @@
-package vn.insee.retailer.wrapper;
+package vn.insee.admin.retailer.wrapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-import vn.insee.retailer.common.AppCommon;
-import vn.insee.retailer.wrapper.entity.ZaloMessage;
-import vn.insee.retailer.wrapper.entity.ZaloUserEntity;
-
+import vn.insee.admin.retailer.common.AppCommon;
+import vn.insee.admin.retailer.wrapper.entity.ZaloMessage;
+import vn.insee.admin.retailer.wrapper.entity.ZaloUserEntity;
 import java.nio.charset.StandardCharsets;
 
 

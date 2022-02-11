@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
-import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusLightingQuizForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.form.LightingQuizFormEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
@@ -148,13 +148,12 @@ public class LightingQuizScript  {
         lightingQuizFormEntity.setJsonDetail(this.objectMapper.writeValueAsString(lqDetailFormDTO));
         lightingQuizFormEntity.setPromotionId(this.promotion.getId());
         lightingQuizFormEntity.setType(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE);
-        lightingQuizFormEntity.setStatus(StatusForm.INIT);
+        lightingQuizFormEntity.setStatus(StatusLightingQuizForm.INIT);
         lightingQuizFormEntity.setUserId(this.user.getUid());
         lightingQuizFormEntity.setTopicId(topic.getId());
         long count = lqDetailFormDTO.getQuestions().stream().filter(q -> q.isTrue()).count();
         lightingQuizFormEntity.setPoint((int) count);
         LIGHTING_QUIZ_FORM_SERVICE.submit(lightingQuizFormEntity);
-        LOGGER.info(lightingQuizFormEntity.getJsonDetail());
 
         //send msg complete
         CompleteGameMessage completeGameMessage = new CompleteGameMessage(this.user, lightingQuizFormEntity.getPoint(),

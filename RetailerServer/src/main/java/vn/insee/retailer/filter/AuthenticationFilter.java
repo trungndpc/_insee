@@ -3,6 +3,7 @@ package vn.insee.retailer.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.repository.UserRepository;
 import vn.insee.retailer.common.BaseResponse;
 import io.jsonwebtoken.Claims;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.security.InseeUserDetail;
 import vn.insee.retailer.security.InseeUserDetailService;
 import vn.insee.util.HttpUtil;
@@ -54,7 +54,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 int userId = Integer.parseInt(claims.getAudience());
                 UserDetails userDetail = userService.loadUserById(userId);
                 InseeUserDetail inseeUser = (InseeUserDetail) userDetail;
-                if (inseeUser.getUser().getStatus() == UserStatus.DISABLED) {
+                if (inseeUser.getUser().getStatus() == StatusUser.DISABLED) {
                     throw new Exception(String.format("User is disable | userId: %d", userId));
                 }
                 List<String> lstSession = inseeUser.getUser().getSessions();

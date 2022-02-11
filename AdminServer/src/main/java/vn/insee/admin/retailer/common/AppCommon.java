@@ -33,5 +33,10 @@ public class AppCommon {
         return "1.0.0";
     }
 
+    public String getAccessToken() {
+        //Todo
+        return "";
+    }
+
 
 }

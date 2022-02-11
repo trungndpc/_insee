@@ -8,14 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.common.status.StatusPost;
-import vn.insee.common.status.StatusPromotion;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.jpa.entity.promotion.StockPromotionEntity;
 import vn.insee.jpa.repository.PostRepository;
-
-import java.util.List;
 
 @Service
 public class PostService {

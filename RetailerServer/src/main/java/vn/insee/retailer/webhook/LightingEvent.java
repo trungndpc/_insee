@@ -14,12 +14,10 @@ import vn.insee.retailer.bot.message.DoneFormMessage;
 import vn.insee.retailer.bot.message.NotFoundLQPromotionMessage;
 import vn.insee.retailer.bot.message.Time2StartGameMessage;
 import vn.insee.retailer.bot.script.LightingQuizScript;
-import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.controller.dto.TopicDTO;
 import vn.insee.retailer.service.LightingQuizFormService;
 import vn.insee.retailer.service.LightingQuizPromotionService;
 import vn.insee.retailer.service.UserService;
-import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
 import vn.insee.retailer.webhook.zalo.UserSendMessage;
 import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
 

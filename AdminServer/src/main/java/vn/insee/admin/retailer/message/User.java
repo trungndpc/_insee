@@ -1,4 +1,4 @@
-package vn.insee.retailer.bot;
+package vn.insee.admin.retailer.message;
 
 public class User {
     private int uid;

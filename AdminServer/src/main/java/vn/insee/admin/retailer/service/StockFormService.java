@@ -8,8 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import vn.insee.admin.retailer.message.ApprovedStockPromotionMessage;
+import vn.insee.admin.retailer.message.User;
+import vn.insee.common.status.StatusStockForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
+import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.repository.FormRepository;
 import vn.insee.jpa.repository.StockFormRepository;
@@ -20,6 +24,9 @@ public class StockFormService {
 
     @Autowired
     private FormRepository formRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private StockFormRepository stockFormRepository;
@@ -44,5 +51,19 @@ public class StockFormService {
             return stockFormEntity;
         }
         return one;
+    }
+
+    public void updateStatus(int id, int status) throws Exception {
+        StockFormEntity stockFormEntity = stockFormRepository.getOne(id);
+        if (stockFormEntity == null) {
+            throw new Exception("stockFormEntity is not exits id: " + id);
+        }
+        stockFormEntity.setStatus(status);
+        if (status == StatusStockForm.APPROVED) {
+            UserEntity userEntity = userService.findById(stockFormEntity.getUserId());
+            User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
+            ApprovedStockPromotionMessage approvedStockPromotionMessage = new ApprovedStockPromotionMessage(user, userEntity.getName());
+            approvedStockPromotionMessage.send();
+        }
     }
 }

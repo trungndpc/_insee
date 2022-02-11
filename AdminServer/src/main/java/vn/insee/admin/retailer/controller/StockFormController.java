@@ -17,7 +17,7 @@ import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.StatsFormDTO;
 import vn.insee.admin.retailer.controller.dto.StockFormDTO;
 import vn.insee.admin.retailer.service.StockFormService;
-import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusStockForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
@@ -56,7 +56,7 @@ public class StockFormController {
         BaseResponse response = new BaseResponse();
         try{
             long total = formService.countByPromotion(promotionId);
-            long approved = formService.countByPromotionAndStatus(promotionId, StatusForm.APPROVED);
+            long approved = formService.countByPromotionAndStatus(promotionId, StatusStockForm.APPROVED);
             StatsFormDTO statsFormDTO = new StatsFormDTO();
             statsFormDTO.setTotal(total);
             statsFormDTO.setApproved(approved);
@@ -68,6 +68,7 @@ public class StockFormController {
         }
         return ResponseEntity.ok(response);
     }
+
     @GetMapping(path = "/get")
     public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id) {
         BaseResponse response = new BaseResponse();
@@ -87,4 +88,21 @@ public class StockFormController {
         }
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int id, @RequestParam(required = true) int status) {
+        BaseResponse response = new BaseResponse();
+        try{
+            formService.updateStatus(id, status);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
+
 }

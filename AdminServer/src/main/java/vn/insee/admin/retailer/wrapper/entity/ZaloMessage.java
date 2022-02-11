@@ -1,4 +1,4 @@
-package vn.insee.retailer.wrapper.entity;
+package vn.insee.admin.retailer.wrapper.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

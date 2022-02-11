@@ -6,12 +6,12 @@ import vn.insee.admin.retailer.wrapper.ZaloService;
 import vn.insee.admin.retailer.wrapper.entity.ZaloMessage;
 
 
-public class TopLeaderBoardLightingQuizMessage extends Message {
-    private static final Logger LOGGER = LogManager.getLogger(TopLeaderBoardLightingQuizMessage.class);
+public class ApprovedUserMessage extends Message {
+    private static final Logger LOGGER = LogManager.getLogger(ApprovedUserMessage.class);
     private String title;
-    public TopLeaderBoardLightingQuizMessage(User user, String title) {
+    public ApprovedUserMessage(User user, String name) {
         super(user);
-        this.title = title;
+        this.title = name;
     }
 
     @Override
@@ -27,8 +27,8 @@ public class TopLeaderBoardLightingQuizMessage extends Message {
     }
 
     private ZaloMessage buildMsg() {
-        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Chúc mừng anh chị đã nằm trong top 10 người " +
-                "trả lời đúng và nhanh nhất của chủ đề: " + title);
+        ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Chúc mừng anh " + title + " đã được xác nhận là khách hàng của INSEE. " +
+                "Giờ đây anh chỉ có thể tham gia các chương trình khuyến mãi độc quyền của INSEE");
         return zaloMessage;
     }
 }

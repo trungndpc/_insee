@@ -11,20 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
-import vn.insee.admin.retailer.controller.converter.FormConverter;
-import vn.insee.admin.retailer.controller.converter.LQConverter;
 import vn.insee.admin.retailer.controller.converter.LQFormConverter;
-import vn.insee.admin.retailer.controller.dto.FormDTO;
-import vn.insee.admin.retailer.controller.dto.PageDTO;
-import vn.insee.admin.retailer.controller.dto.StatsFormDTO;
-import vn.insee.admin.retailer.controller.dto.StockFormDTO;
 import vn.insee.admin.retailer.service.LightingQuizFormService;
-import vn.insee.admin.retailer.service.StockFormService;
-import vn.insee.common.status.StatusForm;
-import vn.insee.common.type.TypePromotion;
-import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.form.LightingQuizFormEntity;
-import vn.insee.jpa.entity.form.StockFormEntity;
 
 @RestController
 @RequestMapping("/api/lq-form")
@@ -53,6 +42,41 @@ public class LightingQuizFormController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(path = "/get")
+    public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id) {
+        BaseResponse response = new BaseResponse();
+        try{
+            LightingQuizFormEntity quizFormEntity = formService.get(id);
+            response.setData(formConverter.covert2DTO(quizFormEntity));
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int id, @RequestParam(required = true) int status) {
+        BaseResponse response = new BaseResponse();
+        try{
+            boolean is = formService.updateStatus(id, status);
+            if (is) {
+                response.setError(ErrorCode.FAILED);
+            }else {
+                response.setError(ErrorCode.FAILED);
+            }
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
 
 }

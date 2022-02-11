@@ -1,13 +1,11 @@
 package vn.insee.retailer.webhook;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
 import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
@@ -29,7 +27,7 @@ public class FollowZaloEvent extends ZaloEvent{
             UserEntity userEntity = userService.findByZaloId(followZaloMsg.userIdByApp);
             if (userEntity == null) {
                 userEntity = new UserEntity();
-                userEntity.setStatus(UserStatus.WAIT_COMPLETE_PROFILE);
+                userEntity.setStatus(StatusUser.WAIT_COMPLETE_PROFILE);
             }
             userEntity.setZaloId(String.valueOf(followZaloMsg.userIdByApp));
             userEntity.setFollowerId(followZaloMsg.follower.id);

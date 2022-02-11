@@ -74,7 +74,6 @@ public class LQConverter {
                 Iterator<QuestionDTO> itr = questions.iterator();
                 while (itr.hasNext()) {
                     QuestionDTO next = itr.next();
-                    LOGGER.error("question_dto: " + next.getId() + " >< " + quizTopicForm.getId());
                     if (next.getId().equals(quizTopicForm.getId())) {
                         itr.remove();
                     }

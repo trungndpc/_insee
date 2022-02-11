@@ -13,6 +13,7 @@ public class TopicDTO {
     private List<QuestionDTO> questions;
     private Long timeStart;
     private Long timeEnd;
+    private int status;
 
     private void checkAndGenID(String id) {
         if (this.id == null || this.id.isEmpty() || !this.id.startsWith("topic_id_")) {
@@ -61,5 +62,13 @@ public class TopicDTO {
 
     public void setTimeEnd(Long timeEnd) {
         this.timeEnd = timeEnd;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

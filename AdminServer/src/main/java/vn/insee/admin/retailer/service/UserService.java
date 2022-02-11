@@ -8,6 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.admin.retailer.common.UserStatus;
+import vn.insee.admin.retailer.message.ApprovedUserMessage;
+import vn.insee.admin.retailer.message.User;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
 
@@ -50,4 +53,21 @@ public class UserService {
         return userRepository.findAll(specs, pageable);
     }
 
+    public UserEntity updateStatus(int uid, int status) throws Exception {
+        UserEntity userEntity = userRepository.getOne(uid);
+        if (userEntity.getStatus() == StatusUser.APPROVED) {
+            throw new Exception("user is approved uid: " + uid);
+        }
+        if (userEntity.getStatus() != StatusUser.WAIT_APPROVAL) {
+            throw new Exception("user do not need approval uid: " + uid);
+        }
+        userEntity.setStatus(status);
+        userRepository.saveAndFlush(userEntity);
+        if (status == StatusUser.APPROVED) {
+            User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
+            ApprovedUserMessage approvedUserMessage = new ApprovedUserMessage(user, userEntity.getName());
+            approvedUserMessage.send();
+        }
+        return userEntity;
+    }
 }

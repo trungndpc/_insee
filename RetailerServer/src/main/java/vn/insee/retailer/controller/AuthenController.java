@@ -8,11 +8,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.common.Permission;
-import vn.insee.common.status.CustomerStatus;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
 import vn.insee.retailer.common.AppCommon;
-import vn.insee.retailer.common.UserStatus;
 import vn.insee.retailer.util.AuthenticationUtils;
 import vn.insee.retailer.util.ListUtils;
 import vn.insee.retailer.util.RenderUtils;
@@ -90,7 +89,7 @@ public class AuthenController {
         }
 
         if (user.getRoleId() == Permission.RETAILER.getId()) {
-            if (user.getStatus() == UserStatus.WAIT_COMPLETE_PROFILE) {
+            if (user.getStatus() == StatusUser.WAIT_COMPLETE_PROFILE) {
                 return RenderUtils.render("index.html");
             }else {
                 response.sendRedirect("/");
@@ -114,7 +113,7 @@ public class AuthenController {
             userEntity.setZaloId(zaloUserEntity.getId());
             userEntity.setPassword(new String());
             userEntity.setAvatar(zaloUserEntity.getAvatar());
-            userEntity.setStatus(UserStatus.WAIT_COMPLETE_PROFILE);
+            userEntity.setStatus(StatusUser.WAIT_COMPLETE_PROFILE);
             if (!StringUtils.isEmpty(zaloUserEntity.getBirthday())) {
                 userEntity.setBirthday(TimeUtil.getTime(zaloUserEntity.getBirthday()));
             }
@@ -124,7 +123,7 @@ public class AuthenController {
             try {
                 int customerId =  NoiseUtil.de_noiseInt(src);
                 UserEntity customer = userRepository.getOne(customerId);
-                if (customer != null && customer.getStatus() == UserStatus.WAITING_ACTIVE) {
+                if (customer != null && customer.getStatus() == StatusUser.WAITING_ACTIVE) {
                     userEntity = link2CustomerProfile(userEntity, customer);
                 }
             }catch (Exception e) {
@@ -141,7 +140,7 @@ public class AuthenController {
         newUserEntity.setCityId(customer.getCityId());
         newUserEntity.setDistrictId(customer.getDistrictId());
         newUserEntity.setAddress(customer.getAddress());
-        newUserEntity.setStatus(CustomerStatus.APPROVED.getStatus());
+        newUserEntity.setStatus(StatusUser.APPROVED);
         userRepository.delete(customer);
         return newUserEntity;
     }
