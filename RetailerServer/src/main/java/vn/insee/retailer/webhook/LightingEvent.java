@@ -63,7 +63,7 @@ public class LightingEvent extends ZaloEvent{
                 long currentTime = System.currentTimeMillis();
                 TopicDTO topicUpComing = lightingQuizPromotionService.getTopicUpComing(promotionEntity);
                 long startTimeUpComing = topicUpComing.getTimeStart();
-                if (startTimeUpComing - currentTime <= 0) {
+                if (startTimeUpComing <= currentTime) {
                     LightingQuizFormEntity lightingQuizFormEntity = lightingQuizFormService.get(user.getUid(), promotionEntity.getId(), topicUpComing.getId());
                     if (lightingQuizFormEntity != null) {
                         new DoneFormMessage(user).send();

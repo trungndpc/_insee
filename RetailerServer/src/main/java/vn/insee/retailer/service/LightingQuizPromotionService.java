@@ -114,17 +114,11 @@ public class LightingQuizPromotionService {
 
     private TopicDTO getTopicUpComing(List<TopicDTO> listTopicDTO) {
         long currentTime = System.currentTimeMillis();
-        Optional<TopicDTO> opIsComing = listTopicDTO.stream()
+        Optional<TopicDTO> opUpComing = listTopicDTO.stream()
                 .filter(topic -> topic.getTimeEnd() >= currentTime)
-                .findAny();
-        if (opIsComing.isPresent()) {
-            return opIsComing.get();
-        }
-
-        Optional<TopicDTO> opUpComing = listTopicDTO.stream().filter(topic -> topic.getTimeStart() >= currentTime)
                 .sorted((t1, t2) -> (int) (t1.getTimeStart() - t2.getTimeStart()))
                 .findFirst();
-        if (opIsComing.isPresent()) {
+        if (opUpComing.isPresent()) {
             return opUpComing.get();
         }
         return null;

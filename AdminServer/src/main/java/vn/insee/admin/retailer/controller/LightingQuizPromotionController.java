@@ -107,6 +107,7 @@ public class LightingQuizPromotionController {
                                                  @RequestParam(required = true) String topicId) {
         BaseResponse response = new BaseResponse();
         try{
+            LOGGER.error("endTopic: ");
             LightingQuizPromotionEntity lightingQuizPromotionEntity = lightingQuizPromotionService.get(id);
             TopicDTO topicDTO = lqConverter.getTopicDTO(lightingQuizPromotionEntity, topicId);
             lightingQuizPromotionService.updateStatusTopic(lightingQuizPromotionEntity.getId(), topicId, StatusTopicLightingQuizPromotion.APPROVED);

@@ -11,9 +11,10 @@ import vn.insee.retailer.wrapper.entity.ZaloMessage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class Time2StartGameMessage extends Message {
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-M-yyyy hh:mm");
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("dd-M-yyyy HH:mm", new Locale("vi", "VN"));
     private static final Logger LOGGER = LogManager.getLogger(Time2StartGameMessage.class);
     private String title;
     private int id;
