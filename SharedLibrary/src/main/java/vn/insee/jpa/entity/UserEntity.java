@@ -30,6 +30,7 @@ public class UserEntity extends BaseEntity {
     private Integer districtId;
     private String address;
     private Integer pairingId;
+    private String inseeId;
 
     @Type(type = "list-array")
     @Column(name = "products", columnDefinition = "integers[]")
@@ -169,5 +170,13 @@ public class UserEntity extends BaseEntity {
 
     public void setPairingId(Integer pairingId) {
         this.pairingId = pairingId;
+    }
+
+    public String getInseeId() {
+        return inseeId;
+    }
+
+    public void setInseeId(String inseeId) {
+        this.inseeId = inseeId;
     }
 }

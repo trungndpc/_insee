@@ -8,14 +8,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
+import vn.insee.admin.retailer.common.UserStatus;
 import vn.insee.admin.retailer.controller.converter.UserConverter;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.UserDTO;
+import vn.insee.admin.retailer.controller.dto.dashboard.CountUserDTO;
+import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.metric.UserCityMetric;
+import vn.insee.jpa.metric.UserDataMetric;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -45,11 +52,15 @@ public class UserController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<BaseResponse> find(@RequestParam(required = false, defaultValue = "0") int page,
+    public ResponseEntity<BaseResponse> find(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) Integer city,
+            @RequestParam(required = false, defaultValue = "0") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
         BaseResponse response = new BaseResponse();
         try{
-            Page<UserEntity> userEntityPage = userService.find(page, pageSize);
+            Page<UserEntity> userEntityPage = userService.find(search, status, city, page, pageSize);
             PageDTO<UserDTO> userDTOPageDTO = userConverter.convertToPageDTO(userEntityPage);
             response.setData(userDTOPageDTO);
         }catch (Exception e) {
@@ -89,6 +100,61 @@ public class UserController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(path = "/count")
+    public ResponseEntity<BaseResponse> count(@RequestParam(required = false) Integer location) {
+        BaseResponse response = new BaseResponse();
+        try{
+            CountUserDTO countUserDTO = new CountUserDTO();
+            countUserDTO.setNumUser(userService.count(location, null));
+            countUserDTO.setNumApprovedUser(userService.count(location, UserStatus.APPROVED));
+            countUserDTO.setNumWaitingActiveUser(userService.count(location, UserStatus.WAITING_ACTIVE));
+            countUserDTO.setNumWaitingReviewUser(userService.count(location, UserStatus.WAIT_APPROVAL));
+            response.setData(countUserDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/stats-user-date")
+    public ResponseEntity<BaseResponse> statisticUserByDate() {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<UserDataMetric> userDataMetrics = userService.statisticUserByDate();
+            List<UserDataMetricDTO> dtos = userDataMetrics.stream().map(userDataMetric -> {
+                return userConverter.convert2DTO(userDataMetric);
+            }).collect(Collectors.toList());
+            response.setData(dtos);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/stats-user-city")
+    public ResponseEntity<BaseResponse> statisticUserByCity() {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<UserCityMetric> userCityMetrics = userService.statisticUserByCity();
+            List<UserCityMetric> dtos = userCityMetrics.stream().map(userCityMetric -> {
+                return userConverter.convert2DTO(userCityMetric);
+            }).collect(Collectors.toList());
+            response.setData(dtos);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
 
 }

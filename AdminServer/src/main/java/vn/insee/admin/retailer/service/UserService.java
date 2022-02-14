@@ -12,13 +12,21 @@ import vn.insee.admin.retailer.message.ApprovedUserMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.metric.UserCityMetric;
+import vn.insee.jpa.metric.UserDataMetric;
 import vn.insee.jpa.repository.UserRepository;
+import vn.insee.jpa.specification.UserSpecification;
+
+import java.util.List;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserSpecification userSpecification;
 
     public UserEntity createUserFromInseeCustomer(UserEntity customer) throws Exception {
         String phone = customer.getPhone();
@@ -47,9 +55,18 @@ public class UserService {
         return userRepository.saveAndFlush(userEntity);
     }
 
-    public Page<UserEntity> find(int page, int pageSize) {
+    public Page<UserEntity> find(String search, Integer status, Integer location, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<UserEntity> specs =  Specification.where(null);
+        if (search != null || !search.isEmpty()) {
+            specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
+        }
+        if (status != null) {
+            specs.and(userSpecification.isStatus(status));
+        }
+        if (location != null) {
+            specs.and(userSpecification.isLocation(location));
+        }
         return userRepository.findAll(specs, pageable);
     }
 
@@ -69,5 +86,24 @@ public class UserService {
             approvedUserMessage.send();
         }
         return userEntity;
+    }
+
+    public long count(Integer location, Integer status) {
+        Specification<UserEntity> specs =  Specification.where(null);
+        if (location != null) {
+            specs.and(userSpecification.isLocation(location));
+        }
+        if (status != null) {
+            specs.and(userSpecification.isStatus(status));
+        }
+        return userRepository.count(specs);
+    }
+
+    public List<UserCityMetric> statisticUserByCity() {
+        return userRepository.statisticUserByCity();
+    }
+
+    public List<UserDataMetric> statisticUserByDate() {
+        return userRepository.statisticUserByDate();
     }
 }

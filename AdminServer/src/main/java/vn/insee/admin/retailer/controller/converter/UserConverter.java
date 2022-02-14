@@ -7,9 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.UserDTO;
+import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.mapper.Mapper;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.metric.UserCityMetric;
+import vn.insee.jpa.metric.UserDataMetric;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,14 @@ public class UserConverter {
             }
         }
         return new PageDTO<UserDTO>(userEntityPage.getNumber(), dtos.size(), userEntityPage.getTotalPages(), dtos);
+    }
+
+    public UserDataMetricDTO convert2DTO(UserDataMetric dataMetricDTO) {
+        return mapper.map(dataMetricDTO, UserDataMetricDTO.class);
+    }
+
+    public UserCityMetric convert2DTO(UserCityMetric userCityMetric) {
+        return mapper.map(userCityMetric, UserCityMetric.class);
     }
 
 }
