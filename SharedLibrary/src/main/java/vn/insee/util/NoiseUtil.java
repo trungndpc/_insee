@@ -20,6 +20,6 @@ public class NoiseUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(NoiseUtil.noiseInt(2));
+        System.out.println(NoiseUtil.noiseInt(10));
     }
 }

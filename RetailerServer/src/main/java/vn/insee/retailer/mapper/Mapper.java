@@ -25,10 +25,10 @@ public class Mapper {
     public static final Condition NOT_NULL = mappingContext -> mappingContext.getSource() != null;
 
     public Mapper() {
-
         this.mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         mapper.getConfiguration().setSkipNullEnabled(true);
+        this.mapper.addMappings(new FormEntity2FormHistoryDTO());
 
     }
     public <S, D> void map(S source, D destination) {

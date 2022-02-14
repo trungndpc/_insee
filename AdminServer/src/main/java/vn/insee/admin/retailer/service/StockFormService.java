@@ -65,5 +65,6 @@ public class StockFormService {
             ApprovedStockPromotionMessage approvedStockPromotionMessage = new ApprovedStockPromotionMessage(user, userEntity.getName());
             approvedStockPromotionMessage.send();
         }
+        stockFormRepository.saveAndFlush(stockFormEntity);
     }
 }

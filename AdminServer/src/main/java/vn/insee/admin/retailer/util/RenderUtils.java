@@ -11,19 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class RenderUtils {
     private static final ConcurrentHashMap<String, String> HTMLs = new ConcurrentHashMap<>();
-    public static String render(String path, String field, String value) throws IOException {
-        String html = render(path);
-        html.replaceAll("\\{\\{user\\}\\}", value);
-        return value;
-    }
 
     public static String render(String path) throws IOException {
-        String cache = HTMLs.getOrDefault(path, "{{user}}");
+        String cache = HTMLs.getOrDefault(path, null);
         if (cache == null) {
-            InputStream inputStream = new ClassPathResource("webapp/" + path + ".html").getInputStream();
+            InputStream inputStream = new ClassPathResource("html/" + path).getInputStream();
             cache = IOUtils.toString(inputStream, StandardCharsets.UTF_8.name());
-            cache = cache.replaceAll("\\{\\{domain\\}\\}", AppCommon.INSTANCE.getDomain());
-            cache = cache.replaceAll("\\{\\{version\\}\\}",AppCommon.INSTANCE.getVersion());
+            HTMLs.put(path, cache);
         }
         return cache;
     }

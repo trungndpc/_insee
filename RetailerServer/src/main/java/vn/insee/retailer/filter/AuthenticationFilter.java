@@ -49,7 +49,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                  @NonNull FilterChain chain) throws IOException, ServletException {
         try {
             String _inseeSS = getSession(req);
-            if (_inseeSS != null) {
+            if (_inseeSS != null && TokenUtil.isValid(_inseeSS)) {
                 Claims claims = TokenUtil.parse(_inseeSS);
                 int userId = Integer.parseInt(claims.getAudience());
                 UserDetails userDetail = userService.loadUserById(userId);
@@ -68,14 +68,10 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }   catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
+//            LOGGER.error(ex.getMessage(), ex);
             resp.setStatus(HttpStatus.UNAUTHORIZED.value());
             resp.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
             resp.setHeader("Content-Type", "application/json");
-            BaseResponse baseResponse = new BaseResponse();
-            baseResponse.setError(HttpStatus.UNAUTHORIZED.value());
-            resp.getWriter().println(objectMapper.writeValueAsString(baseResponse));
-            return;
         }
         chain.doFilter(req, resp);
     }

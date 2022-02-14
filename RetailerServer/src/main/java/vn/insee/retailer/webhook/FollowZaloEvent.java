@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.retailer.controller.AuthenController;
 import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
 import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
@@ -31,7 +32,9 @@ public class FollowZaloEvent extends ZaloEvent{
             }
             userEntity.setZaloId(String.valueOf(followZaloMsg.userIdByApp));
             userEntity.setFollowerId(followZaloMsg.follower.id);
-            userService.saveOrUpdate(userEntity);
+            userEntity = userService.saveOrUpdate(userEntity);
+            //flow register async
+            AuthenController.MAP_FOLLOWER.put(String.valueOf(followZaloMsg.userIdByApp), userEntity.getId());
             return true;
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -25,12 +25,16 @@ import vn.insee.util.TokenUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class AuthenController {
     private static final Logger LOGGER = LogManager.getLogger(AuthenController.class);
     @Autowired
     private UserRepository userRepository;
+
+    public static final ConcurrentHashMap<String, Integer> MAP_FOLLOWER = new ConcurrentHashMap<>();
 
     @GetMapping(value = "/dang-ky", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
@@ -46,6 +50,13 @@ public class AuthenController {
             if (!StringUtils.isEmpty(continueUrl)) {
                 hookBuilder.append("?continueUrl=");
                 hookBuilder.append(continueUrl);
+                if (!StringUtils.isEmpty(src)) {
+                    hookBuilder.append("&src=" + src);
+                }
+            }else {
+                if (!StringUtils.isEmpty(src)) {
+                    hookBuilder.append("?src=" + src);
+                }
             }
             StringBuilder urlAuthenZaloBuilder = new StringBuilder(AppCommon.INSTANCE.getAuthenZaloUrl());
             urlAuthenZaloBuilder.append("&redirect_uri=");
@@ -72,6 +83,7 @@ public class AuthenController {
                 response.sendRedirect("/oops");
                 return "OK";
             }
+
             user.setRoleId(Permission.RETAILER.getId());
             //to get user id to store into session
             user = userRepository.saveAndFlush(user);
@@ -106,7 +118,21 @@ public class AuthenController {
         if(userEntity == null) {
             userEntity = new UserEntity();
             userEntity.setId(0);
+
+            //Waiting event follow
+            Integer id = null;
+            while (id != null) {
+                id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
+                try {
+                    Thread.sleep(200);
+                }catch (Exception e) {
+                }
+            }
+            userEntity = userRepository.getOne(id);
         }
+
+        //Remove to ignore over heap
+        MAP_FOLLOWER.remove(userEntity.getZaloId());
         if (userEntity.getRoleId() == null) {
             userEntity.setRoleId(Permission.ANONYMOUS.getId());
             userEntity.setName(zaloUserEntity.getName());
@@ -119,9 +145,9 @@ public class AuthenController {
             }
         }
 
-        if (StringUtils.isEmpty(src)) {
+        if (!StringUtils.isEmpty(src)) {
             try {
-                int customerId =  NoiseUtil.de_noiseInt(src);
+                int customerId =  Integer.parseInt(src);
                 UserEntity customer = userRepository.getOne(customerId);
                 if (customer != null && customer.getStatus() == StatusUser.WAITING_ACTIVE) {
                     userEntity = link2CustomerProfile(userEntity, customer);
@@ -142,6 +168,7 @@ public class AuthenController {
         newUserEntity.setAddress(customer.getAddress());
         newUserEntity.setStatus(StatusUser.APPROVED);
         userRepository.delete(customer);
+        userRepository.saveAndFlush(newUserEntity);
         return newUserEntity;
     }
 

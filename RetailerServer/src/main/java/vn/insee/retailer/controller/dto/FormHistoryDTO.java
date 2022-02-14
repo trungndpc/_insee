@@ -7,6 +7,7 @@ public class FormHistoryDTO {
     private Integer userId;
     private int status;
     private int type;
+    private Long time;
 
     public Integer getId() {
         return id;
@@ -54,5 +55,13 @@ public class FormHistoryDTO {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 }

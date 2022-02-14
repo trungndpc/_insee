@@ -19,6 +19,7 @@ public class UserDTO {
     private Integer districtId;
     private List<Integer> products;
     private String address;
+    private Integer pairingId;
 
     public Integer getId() {
         return id;
@@ -122,5 +123,13 @@ public class UserDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Integer getPairingId() {
+        return pairingId;
+    }
+
+    public void setPairingId(Integer pairingId) {
+        this.pairingId = pairingId;
     }
 }

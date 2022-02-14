@@ -26,6 +26,9 @@ public class UserService {
             }
             if (exitUserEntity.getStatus() == StatusUser.WAITING_ACTIVE) {
                 userEntity.setPairingId(exitUserEntity.getId());
+                userEntity.setAddress(exitUserEntity.getAddress());
+                userEntity.setDistrictId(exitUserEntity.getDistrictId());
+                userEntity.setCityId(exitUserEntity.getCityId());
             }
         }
         userEntity.setStatus(StatusUser.WAIT_APPROVAL);

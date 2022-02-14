@@ -1,0 +1,5 @@
+2022-02-12 00:24:34.485  INFO trungnd2-System-Product-Name --- [extShutdownHook] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'taskScheduler'
+2022-02-12 00:24:34.489  INFO trungnd2-System-Product-Name --- [extShutdownHook] o.s.s.c.ThreadPoolTaskExecutor           : Shutting down ExecutorService 'applicationTaskExecutor'
+2022-02-12 00:24:34.492  INFO trungnd2-System-Product-Name --- [extShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-02-12 00:24:34.493  INFO trungnd2-System-Product-Name --- [extShutdownHook] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...
+2022-02-12 00:24:34.533  INFO trungnd2-System-Product-Name --- [extShutdownHook] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown completed.

@@ -14,6 +14,8 @@ import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -62,12 +64,16 @@ public class UserService {
             throw new Exception("user do not need approval uid: " + uid);
         }
         userEntity.setStatus(status);
-        userRepository.saveAndFlush(userEntity);
         if (status == StatusUser.APPROVED) {
+            if (userEntity.getPairingId() != null) {
+                userRepository.deleteById(userEntity.getPairingId());
+                userEntity.setPairingId(null);
+            }
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
             ApprovedUserMessage approvedUserMessage = new ApprovedUserMessage(user, userEntity.getName());
             approvedUserMessage.send();
         }
+        userRepository.saveAndFlush(userEntity);
         return userEntity;
     }
 }

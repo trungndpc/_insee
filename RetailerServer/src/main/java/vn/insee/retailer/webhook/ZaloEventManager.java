@@ -40,18 +40,18 @@ public class ZaloEventManager {
     public void doing(JSONObject zaloMsg) throws Exception {
         long userByAppId = zaloMsg.getLong("user_id_by_app");
         String eventName = zaloMsg.optString("event_name", "");
-
-        UserEntity userEntity = userService.findByZaloId(userByAppId);
-        if (userEntity == null) {
-            throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);
-        }
-
         switch (eventName) {
             case "follow":
                 FollowZaloWebhookMessage userFollow = objectMapper.readValue(zaloMsg.toString(), FollowZaloWebhookMessage.class);
                 followZaloEvent.process(userFollow);
                 return;
+
             case "user_send_text":
+                UserEntity userEntity = userService.findByZaloId(userByAppId);
+                if (userEntity == null) {
+                    throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);
+                }
+
                 UserSendMessage userSendText = objectMapper.readValue(zaloMsg.toString(), UserSendMessage.class);
                 String text = userSendText.message.text;
                 Object session = webhookSessionManager.getCurrentSession(userEntity.getId());
