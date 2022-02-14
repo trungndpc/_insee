@@ -69,11 +69,13 @@ public class PromotionController {
     }
 
     @GetMapping(path = "/list")
-    public ResponseEntity<BaseResponse> list(@RequestParam(required = false, defaultValue = "0") int page,
+    public ResponseEntity<BaseResponse> list(
+            @RequestParam(required = false) List<Integer> types,
+            @RequestParam(required = false, defaultValue = "0") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
         BaseResponse response = new BaseResponse();
         try{
-            Page<PromotionEntity> promotionEntityPage = promotionService.find(page, pageSize);
+            Page<PromotionEntity> promotionEntityPage = promotionService.find(types, page, pageSize);
             PageDTO<PromotionDTO> promotionDTOPageDTO =
                     promotionConverter.convertToPageDTO(promotionEntityPage);
             response.setData(promotionDTOPageDTO);

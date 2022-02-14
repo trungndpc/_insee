@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PromotionRepository;
+import vn.insee.jpa.specification.PromotionSpecification;
 
 import java.util.List;
 
@@ -19,9 +20,15 @@ public class PromotionService {
     @Autowired
     private PromotionRepository promotionRepository;
 
-    public Page<PromotionEntity> find(int page, int pageSize) {
+    @Autowired
+    private PromotionSpecification promotionSpecification;
+
+    public Page<PromotionEntity> find(List<Integer> types, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<PromotionEntity> specs =  Specification.where(null);
+        if (types != null) {
+            specs.and(promotionSpecification.inTypes(types));
+        }
         return promotionRepository.findAll(specs, pageable);
     }
 

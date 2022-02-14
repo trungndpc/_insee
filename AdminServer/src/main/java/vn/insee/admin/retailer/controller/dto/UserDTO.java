@@ -19,6 +19,7 @@ public class UserDTO {
     private Integer districtId;
     private List<Integer> products;
     private String address;
+    private String inseeId;
     private Integer pairingId;
 
     public Integer getId() {
@@ -123,6 +124,14 @@ public class UserDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getInseeId() {
+        return inseeId;
+    }
+
+    public void setInseeId(String inseeId) {
+        this.inseeId = inseeId;
     }
 
     public Integer getPairingId() {

@@ -9,6 +9,7 @@ public class CustomerForm {
     private Integer districtId;
     private String name;
     private List<Integer> cements;
+    private String inseeId;
 
     public String getPhone() {
         return phone;
@@ -56,5 +57,13 @@ public class CustomerForm {
 
     public void setCements(List<Integer> cements) {
         this.cements = cements;
+    }
+
+    public String getInseeId() {
+        return inseeId;
+    }
+
+    public void setInseeId(String inseeId) {
+        this.inseeId = inseeId;
     }
 }

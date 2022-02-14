@@ -1,11 +1,16 @@
 package vn.insee.jpa.entity;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import vn.insee.jpa.entity.base.BaseEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "form", schema = "public")
+@TypeDef(name = "list-array",typeClass = ListArrayType.class)
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class FormEntity extends BaseEntity {
     @Id
@@ -15,6 +20,10 @@ public abstract class FormEntity extends BaseEntity {
     private Integer userId;
     private int status;
     private int type;
+
+    @Type(type = "list-array")
+    @Column(name = "locations",columnDefinition = "integer[]")
+    private List<Integer> gifts;
 
     public Integer getId() {
         return id;
@@ -54,5 +63,13 @@ public abstract class FormEntity extends BaseEntity {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public List<Integer> getGifts() {
+        return gifts;
+    }
+
+    public void setGifts(List<Integer> gifts) {
+        this.gifts = gifts;
     }
 }
