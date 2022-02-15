@@ -4,6 +4,9 @@ public class UserCityMetricDTO {
     private int total;
     private int city;
 
+    public UserCityMetricDTO() {
+    }
+
     public UserCityMetricDTO(int total, int city) {
         this.total = total;
         this.city = city;

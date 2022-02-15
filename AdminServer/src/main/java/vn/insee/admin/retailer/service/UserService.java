@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.admin.retailer.common.UserStatus;
 import vn.insee.admin.retailer.message.ApprovedUserMessage;
+import vn.insee.admin.retailer.message.RejectedUserMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
@@ -20,8 +21,6 @@ import vn.insee.jpa.repository.UserRepository;
 import vn.insee.jpa.specification.UserSpecification;
 
 import java.util.List;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -75,12 +74,12 @@ public class UserService {
             specs = specs.and(userSpecification.isStatus(status));
         }
         if (location != null) {
-            specs = specs.and(userSpecification.isLocation(location));
+            specs = specs.and(userSpecification.isCity(location));
         }
         return userRepository.findAll(specs, pageable);
     }
 
-    public UserEntity updateStatus(int uid, int status) throws Exception {
+    public UserEntity updateStatus(int uid, int status, String note) throws Exception {
         UserEntity userEntity = userRepository.getOne(uid);
         if (userEntity.getStatus() == StatusUser.APPROVED) {
             throw new Exception("user is approved uid: " + uid);
@@ -89,14 +88,20 @@ public class UserService {
             throw new Exception("user do not need approval uid: " + uid);
         }
         userEntity.setStatus(status);
+        User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
         if (status == StatusUser.APPROVED) {
             if (userEntity.getPairingId() != null) {
                 userRepository.deleteById(userEntity.getPairingId());
                 userEntity.setPairingId(null);
             }
-            User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
             ApprovedUserMessage approvedUserMessage = new ApprovedUserMessage(user, userEntity.getName());
             approvedUserMessage.send();
+        }
+
+        if (status == StatusUser.REJECTED) {
+            userEntity.setNote(note);
+            RejectedUserMessage rejectedUserMessage = new RejectedUserMessage(user, note);
+            rejectedUserMessage.send();
         }
         userRepository.saveAndFlush(userEntity);
         return userEntity;
@@ -105,7 +110,7 @@ public class UserService {
     public long count(Integer location, Integer status) {
         Specification<UserEntity> specs =  Specification.where(null);
         if (location != null) {
-            specs.and(userSpecification.isLocation(location));
+            specs.and(userSpecification.isCity(location));
         }
         if (status != null) {
             specs.and(userSpecification.isStatus(status));
@@ -119,5 +124,35 @@ public class UserService {
 
     public List<UserDataMetric> statisticUserByDate() {
         return userRepository.statisticUserByDate();
+    }
+
+    public List<UserEntity> findBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {
+        Specification<UserEntity> specs =  Specification.where(null);
+        if (status != null) {
+            specs = specs.and(userSpecification.isStatus(status));
+        }
+        if (cityIds != null) {
+            specs = specs.and(userSpecification.inCity(cityIds));
+        }
+
+        if (districtIds != null) {
+            specs = specs.and(userSpecification.inDistrict(districtIds));
+        }
+        return userRepository.findAll(specs);
+    }
+
+    public long countBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {
+        Specification<UserEntity> specs =  Specification.where(null);
+        if (status != null) {
+            specs = specs.and(userSpecification.isStatus(status));
+        }
+        if (cityIds != null) {
+            specs = specs.and(userSpecification.inCity(cityIds));
+        }
+
+        if (districtIds != null) {
+            specs = specs.and(userSpecification.inDistrict(districtIds));
+        }
+        return userRepository.count(specs);
     }
 }

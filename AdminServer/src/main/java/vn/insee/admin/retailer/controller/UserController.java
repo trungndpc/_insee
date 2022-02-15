@@ -106,10 +106,11 @@ public class UserController {
 
     @GetMapping(path = "/update-status")
     public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int uid,
-                                                     @RequestParam(required = true) int status) {
+                                                     @RequestParam(required = true) int status,
+                                                     @RequestParam(required = false) String note) {
         BaseResponse response = new BaseResponse();
         try{
-            userService.updateStatus(uid, status);
+            userService.updateStatus(uid, status, note);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);

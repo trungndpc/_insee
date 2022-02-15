@@ -6,6 +6,9 @@ public class UserCityMetric {
     private int total;
     private int city;
 
+    public UserCityMetric() {
+    }
+
     public UserCityMetric(int total, int city) {
         this.total = total;
         this.city = city;

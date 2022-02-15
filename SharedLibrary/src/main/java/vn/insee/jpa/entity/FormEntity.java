@@ -20,9 +20,10 @@ public abstract class FormEntity extends BaseEntity {
     private Integer userId;
     private int status;
     private int type;
+    private String note;
 
     @Type(type = "list-array")
-    @Column(name = "locations",columnDefinition = "integer[]")
+    @Column(name = "gift_ids",columnDefinition = "integer[]")
     private List<Integer> gifts;
 
     public Integer getId() {
@@ -71,5 +72,13 @@ public abstract class FormEntity extends BaseEntity {
 
     public void setGifts(List<Integer> gifts) {
         this.gifts = gifts;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

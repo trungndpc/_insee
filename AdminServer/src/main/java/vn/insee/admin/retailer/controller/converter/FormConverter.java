@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import vn.insee.admin.retailer.controller.dto.*;
+import vn.insee.admin.retailer.controller.dto.metric.FormCityMetricDTO;
+import vn.insee.admin.retailer.controller.dto.metric.FormDateMetricDTO;
 import vn.insee.admin.retailer.mapper.Mapper;
 import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
+import vn.insee.jpa.metric.FormCityMetric;
+import vn.insee.jpa.metric.FormDateMetric;
 import vn.insee.jpa.repository.PromotionRepository;
 import vn.insee.jpa.repository.UserRepository;
 
@@ -31,6 +35,14 @@ public class FormConverter {
 
     @Autowired
     private PromotionRepository promotionRepository;
+
+    public FormDateMetricDTO map(FormDateMetric metric) {
+        return mapper.map(metric, FormDateMetricDTO.class);
+    }
+
+    public FormCityMetricDTO map(FormCityMetric metric) {
+        return mapper.map(metric, FormCityMetricDTO.class);
+    }
 
     public FormDTO convert2FormDTO(FormEntity formEntity) {
         FormDTO formDTO = mapper.map(formEntity, FormDTO.class);;

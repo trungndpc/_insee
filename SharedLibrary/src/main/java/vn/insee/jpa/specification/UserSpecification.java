@@ -2,8 +2,7 @@ package vn.insee.jpa.specification;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-import vn.insee.jpa.entity.PromotionEntity;
-import vn.insee.jpa.entity.PromotionEntity_;
+import vn.insee.jpa.entity.FormEntity_;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.UserEntity_;
 
@@ -17,10 +16,21 @@ public class UserSpecification {
                 builder.equal(root.get(UserEntity_.status), status);
     }
 
-    public Specification<UserEntity> isLocation(int location) {
+    public Specification<UserEntity> isCity(int location) {
         return (root, query, builder) ->
                 builder.equal(root.get(UserEntity_.cityId), location);
     }
+
+    public Specification<UserEntity> inCity(List<Integer> cityIds) {
+        return (root, query, builder) ->
+                root.get(UserEntity_.cityId).in(cityIds);
+    }
+
+    public Specification<UserEntity> inDistrict(List<Integer> districtIds) {
+        return (root, query, builder) ->
+                root.get(UserEntity_.districtId).in(districtIds);
+    }
+
 
     public Specification<UserEntity> likePhone(String phone) {
         return (root, query, builder) ->

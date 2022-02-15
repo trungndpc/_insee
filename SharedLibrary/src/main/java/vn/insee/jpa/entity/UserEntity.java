@@ -31,6 +31,7 @@ public class UserEntity extends BaseEntity {
     private String address;
     private Integer pairingId;
     private String inseeId;
+    private String note;
 
     @Type(type = "list-array")
     @Column(name = "products", columnDefinition = "integers[]")
@@ -178,5 +179,13 @@ public class UserEntity extends BaseEntity {
 
     public void setInseeId(String inseeId) {
         this.inseeId = inseeId;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

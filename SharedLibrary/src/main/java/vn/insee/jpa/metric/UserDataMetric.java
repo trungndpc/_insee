@@ -4,6 +4,9 @@ public class UserDataMetric {
     private String date;
     private int total;
 
+    public UserDataMetric() {
+    }
+
     public UserDataMetric(String date, int total) {
         this.date = date;
         this.total = total;
