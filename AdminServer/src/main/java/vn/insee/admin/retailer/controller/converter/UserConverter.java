@@ -2,6 +2,8 @@ package vn.insee.admin.retailer.controller.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -14,17 +16,24 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.metric.UserCityMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 
+import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class UserConverter {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
     private Mapper mapper;
+
+    public UserEntity map(UserEntity userEntity, CustomerForm form) {
+        mapper.map(form, userEntity);
+        return userEntity;
+    }
 
     public UserEntity convert2Entity(CustomerForm registerForm) {
         return mapper.map(registerForm, UserEntity.class);

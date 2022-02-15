@@ -87,6 +87,23 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(path = "/update", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BaseResponse> post(@RequestBody CustomerForm form, @RequestParam(required = true) Integer id) {
+        BaseResponse response = new BaseResponse();
+        try{
+            UserEntity userEntity = userService.findById(id);
+            userEntity = userConverter.map(userEntity, form);
+            userEntity = userService.update(userEntity);
+            UserDTO customerDTO = userConverter.convert2DTO(userEntity);
+            response.setData(customerDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(path = "/update-status")
     public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int uid,
                                                      @RequestParam(required = true) int status) {

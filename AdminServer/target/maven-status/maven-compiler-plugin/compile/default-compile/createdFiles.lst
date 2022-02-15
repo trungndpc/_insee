@@ -1,10 +1,12 @@
 vn/insee/admin/retailer/controller/dto/PromotionDTO.class
+vn/insee/admin/retailer/controller/dto/metric/UserDataMetricDTO.class
 vn/insee/admin/retailer/common/BaseResponse.class
 vn/insee/admin/retailer/mapper/Mapper.class
 vn/insee/admin/retailer/controller/dto/TopicDTO.class
 vn/insee/admin/retailer/service/UserService.class
 vn/insee/admin/retailer/wrapper/entity/ZaloMessage.class
 vn/insee/admin/retailer/controller/dto/lq/LQQuestionFormDTO.class
+vn/insee/admin/retailer/controller/form/GiftForm.class
 vn/insee/admin/retailer/common/UserStatus.class
 vn/insee/admin/retailer/controller/form/LightingQuizTopicForm.class
 vn/insee/admin/retailer/controller/dto/LQPromotionDTO.class
@@ -13,6 +15,7 @@ vn/insee/admin/retailer/controller/dto/StockPromotionDTO.class
 vn/insee/admin/retailer/service/LightingQuizFormService.class
 vn/insee/admin/retailer/Main.class
 vn/insee/admin/retailer/util/StringUtils.class
+vn/insee/admin/retailer/service/GiftService.class
 vn/insee/admin/retailer/wrapper/entity/ZaloMessage$Attachment$Payload.class
 vn/insee/admin/retailer/controller/PromotionController.class
 vn/insee/admin/retailer/service/LightingQuizPromotionService$1.class
@@ -21,6 +24,7 @@ vn/insee/admin/retailer/wrapper/entity/ZaloMessage$Attachment$Payload$Element$Ac
 vn/insee/admin/retailer/controller/dto/FormDTO.class
 vn/insee/admin/retailer/controller/converter/UserConverter.class
 vn/insee/admin/retailer/wrapper/ZaloService.class
+vn/insee/admin/retailer/controller/GiftFormController.class
 vn/insee/admin/retailer/service/PromotionService.class
 vn/insee/admin/retailer/controller/form/QuestionForm.class
 vn/insee/admin/retailer/controller/converter/FormConverter.class
@@ -41,12 +45,14 @@ vn/insee/admin/retailer/common/ErrorCode.class
 vn/insee/admin/retailer/message/TopLeaderBoardLightingQuizMessage.class
 vn/insee/admin/retailer/controller/converter/LQConverter$1.class
 vn/insee/admin/retailer/controller/dto/lq/LQDetailFormDTO.class
+vn/insee/admin/retailer/controller/dto/dashboard/CountUserDTO.class
 vn/insee/admin/retailer/controller/LightingQuizFormController.class
 vn/insee/admin/retailer/controller/LightingQuizPromotionController.class
 vn/insee/admin/retailer/wrapper/entity/ZaloMessage$Attachment$Payload$Button.class
 vn/insee/admin/retailer/util/ListUtils.class
 vn/insee/admin/retailer/service/LightingQuizPromotionService.class
 vn/insee/admin/retailer/controller/HomeController.class
+vn/insee/admin/retailer/controller/dto/metric/UserCityMetricDTO.class
 vn/insee/admin/retailer/message/Message.class
 vn/insee/admin/retailer/controller/dto/lq/LQFormDTO.class
 vn/insee/admin/retailer/controller/PostController.class
@@ -60,6 +66,7 @@ vn/insee/admin/retailer/controller/dto/PageDTO.class
 vn/insee/admin/retailer/controller/dto/AnswerDTO.class
 vn/insee/admin/retailer/controller/converter/StockConverter.class
 vn/insee/admin/retailer/controller/StockFormController.class
+vn/insee/admin/retailer/service/FormService.class
 vn/insee/admin/retailer/util/RenderUtils.class
 vn/insee/admin/retailer/controller/dto/StatsFormDTO.class
 vn/insee/admin/retailer/controller/dto/PostDTO.class
@@ -68,3 +75,5 @@ vn/insee/admin/retailer/common/AppCommon.class
 vn/insee/admin/retailer/controller/converter/PromotionConverter.class
 vn/insee/admin/retailer/controller/converter/LQConverter$2.class
 vn/insee/admin/retailer/wrapper/entity/ZaloMessage$Attachment$Payload$Element.class
+vn/insee/admin/retailer/controller/converter/GiftConverter.class
+vn/insee/admin/retailer/controller/dto/GiftDTO.class

@@ -5,7 +5,7 @@ import vn.insee.jpa.entity.base.BaseEntity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "post", schema = "public")
+@Table(name = "gift", schema = "public")
 public class GiftEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

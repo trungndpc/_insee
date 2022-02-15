@@ -1,5 +1,7 @@
 package vn.insee.admin.retailer.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,12 +25,18 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+    private static final Logger LOGGER = LogManager.getLogger(UserService.class);
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserSpecification userSpecification;
+
+    public UserEntity update(UserEntity userEntity) {
+        userEntity = userRepository.saveAndFlush(userEntity);
+        return userEntity;
+    }
 
     public UserEntity createUserFromInseeCustomer(UserEntity customer) throws Exception {
         String phone = customer.getPhone();
@@ -60,14 +68,14 @@ public class UserService {
     public Page<UserEntity> find(String search, Integer status, Integer location, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<UserEntity> specs =  Specification.where(null);
-        if (search != null || !search.isEmpty()) {
-            specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
+        if (search != null && !search.isEmpty()) {
+            specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
         }
         if (status != null) {
-            specs.and(userSpecification.isStatus(status));
+            specs = specs.and(userSpecification.isStatus(status));
         }
         if (location != null) {
-            specs.and(userSpecification.isLocation(location));
+            specs = specs.and(userSpecification.isLocation(location));
         }
         return userRepository.findAll(specs, pageable);
     }
