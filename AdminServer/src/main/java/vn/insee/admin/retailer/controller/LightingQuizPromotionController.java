@@ -31,7 +31,8 @@ public class LightingQuizPromotionController {
     private LQConverter lqConverter;
 
     @PostMapping(path = "/create-topic", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BaseResponse> create(@RequestBody LightingQuizTopicForm form, @RequestParam(required = true) int promotionId) {
+    public ResponseEntity<BaseResponse> create(@RequestBody LightingQuizTopicForm form,
+                                               @RequestParam(required = true) int promotionId) {
         BaseResponse response = new BaseResponse();
         try{
             form.setStatus(StatusTopicLightingQuizPromotion.INIT);
@@ -83,7 +84,6 @@ public class LightingQuizPromotionController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping(path = "/get-topic")
     public ResponseEntity<BaseResponse> getTopic(@RequestParam(required = true) int id,
                                                  @RequestParam(required = true) String topicId) {
@@ -102,16 +102,19 @@ public class LightingQuizPromotionController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping(path = "/end-topic")
+    @GetMapping(path = "/update-status-topic")
     public ResponseEntity<BaseResponse> endTopic(@RequestParam(required = true) int id,
-                                                 @RequestParam(required = true) String topicId) {
+                                                 @RequestParam(required = true) String topicId,
+                                                 @RequestParam(required = true) int status) {
         BaseResponse response = new BaseResponse();
         try{
-            LOGGER.error("endTopic: ");
             LightingQuizPromotionEntity lightingQuizPromotionEntity = lightingQuizPromotionService.get(id);
             TopicDTO topicDTO = lqConverter.getTopicDTO(lightingQuizPromotionEntity, topicId);
-            lightingQuizPromotionService.updateStatusTopic(lightingQuizPromotionEntity.getId(), topicId, StatusTopicLightingQuizPromotion.APPROVED);
-            lightingQuizFormService.summary2Ranking(lightingQuizPromotionEntity.getId(), topicDTO);
+            lightingQuizPromotionService.updateStatusTopic(lightingQuizPromotionEntity.getId(), topicId,
+                    status);
+            if (status == StatusTopicLightingQuizPromotion.DONE) {
+                lightingQuizFormService.summary2Ranking(lightingQuizPromotionEntity.getId(), topicDTO);
+            }
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);

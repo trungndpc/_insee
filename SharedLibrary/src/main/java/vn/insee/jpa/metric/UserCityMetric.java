@@ -9,7 +9,7 @@ public class UserCityMetric {
     public UserCityMetric() {
     }
 
-    public UserCityMetric(int total, int city) {
+    public UserCityMetric(int city, int total) {
         this.total = total;
         this.city = city;
     }

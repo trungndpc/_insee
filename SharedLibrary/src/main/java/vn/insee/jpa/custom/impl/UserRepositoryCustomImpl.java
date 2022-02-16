@@ -32,7 +32,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         Root<UserEntity> root = query.from(UserEntity.class);
         query.groupBy(root.get(UserEntity_.cityId));
         query.multiselect(root.get(UserEntity_.cityId), cb.count(root.get(UserEntity_.id)));
-        query.where(cb.equal(root.get(UserEntity_.STATUS), StatusUser.APPROVED));
+//        query.where(cb.equal(root.get(UserEntity_.STATUS), StatusUser.APPROVED));
         List<Object[]> resultList = entityManager.createQuery(query).getResultList();
         return resultList.stream().map(r -> new UserCityMetric(Integer.parseInt(r[0].toString()),
                 Integer.parseInt(r[1].toString()))).collect(Collectors.toList());

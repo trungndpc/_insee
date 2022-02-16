@@ -13,4 +13,8 @@ public class PromotionSpecification {
         return (root, query, builder) ->
                 root.get(PromotionEntity_.type).in(types);
     }
+
+    public Specification<PromotionEntity> isNotStatus(int status) {
+        return (root, query, builder) -> builder.notEqual(root.get(PromotionEntity_.status), status);
+    }
 }

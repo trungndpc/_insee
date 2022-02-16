@@ -8,6 +8,7 @@ import vn.insee.admin.retailer.controller.converter.LQConverter;
 import vn.insee.admin.retailer.controller.dto.LQPromotionDTO;
 import vn.insee.admin.retailer.controller.dto.TopicDTO;
 import vn.insee.common.status.StatusLightingQuizPromotion;
+import vn.insee.common.status.StatusPromotion;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.jpa.repository.LightingQuizPromotionRepository;
 
@@ -28,7 +29,7 @@ public class LightingQuizPromotionService {
     }
 
     public LightingQuizPromotionEntity create(LightingQuizPromotionEntity lightingQuizPromotionEntity) {
-        lightingQuizPromotionEntity.setStatus(StatusLightingQuizPromotion.INIT);
+        lightingQuizPromotionEntity.setStatus(StatusPromotion.INIT);
         return lzQuizPromotionRepository.saveAndFlush(lightingQuizPromotionEntity);
     }
 

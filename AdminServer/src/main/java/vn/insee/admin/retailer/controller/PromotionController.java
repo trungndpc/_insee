@@ -69,7 +69,7 @@ public class PromotionController {
     }
 
     @GetMapping(path = "/list")
-    public ResponseEntity<BaseResponse> list(
+    public ResponseEntity<BaseResponse> list (
             @RequestParam(required = false) List<Integer> types,
             @RequestParam(required = false, defaultValue = "0") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
@@ -107,6 +107,22 @@ public class PromotionController {
         try{
             PromotionEntity promotionEntity = promotionService.get(id);
             PromotionDTO promotionDTO = promotionConverter.convert2DTO(promotionEntity);
+            response.setData(promotionDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int id,
+                                                     @RequestParam(required = true) int status) {
+        BaseResponse response = new BaseResponse();
+        try{
+            PromotionEntity entity = promotionService.updateStatus(id, status);
+            PromotionDTO promotionDTO = promotionConverter.convert2DTO(entity);
             response.setData(promotionDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());

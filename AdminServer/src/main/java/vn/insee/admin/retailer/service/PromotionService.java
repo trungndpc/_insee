@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import vn.insee.common.status.StatusPromotion;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PromotionRepository;
@@ -26,8 +27,9 @@ public class PromotionService {
     public Page<PromotionEntity> find(List<Integer> types, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<PromotionEntity> specs =  Specification.where(null);
+        specs = specs.and(promotionSpecification.isNotStatus(StatusPromotion.DELETED));
         if (types != null) {
-            specs.and(promotionSpecification.inTypes(types));
+            specs = specs.and(promotionSpecification.inTypes(types));
         }
         return promotionRepository.findAll(specs, pageable);
     }
@@ -38,6 +40,12 @@ public class PromotionService {
 
     public PromotionEntity get(int id) {
         return promotionRepository.getOne(id);
+    }
+
+    public PromotionEntity updateStatus(int id, int status) {
+        PromotionEntity entity = promotionRepository.getOne(id);
+        entity.setStatus(status);
+        return promotionRepository.saveAndFlush(entity);
     }
 
 }

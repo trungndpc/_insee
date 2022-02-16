@@ -8,7 +8,7 @@ public class CustomerForm {
     private Integer cityId;
     private Integer districtId;
     private String name;
-    private List<Integer> cements;
+    private List<Integer> products;
     private String inseeId;
 
     public String getPhone() {
@@ -51,12 +51,12 @@ public class CustomerForm {
         this.name = name;
     }
 
-    public List<Integer> getCements() {
-        return cements;
+    public List<Integer> getProducts() {
+        return products;
     }
 
-    public void setCements(List<Integer> cements) {
-        this.cements = cements;
+    public void setProducts(List<Integer> products) {
+        this.products = products;
     }
 
     public String getInseeId() {
