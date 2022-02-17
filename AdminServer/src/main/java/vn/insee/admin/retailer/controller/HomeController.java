@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.controller.converter.UserConverter;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.admin.retailer.util.RenderUtils;
+import vn.insee.admin.retailer.woker.Scheduler;
+import vn.insee.admin.retailer.woker.PostNormalBroadcastTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 
 @RestController
@@ -28,6 +31,17 @@ public class HomeController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private Scheduler scheduler;
+
+
+    @GetMapping(value = "/test", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String test(HttpServletRequest request, HttpServletResponse response) throws
+            IOException {
+        return "OK";
+    }
 
     @GetMapping(value = "/**", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody

@@ -7,8 +7,7 @@ import org.springframework.context.annotation.Configuration;
 public class Constant {
     public static String ADMIN_DOMAIN;
     public static String ADMIN_DOMAIN_WITHOUT_PROTOCOL;
-    public static String CLIENT_DOMAIN;
-    public static String CLIENT_DOMAIN_WITHOUT_PROTOCOL;
+    public static final String CLIENT_DOMAIN = "https://cuahang.insee.udev.com.vn";
     public static String PREFIX_ADMIN_CONTROLLER;
     public static String PREFIX_CLIENT_CONTROLLER;
     public static String ADMIN_DOMAIN_VERSION;
@@ -18,7 +17,6 @@ public class Constant {
     public static String ZALO_OA_ACCESS_TOKEN;
     public static String ZALO_OA_REDIRECT_AUTHEN_ZALO;
     public static String ZALO_OA_REQUEST_OA_INFO;
-    public static long OAID;
 
     public static String CONTENT_RESPONSE_TO_REDIRECT = "REDIRECT";
 
@@ -26,12 +24,6 @@ public class Constant {
     public void setAdminDomain(String adminDomain) {
         ADMIN_DOMAIN = adminDomain;
         ADMIN_DOMAIN_WITHOUT_PROTOCOL = adminDomain.replace("https://", "").replace("http://", "");
-    }
-
-    @Value("${domain.client}")
-    public void setClientDomain(String clientDomain) {
-        CLIENT_DOMAIN = clientDomain;
-        CLIENT_DOMAIN_WITHOUT_PROTOCOL = clientDomain.replace("https://", "").replace("http://", "");
     }
 
     @Value("${domain.prefix.admin.controller}")
@@ -75,8 +67,4 @@ public class Constant {
         ZALO_OA_REQUEST_OA_INFO = zaloOaRequestOaInfo;
     }
 
-    @Value("${oaid}")
-    public void setOAID(long OAID) {
-        Constant.OAID = OAID;
-    }
 }

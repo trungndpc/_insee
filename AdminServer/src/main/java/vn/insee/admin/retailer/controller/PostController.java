@@ -15,6 +15,8 @@ import vn.insee.admin.retailer.controller.form.PostForm;
 import vn.insee.admin.retailer.service.PostService;
 import vn.insee.jpa.entity.PostEntity;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/post")
 public class PostController {
@@ -42,7 +44,7 @@ public class PostController {
     }
 
     @GetMapping(path = "/list")
-    public ResponseEntity<BaseResponse> list(@RequestParam(required = false, defaultValue = "0") int page,
+    public ResponseEntity<BaseResponse> find(@RequestParam(required = false, defaultValue = "0") int page,
                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
         BaseResponse response = new BaseResponse();
         try{
@@ -50,6 +52,20 @@ public class PostController {
             PageDTO<PostDTO> postDTOPageDTO =
                     postConverter.convertToPageDTO(postEntityPage);
             response.setData(postDTOPageDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/get-list")
+    public ResponseEntity<BaseResponse> getList() {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<PostEntity> postEntityList = postService.getAll();
+            response.setData(postConverter.convert2ListDTO(postEntityList));
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             response.setError(ErrorCode.FAILED);

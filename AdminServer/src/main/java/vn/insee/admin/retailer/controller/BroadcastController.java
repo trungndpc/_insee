@@ -105,6 +105,19 @@ public class BroadcastController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = false) int status, @RequestParam(required = true) int id) {
+        BaseResponse response = new BaseResponse();
+        try{
+            service.updateStatus(id, status);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
 
 
 

@@ -3,7 +3,6 @@ package vn.insee.admin.retailer.controller.form;
 import java.util.List;
 
 public class BroadcastForm {
-    private int id;
     private String name;
     private long timeStart;
     private int status;
@@ -14,14 +13,6 @@ public class BroadcastForm {
     private Integer click;
     private List<Integer> cityIds;
     private List<Integer> districtIds;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

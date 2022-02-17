@@ -14,7 +14,7 @@ import java.util.List;
 public class BroadcastEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     private long timeStart;
     private int status;
@@ -34,12 +34,20 @@ public class BroadcastEntity extends BaseEntity {
     private Integer postId;
     private Integer seen;
     private Integer click;
+    private String jobId;
+    private Integer totalUids;
+    private Integer totalUidsAfterBuildUser;
+    private Integer totalUidsSuccessSend;
 
-    public int getId() {
+    @Type(type = "list-array")
+    @Column(name = "clickers", columnDefinition = "integers[]")
+    private List<Integer> clickers;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -121,5 +129,45 @@ public class BroadcastEntity extends BaseEntity {
 
     public void setDistrictIds(List<Integer> districtIds) {
         this.districtIds = districtIds;
+    }
+
+    public String getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(String jobId) {
+        this.jobId = jobId;
+    }
+
+    public Integer getTotalUids() {
+        return totalUids;
+    }
+
+    public void setTotalUids(Integer totalUids) {
+        this.totalUids = totalUids;
+    }
+
+    public Integer getTotalUidsAfterBuildUser() {
+        return totalUidsAfterBuildUser;
+    }
+
+    public void setTotalUidsAfterBuildUser(Integer totalUidsAfterBuildUser) {
+        this.totalUidsAfterBuildUser = totalUidsAfterBuildUser;
+    }
+
+    public Integer getTotalUidsSuccessSend() {
+        return totalUidsSuccessSend;
+    }
+
+    public void setTotalUidsSuccessSend(Integer totalUidsSuccessSend) {
+        this.totalUidsSuccessSend = totalUidsSuccessSend;
+    }
+
+    public List<Integer> getClickers() {
+        return clickers;
+    }
+
+    public void setClickers(List<Integer> clickers) {
+        this.clickers = clickers;
     }
 }

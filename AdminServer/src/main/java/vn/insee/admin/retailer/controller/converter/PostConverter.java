@@ -13,6 +13,7 @@ import vn.insee.jpa.entity.PostEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class PostConverter {
@@ -40,5 +41,9 @@ public class PostConverter {
             }
         }
         return new PageDTO<PostDTO>(postEntities.getNumber(), dtos.size(), postEntities.getTotalPages(), dtos);
+    }
+
+    public List<PostDTO> convert2ListDTO(List<PostEntity> postEntities) {
+        return postEntities.stream().map(this::convert2DTO).collect(Collectors.toList());
     }
 }

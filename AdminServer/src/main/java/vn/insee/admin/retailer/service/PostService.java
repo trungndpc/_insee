@@ -13,6 +13,8 @@ import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PostRepository;
 
+import java.util.List;
+
 @Service
 public class PostService {
 
@@ -46,6 +48,10 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Specification<UserEntity> specs =  Specification.where(null);
         return postRepository.findAll(specs, pageable);
+    }
+
+    public List<PostEntity> getAll() {
+        return postRepository.findAll();
     }
 
     public PostEntity get(int id) {
