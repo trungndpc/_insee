@@ -50,7 +50,9 @@ public class FormConverter {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userEntity.getId());
         userDTO.setName(userEntity.getName());
+        formDTO.setTime(formEntity.getUpdatedTime().toEpochSecond());
         userDTO.setAvatar(userEntity.getAvatar());
+        userDTO.setInseeId(userEntity.getInseeId());
         formDTO.setUser(userDTO);
         PromotionEntity promotionEntity = promotionRepository.getOne(formEntity.getPromotionId());
         PromotionDTO promotionDTO = new PromotionDTO();
@@ -63,7 +65,8 @@ public class FormConverter {
 
     public StockFormDTO convert2StockFormDTO(StockFormEntity stockFormEntity) {
         StockFormDTO formDTO = mapper.map(stockFormEntity, StockFormDTO.class);
-        formDTO.setJsonImg(stockFormEntity.getJsonImage());
+        formDTO.setJsonImgs(stockFormEntity.getJsonImage());
+        formDTO.setTime(stockFormEntity.getUpdatedTime().toEpochSecond());
         UserEntity userEntity = userRepository.getOne(formDTO.getUserId());
         UserDTO userDTO = new UserDTO();
         userDTO.setId(userEntity.getId());

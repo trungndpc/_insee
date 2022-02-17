@@ -7,13 +7,13 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StockFormDTO extends FormDTO {
     @JsonRawValue
-    private String jsonImg;
+    private String jsonImgs;
 
-    public String getJsonImg() {
-        return jsonImg;
+    public String getJsonImgs() {
+        return jsonImgs;
     }
 
-    public void setJsonImg(String jsonImg) {
-        this.jsonImg = jsonImg;
+    public void setJsonImgs(String jsonImgs) {
+        this.jsonImgs = jsonImgs;
     }
 }

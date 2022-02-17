@@ -11,6 +11,7 @@ public class FormDTO {
     private int type;
     private UserDTO user;
     private PromotionDTO promotion;
+    private Long time;
 
     public Integer getId() {
         return id;
@@ -66,5 +67,13 @@ public class FormDTO {
 
     public void setPromotion(PromotionDTO promotion) {
         this.promotion = promotion;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 }
