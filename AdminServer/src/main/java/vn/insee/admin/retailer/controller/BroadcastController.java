@@ -72,6 +72,25 @@ public class BroadcastController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(path = "/update", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BaseResponse> update(@RequestParam(required = true) int id, @RequestBody BroadcastForm form) {
+        BaseResponse response = new BaseResponse();
+        try{
+            BroadcastEntity broadcastEntity = service.get(id);
+            broadcastEntity.setCityIds(form.getCityIds());
+            broadcastEntity.setDistrictIds(form.getDistrictIds());
+            broadcastEntity.setPostId(form.getPostId());
+            broadcastEntity.setName(form.getName());
+            broadcastEntity.setTimeStart(form.getTimeStart());
+            service.update(broadcastEntity);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
 
     @GetMapping(path = "/estimate")
     public ResponseEntity<BaseResponse> get(@RequestParam(required = false) List<Integer> cityIds,
@@ -117,6 +136,21 @@ public class BroadcastController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(path = "/get")
+    public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id) {
+        BaseResponse response = new BaseResponse();
+        try{
+            BroadcastEntity broadcastEntity = service.get(id);
+            response.setData(converter.convert2DTO(broadcastEntity));
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
 
 
 

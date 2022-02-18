@@ -14,6 +14,7 @@ public class GiftEntity extends BaseEntity {
     private Integer status;
     private Integer userId;
     private String title;
+    private Integer type;
 
     public Integer getId() {
         return id;
@@ -53,5 +54,13 @@ public class GiftEntity extends BaseEntity {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

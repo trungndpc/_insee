@@ -12,6 +12,7 @@ import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PostRepository;
+import vn.insee.jpa.specification.PostSpecification;
 
 import java.util.List;
 
@@ -24,15 +25,21 @@ public class PostService {
     @Autowired
     private PromotionService promotionService;
 
+    @Autowired
+    private PostSpecification postSpecification;
+
     public PostEntity create(PostEntity postEntity) {
         postEntity.setStatus(StatusPost.INIT);
         postEntity = postRepository.saveAndFlush(postEntity);
         if (postEntity.getPromotionId() != null) {
             PromotionEntity promotionEntity = promotionService.get(postEntity.getPromotionId());
-            if (postEntity.getLocations() == null) {
-                postEntity.setLocations(promotionEntity.getLocations());
+            if (postEntity.getCityIds() == null) {
+                postEntity.setCityIds(promotionEntity.getCityIds());
             }
 
+            if (postEntity.getDistrictIds() == null) {
+                postEntity.setDistrictIds(promotionEntity.getDistrictIds());
+            }
             if (postEntity.getTimeStart() == null) {
                 postEntity.setTimeStart(promotionEntity.getTimeStart());
             }
@@ -44,9 +51,17 @@ public class PostService {
         return postEntity;
     }
 
+    public PostEntity updateStatus(int id, int status) {
+        PostEntity postEntity = postRepository.getOne(id);
+        postEntity.setStatus(status);
+        postEntity = postRepository.saveAndFlush(postEntity);
+        return postEntity;
+    }
+
     public Page<PostEntity> find(int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<PostEntity> specs =  Specification.where(null);
+        specs = specs.and(postSpecification.isNotStatus(StatusPost.DELETED));
         return postRepository.findAll(specs, pageable);
     }
 

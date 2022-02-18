@@ -9,7 +9,8 @@ public class PostForm {
     private String content;
     private String summary;
     private Integer promotionId;
-    private List<Integer> locations;
+    private List<Integer> cityIds;
+    private List<Integer> districtIds;
     private Long timeStart;
     private Long timeEnd;
 
@@ -61,15 +62,6 @@ public class PostForm {
         this.promotionId = promotionId;
     }
 
-
-    public List<Integer> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Integer> locations) {
-        this.locations = locations;
-    }
-
     public Long getTimeStart() {
         return timeStart;
     }
@@ -84,5 +76,21 @@ public class PostForm {
 
     public void setTimeEnd(Long timeEnd) {
         this.timeEnd = timeEnd;
+    }
+
+    public List<Integer> getCityIds() {
+        return cityIds;
+    }
+
+    public void setCityIds(List<Integer> cityIds) {
+        this.cityIds = cityIds;
+    }
+
+    public List<Integer> getDistrictIds() {
+        return districtIds;
+    }
+
+    public void setDistrictIds(List<Integer> districtIds) {
+        this.districtIds = districtIds;
     }
 }

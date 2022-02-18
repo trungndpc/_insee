@@ -28,8 +28,14 @@ public abstract class PromotionEntity extends BaseEntity {
     private List<Integer> cements;
 
     @Type(type = "list-array")
-    @Column(name = "locations",columnDefinition = "integer[]")
-    private List<Integer> locations;
+    @Column(name = "city_ids",columnDefinition = "integer[]")
+    private List<Integer> cityIds;
+
+
+    @Type(type = "list-array")
+    @Column(name = "district_ids",columnDefinition = "integer[]")
+    private List<Integer> districtIds;
+
 
     public Integer getId() {
         return id;
@@ -87,11 +93,19 @@ public abstract class PromotionEntity extends BaseEntity {
         this.cements = cements;
     }
 
-    public List<Integer> getLocations() {
-        return locations;
+    public List<Integer> getCityIds() {
+        return cityIds;
     }
 
-    public void setLocations(List<Integer> locations) {
-        this.locations = locations;
+    public void setCityIds(List<Integer> cityIds) {
+        this.cityIds = cityIds;
+    }
+
+    public List<Integer> getDistrictIds() {
+        return districtIds;
+    }
+
+    public void setDistrictIds(List<Integer> districtIds) {
+        this.districtIds = districtIds;
     }
 }

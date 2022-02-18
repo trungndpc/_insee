@@ -11,9 +11,11 @@ import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.controller.converter.PostConverter;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.PostDTO;
+import vn.insee.admin.retailer.controller.dto.PromotionDTO;
 import vn.insee.admin.retailer.controller.form.PostForm;
 import vn.insee.admin.retailer.service.PostService;
 import vn.insee.jpa.entity.PostEntity;
+import vn.insee.jpa.entity.PromotionEntity;
 
 import java.util.List;
 
@@ -80,6 +82,22 @@ public class PostController {
         try{
             PostEntity postEntity = postService.get(id);
             PostDTO postDTO = postConverter.convert2DTO(postEntity);
+            response.setData(postDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/update-status")
+    public ResponseEntity<BaseResponse> updateStatus(@RequestParam(required = true) int id,
+                                                     @RequestParam(required = true) int status) {
+        BaseResponse response = new BaseResponse();
+        try{
+            PostEntity entity = postService.updateStatus(id, status);
+            PostDTO postDTO = postConverter.convert2DTO(entity);
             response.setData(postDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());

@@ -10,7 +10,8 @@ public class PromotionForm {
     private Long timeStart;
     private Long timeEnd;
     private List<Integer> cements;
-    private List<Integer> locations;
+    private List<Integer> cityIds;
+    private List<Integer> districtIds;
 
     public Integer getId() {
         return id;
@@ -68,11 +69,19 @@ public class PromotionForm {
         this.cements = cements;
     }
 
-    public List<Integer> getLocations() {
-        return locations;
+    public List<Integer> getCityIds() {
+        return cityIds;
     }
 
-    public void setLocations(List<Integer> locations) {
-        this.locations = locations;
+    public void setCityIds(List<Integer> cityIds) {
+        this.cityIds = cityIds;
+    }
+
+    public List<Integer> getDistrictIds() {
+        return districtIds;
+    }
+
+    public void setDistrictIds(List<Integer> districtIds) {
+        this.districtIds = districtIds;
     }
 }

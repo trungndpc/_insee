@@ -43,7 +43,7 @@ public class LightingQuizPromotionService {
         if (optionalLightingQuizPromotion.isPresent()) {
             LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
             TopicDTO topicUpComing = getTopicUpComing(lightingQuizPromotionEntity);
-            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getCityIds());
             for (UserEntity userEntity: userEntities) {
                 User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
                 Before5MinMessage sendBefore5MinMessage = new Before5MinMessage(user, topicUpComing.getTitle(),
@@ -58,7 +58,7 @@ public class LightingQuizPromotionService {
         if (optionalLightingQuizPromotion.isPresent()) {
             LightingQuizPromotionEntity lightingQuizPromotionEntity = optionalLightingQuizPromotion.get();
             TopicDTO topic = getTopicUpComing(lightingQuizPromotionEntity);
-            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getLocations());
+            List<UserEntity> userEntities = userService.findByLocation(lightingQuizPromotionEntity.getCityIds());
             for (UserEntity userEntity: userEntities) {
                 User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
                 LightingQuizScript lightingQuizScript = new LightingQuizScript(user);
@@ -81,7 +81,7 @@ public class LightingQuizPromotionService {
         if (promotionList == null) {
             throw new Exception("not found lz promotion ");
         }
-        promotionList = promotionList.stream().filter(promotion -> promotion.getLocations().contains(city))
+        promotionList = promotionList.stream().filter(promotion -> promotion.getCityIds().contains(city))
                 .collect(Collectors.toList());
         if (promotionList == null) {
             throw new Exception("not found lz promotion for city: " + city);

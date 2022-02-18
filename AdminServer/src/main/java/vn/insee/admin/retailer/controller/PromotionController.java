@@ -68,6 +68,28 @@ public class PromotionController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping(path = "/update", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<BaseResponse> update(@RequestBody PromotionForm form) {
+        BaseResponse response = new BaseResponse();
+        try{
+            PromotionEntity promotionEntity = promotionService.get(form.getId());
+            promotionEntity.setTitle(form.getTitle());
+            if (form.getCements() != null) {
+                promotionEntity.setCements(form.getCements());
+            }
+            promotionEntity.setTimeStart(form.getTimeStart());
+            promotionEntity.setTimeEnd(form.getTimeEnd());
+            promotionEntity.setCityIds(form.getCityIds());
+            promotionEntity.setDistrictIds(form.getDistrictIds());
+            promotionService.update(promotionEntity);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping(path = "/list")
     public ResponseEntity<BaseResponse> list (
             @RequestParam(required = false) List<Integer> types,

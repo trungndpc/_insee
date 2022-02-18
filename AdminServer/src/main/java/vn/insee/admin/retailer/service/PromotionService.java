@@ -48,4 +48,8 @@ public class PromotionService {
         return promotionRepository.saveAndFlush(entity);
     }
 
+    public PromotionEntity update(PromotionEntity promotionEntity) {
+        return promotionRepository.saveAndFlush(promotionEntity);
+    }
+
 }

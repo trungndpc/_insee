@@ -1,11 +1,18 @@
 package vn.insee.admin.retailer.controller.form;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import vn.insee.admin.retailer.controller.dto.gift.PhoneCardGift;
+
+import java.util.List;
+
 public class GiftForm {
     private Integer id;
     private String content;
     private Integer status;
     private Integer userId;
     private String title;
+    private Integer type;
+    private List<PhoneCardGift> cardPhones;
 
     public Integer getId() {
         return id;
@@ -45,5 +52,21 @@ public class GiftForm {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public List<PhoneCardGift> getCardPhones() {
+        return cardPhones;
+    }
+
+    public void setCardPhones(List<PhoneCardGift> cardPhones) {
+        this.cardPhones = cardPhones;
     }
 }

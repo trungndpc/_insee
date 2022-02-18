@@ -17,6 +17,10 @@ public class BroadcastDTO {
     private Integer click;
     private List<Integer> cityIds;
     private List<Integer> districtIds;
+    private Integer totalUids;
+    private Integer totalUidsAfterBuildUser;
+    private Integer totalUidsSuccessSend;
+
 
     public int getId() {
         return id;
@@ -104,5 +108,29 @@ public class BroadcastDTO {
 
     public void setDistrictIds(List<Integer> districtIds) {
         this.districtIds = districtIds;
+    }
+
+    public Integer getTotalUids() {
+        return totalUids;
+    }
+
+    public void setTotalUids(Integer totalUids) {
+        this.totalUids = totalUids;
+    }
+
+    public Integer getTotalUidsAfterBuildUser() {
+        return totalUidsAfterBuildUser;
+    }
+
+    public void setTotalUidsAfterBuildUser(Integer totalUidsAfterBuildUser) {
+        this.totalUidsAfterBuildUser = totalUidsAfterBuildUser;
+    }
+
+    public Integer getTotalUidsSuccessSend() {
+        return totalUidsSuccessSend;
+    }
+
+    public void setTotalUidsSuccessSend(Integer totalUidsSuccessSend) {
+        this.totalUidsSuccessSend = totalUidsSuccessSend;
     }
 }
