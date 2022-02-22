@@ -1,10 +1,12 @@
 package vn.insee.retailer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
+import vn.insee.jpa.specification.UserSpecification;
 
 import java.util.List;
 
@@ -13,6 +15,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserSpecification userSpecification;
 
     public UserEntity register(UserEntity userEntity) throws Exception {
         if (userEntity.getStatus() != StatusUser.WAIT_COMPLETE_PROFILE) {
@@ -52,7 +57,18 @@ public class UserService {
         return userRepository.saveAndFlush(userEntity);
     }
 
-    public List<UserEntity> findByLocation(List<Integer> cityIds) {
-        return userRepository.findByCityIdIn(cityIds);
+    public List<UserEntity> findBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {
+        Specification<UserEntity> specs =  Specification.where(null);
+        if (status != null) {
+            specs = specs.and(userSpecification.isStatus(status));
+        }
+        if (cityIds != null) {
+            specs = specs.and(userSpecification.inCity(cityIds));
+        }
+
+        if (districtIds != null) {
+            specs = specs.and(userSpecification.inDistrict(districtIds));
+        }
+        return userRepository.findAll(specs);
     }
 }

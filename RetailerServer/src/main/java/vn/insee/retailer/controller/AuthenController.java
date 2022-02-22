@@ -104,7 +104,7 @@ public class AuthenController {
             if (user.getStatus() == StatusUser.WAIT_COMPLETE_PROFILE) {
                 return RenderUtils.render("index.html");
             }else {
-                response.sendRedirect("/");
+                response.sendRedirect(StringUtils.isEmpty(continueUrl) ? "/" : continueUrl);
                 return "OK";
             }
         }else {

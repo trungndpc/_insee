@@ -6,6 +6,7 @@ import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.FormEntity_;
 import vn.insee.jpa.metric.FormCityMetric;
 import vn.insee.jpa.metric.FormDateMetric;
+import vn.insee.jpa.metric.FormPromotionMetric;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +52,24 @@ public class FormRepositoryImpl implements FormRepositoryCustom {
         List<Object[]> resultList = query.getResultList();
         return resultList.stream().map(r -> new FormCityMetric(Integer.parseInt(r[0].toString()),
                         Integer.parseInt(r[1].toString())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FormPromotionMetric> statisticFormByPromotion() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
+        Root<FormEntity> root = query.from(FormEntity.class);
+        Expression<Integer> expression = root.get(FormEntity_.PROMOTION_ID);
+        Expression<Long> count = cb.count(root.get(FormEntity_.id));
+        query.groupBy(expression);
+        query.multiselect(expression, count);
+        query.orderBy(cb.desc(count));
+        TypedQuery<Object[]> typedQuery = entityManager.createQuery(query);
+        typedQuery.setFirstResult(0);
+        typedQuery.setMaxResults(15);
+        List<Object[]> resultList = typedQuery.getResultList();
+        return resultList.stream().map(r -> new FormPromotionMetric(Integer.parseInt(r[0].toString()), Integer.parseInt(r[1].toString())))
                 .collect(Collectors.toList());
     }
 

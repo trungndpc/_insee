@@ -42,11 +42,12 @@ public class Before5MinMessage extends Message {
         ZaloMessage.Attachment.Payload.Button button = new ZaloMessage.Attachment.Payload.Button();
         button.type = "oa.open.url";
         button.title = "Thể lệ chương trình";
-        ZaloMessage.Attachment.Payload.Button.ButtonPayload buttonPayload = new ZaloMessage.Attachment.Payload.Button.ButtonPayload();
-        buttonPayload.url = Constant.CLIENT_DOMAIN + "/khuyen-mai/" + id;
-        button.payload = buttonPayload;
-        payload.buttons.add(button);
-
+        if (id != 0) {
+            ZaloMessage.Attachment.Payload.Button.ButtonPayload buttonPayload = new ZaloMessage.Attachment.Payload.Button.ButtonPayload();
+            buttonPayload.url = Constant.CLIENT_DOMAIN + "/bai-viet/" + id;
+            button.payload = buttonPayload;
+            payload.buttons.add(button);
+        }
         ZaloMessage.Attachment attachment = new ZaloMessage.Attachment();
         attachment.type = "template";
         attachment.payload = payload;

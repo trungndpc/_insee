@@ -18,7 +18,7 @@ public class BaseEntity {
 
     @LastModifiedDate
     @Column(name = "updated_time")
-    private ZonedDateTime  updatedTime;
+    private ZonedDateTime updatedTime;
 
     public ZonedDateTime getCreatedTime() {
         return createdTime;

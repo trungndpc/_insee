@@ -34,6 +34,10 @@ public class PromotionService {
         return promotionRepository.findAll(specs, pageable);
     }
 
+    public List<PromotionEntity> find(int type, int status) {
+        return promotionRepository.findByTypeAndStatus(type, status);
+    }
+
     public List<PromotionEntity> findPromotionForMapPost() {
         return promotionRepository.findAll();
     }

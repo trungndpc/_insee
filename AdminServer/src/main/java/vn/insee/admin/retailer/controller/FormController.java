@@ -17,13 +17,18 @@ import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.StockFormDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormCityMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormDateMetricDTO;
+import vn.insee.admin.retailer.controller.dto.metric.FormPromotionMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.service.FormService;
+import vn.insee.admin.retailer.service.PromotionService;
+import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
+import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.metric.FormCityMetric;
 import vn.insee.jpa.metric.FormDateMetric;
+import vn.insee.jpa.metric.FormPromotionMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 
 import java.util.List;
@@ -40,6 +45,9 @@ public class FormController {
     @Autowired
     private FormConverter formConverter;
 
+    @Autowired
+    private PromotionService promotionService;
+
     @GetMapping(path = "/find-by-promotion")
     public ResponseEntity<BaseResponse> list( @RequestParam(required = true) int promotionId,
             @RequestParam(required = false) Integer city,
@@ -50,6 +58,28 @@ public class FormController {
         BaseResponse response = new BaseResponse();
         try{
             Page<FormEntity> formEntities = formService.findByPromotionId(promotionId, status, city, search, page, pageSize);
+            PageDTO<FormDTO> promotionDTOPageDTO =
+                    formConverter.convertToPageDTO(formEntities);
+            response.setData(promotionDTOPageDTO);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/find-by-promotions")
+    public ResponseEntity<BaseResponse> list( @RequestParam(required = true) List<Integer> promotionIds,
+                                              @RequestParam(required = false) Integer city,
+                                              @RequestParam(required = false) Integer status,
+                                              @RequestParam(required = false) String search,
+                                              @RequestParam(required = false, defaultValue = "0") int page,
+                                              @RequestParam(required = false, defaultValue = "10") int pageSize) {
+        BaseResponse response = new BaseResponse();
+        try{
+            Page<FormEntity> formEntities = formService.findByPromotions(promotionIds,
+                    status, city, search, page, pageSize);
             PageDTO<FormDTO> promotionDTOPageDTO =
                     formConverter.convertToPageDTO(formEntities);
             response.setData(promotionDTOPageDTO);
@@ -75,8 +105,6 @@ public class FormController {
         }
         return ResponseEntity.ok(response);
     }
-
-
 
     @GetMapping(path = "/get")
     public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id) {
@@ -137,6 +165,23 @@ public class FormController {
         try{
             List<FormCityMetric> formCityMetrics = formService.statisticFormByCity(promotionIds);
             List<FormCityMetricDTO> dtos = formCityMetrics.stream().map(userDataMetric -> {
+                return formConverter.map(userDataMetric);
+            }).collect(Collectors.toList());
+            response.setData(dtos);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/stats-form-promotion")
+    public ResponseEntity<BaseResponse> statisticFormPromotion() {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<FormPromotionMetric> formPromotionMetrics = formService.statisticFormByPromotion();
+            List<FormPromotionMetricDTO> dtos = formPromotionMetrics.stream().map(userDataMetric -> {
                 return formConverter.map(userDataMetric);
             }).collect(Collectors.toList());
             response.setData(dtos);

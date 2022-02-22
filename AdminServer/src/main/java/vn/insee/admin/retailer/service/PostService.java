@@ -15,6 +15,7 @@ import vn.insee.jpa.repository.PostRepository;
 import vn.insee.jpa.specification.PostSpecification;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -71,6 +72,28 @@ public class PostService {
 
     public PostEntity get(int id) {
         return postRepository.getOne(id);
+    }
+
+    public PostEntity findPost(int promotionId, UserEntity userEntity) {
+        long currentTime = System.currentTimeMillis();
+        List<PostEntity> postEntities = postRepository.findAllByOrderByUpdatedTimeDesc();
+        Optional<PostEntity> first = postEntities.stream().filter(post -> post.getPromotionId() == promotionId)
+                .filter(post -> {
+                    if (post.getDistrictIds() != null) {
+                        return post.getDistrictIds().contains(userEntity.getDistrictId());
+                    }
+                    if (post.getCityIds() != null) {
+                        return post.getCityIds().contains(userEntity.getCityId());
+                    }
+                    return true;
+                })
+                .filter(post -> post.getTimeStart() <= currentTime)
+                .filter(post -> post.getTimeEnd() >= currentTime)
+                .findFirst();
+        if (first.isPresent()) {
+            return first.get();
+        }
+        return null;
     }
 
 }

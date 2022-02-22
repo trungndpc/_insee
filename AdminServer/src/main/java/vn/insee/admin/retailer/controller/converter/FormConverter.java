@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import vn.insee.admin.retailer.controller.dto.*;
 import vn.insee.admin.retailer.controller.dto.metric.FormCityMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormDateMetricDTO;
+import vn.insee.admin.retailer.controller.dto.metric.FormPromotionMetricDTO;
 import vn.insee.admin.retailer.mapper.Mapper;
 import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.PromotionEntity;
@@ -16,6 +17,7 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.metric.FormCityMetric;
 import vn.insee.jpa.metric.FormDateMetric;
+import vn.insee.jpa.metric.FormPromotionMetric;
 import vn.insee.jpa.repository.PromotionRepository;
 import vn.insee.jpa.repository.UserRepository;
 
@@ -44,6 +46,17 @@ public class FormConverter {
         return mapper.map(metric, FormCityMetricDTO.class);
     }
 
+    public FormPromotionMetricDTO map(FormPromotionMetric metric) {
+        FormPromotionMetricDTO dto = mapper.map(metric, FormPromotionMetricDTO.class);
+        PromotionEntity one = promotionRepository.getOne(metric.getPromotionId());
+        PromotionDTO promotionDTO = new PromotionDTO();
+        promotionDTO.setType(one.getType());
+        promotionDTO.setTitle(one.getTitle());
+        promotionDTO.setTimeStart(one.getTimeStart());
+        dto.setPromotion(promotionDTO);
+        return dto;
+    }
+
     public FormDTO convert2FormDTO(FormEntity formEntity) {
         FormDTO formDTO = mapper.map(formEntity, FormDTO.class);;
         UserEntity userEntity = userRepository.getOne(formDTO.getUserId());
@@ -53,6 +66,7 @@ public class FormConverter {
         formDTO.setTime(formEntity.getUpdatedTime().toEpochSecond());
         userDTO.setAvatar(userEntity.getAvatar());
         userDTO.setInseeId(userEntity.getInseeId());
+        userDTO.setCityId(userEntity.getCityId());
         formDTO.setUser(userDTO);
         PromotionEntity promotionEntity = promotionRepository.getOne(formEntity.getPromotionId());
         PromotionDTO promotionDTO = new PromotionDTO();

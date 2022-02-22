@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class JobService {
+public class BroadcastJobWorker {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired

@@ -14,10 +14,26 @@ public class Scheduler {
     private JobScheduler jobScheduler;
 
     @Autowired
-    private JobService service;
+    private BroadcastJobWorker service;
+
+    @Autowired
+    private NotyUpcomingTopicWorker notyUpcomingTopicWorker;
+
+    @Autowired
+    private StartTopicWorker startTopicWorker;
 
     public String addJob(LocalDateTime localDateTime, PostNormalBroadcastTask job) {
         JobId jobId = jobScheduler.schedule(localDateTime, () -> service.execute(job));
+        return jobId.asUUID().toString();
+    }
+
+    public String addJob(LocalDateTime localDateTime, NotyUpcomingTopicTask task) {
+        JobId jobId = jobScheduler.schedule(localDateTime, () -> notyUpcomingTopicWorker.execute(task));
+        return jobId.asUUID().toString();
+    }
+
+    public String addJob2StartTopicLQPromotion(LocalDateTime localDateTime, NotyUpcomingTopicTask task) {
+        JobId jobId = jobScheduler.schedule(localDateTime, () -> startTopicWorker.execute(task));
         return jobId.asUUID().toString();
     }
 

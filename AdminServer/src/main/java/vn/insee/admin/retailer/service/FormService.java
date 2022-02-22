@@ -17,6 +17,7 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.metric.FormCityMetric;
 import vn.insee.jpa.metric.FormDateMetric;
+import vn.insee.jpa.metric.FormPromotionMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 import vn.insee.jpa.repository.FormRepository;
 import vn.insee.jpa.repository.StockFormRepository;
@@ -43,9 +44,41 @@ public class FormService {
 
     public Page<FormEntity> findByPromotionId(int promotionId, Integer status, Integer city,
                                               String search, int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "created_time"));
         Specification<FormEntity> specs =  Specification.where(null);
         specs = specs.and(formSpecification.isPromotion(promotionId));
+        if (status != null) {
+            specs = specs.and(formSpecification.isStatus(status));
+        }
+        List<FormEntity> all = formRepository.findAll(specs);
+        if (all != null && !all.isEmpty()) {
+            if (city != null || search != null ) {
+                all = all.stream().filter(formEntity -> {
+                    UserEntity userEntity = userService.findById(formEntity.getUserId());
+                    boolean is = false;
+                    if (city != null) {
+                        is = userEntity.getCityId() == city;
+                    }
+                    if (search != null) {
+                        is = userEntity.getName().contains(search) || userEntity.getPhone().contains(search);
+                    }
+                    return is;
+                }).sorted((t1, t2) -> t1.getUpdatedTime().compareTo(t2.getUpdatedTime()))
+                        .collect(Collectors.toList());
+            }
+
+            final int start = (int)pageable.getOffset();
+            final int end = Math.min((start + pageable.getPageSize()), all.size());
+            return new PageImpl<>(all.subList(start, end), pageable, all.size());
+        }
+        return Page.empty();
+    }
+
+    public Page<FormEntity> findByPromotions(List<Integer> promotionIds, Integer status, Integer city,
+                                              String search, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Specification<FormEntity> specs =  Specification.where(null);
+        specs = specs.and(formSpecification.inPromotions(promotionIds));
         if (status != null) {
             specs = specs.and(formSpecification.isStatus(status));
         }
@@ -127,6 +160,10 @@ public class FormService {
 
     public List<FormCityMetric> statisticFormByCity(List<Integer> promotionIds) {
         return formRepository.statisticFormByCity(promotionIds);
+    }
+
+    public List<FormPromotionMetric> statisticFormByPromotion() {
+        return formRepository.statisticFormByPromotion();
     }
 
 }

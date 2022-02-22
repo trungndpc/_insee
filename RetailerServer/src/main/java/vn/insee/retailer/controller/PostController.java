@@ -57,7 +57,7 @@ public class PostController {
             if (user == null) {
                 throw new Exception("not permission");
             }
-            List<PostEntity> posts = postService.getPosts(user.getId());
+            List<PostEntity> posts = postService.findPost(user);
             response.setData(postConverter.covert2DTOs(posts));
         }catch (Exception e) {
             LOGGER.error(e.getMessage());

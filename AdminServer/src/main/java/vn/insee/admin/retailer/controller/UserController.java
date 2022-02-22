@@ -14,6 +14,7 @@ import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.UserDTO;
 import vn.insee.admin.retailer.controller.dto.dashboard.CountUserDTO;
 import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
+import vn.insee.admin.retailer.controller.export.UserExcelExporter;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.common.status.StatusUser;
@@ -21,6 +22,10 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.metric.UserCityMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 
+import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +74,29 @@ public class UserController {
             response.setMsg(e.getMessage());
         }
         return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping(path = "/export-excel")
+    public void exportExcel(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) Integer city,
+            HttpServletResponse response) {
+        try{
+            List<UserEntity> list = userService.list(search, status, city);
+            response.setContentType("application/octet-stream");
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+            String currentDateTime = dateFormatter.format(new Date());
+
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+            response.setHeader(headerKey, headerValue);
+            UserExcelExporter excelExporter = new UserExcelExporter(list);
+            excelExporter.export(response);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @PostMapping(path = "/upload-customer", consumes = "application/json", produces = "application/json")
