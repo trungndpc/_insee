@@ -59,6 +59,13 @@ public class HomeController {
     @Autowired
     private PostService postService;
 
+    @GetMapping(value = "/gioi-thieu-chuong-trinh-moi", produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseBody
+    public String introduce() throws
+            IOException {
+        return RenderUtils.render("index.html");
+    }
+
 
     @GetMapping(value = "/khoe-kho-nhan-qua", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody

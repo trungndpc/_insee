@@ -29,6 +29,7 @@ public class Mapper {
         this.mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         mapper.getConfiguration().setSkipNullEnabled(true);
+        mapper.addMappings(new UserEntity2UserDTO());
 
     }
     public <S, D> void map(S source, D destination) {

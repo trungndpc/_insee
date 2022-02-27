@@ -1,5 +1,7 @@
 package vn.insee.jpa.entity.form;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import org.hibernate.annotations.TypeDef;
 import vn.insee.jpa.entity.FormEntity;
 
 import javax.persistence.Entity;
@@ -7,8 +9,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "lighting_quiz_form", schema = "public")
+@TypeDef(name = "list-array",typeClass = ListArrayType.class)
 public class LightingQuizFormEntity extends FormEntity {
-
     private String jsonDetail;
     private int point;
     private String topicId;

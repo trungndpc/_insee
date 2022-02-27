@@ -5095,7 +5095,7 @@ org.springframework.dao.DataIntegrityViolationException: could not execute state
 	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:215)
 	at com.sun.proxy.$Proxy131.saveAndFlush(Unknown Source)
 	at vn.insee.admin.retailer.service.GiftService.create(GiftService.java:14)
-	at vn.insee.admin.retailer.controller.GiftFormController.create(GiftFormController.java:39)
+	at vn.insee.admin.retailer.controller.GiftController.create(GiftFormController.java:39)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
 	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
 	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)

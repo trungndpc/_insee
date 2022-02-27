@@ -28,7 +28,6 @@ vn/insee/admin/retailer/woker/NotyUpcomingTopicWorker.class
 vn/insee/admin/retailer/message/Before5MinMessage.class
 vn/insee/admin/retailer/wrapper/ZaloService.class
 vn/insee/admin/retailer/service/PromotionService.class
-vn/insee/admin/retailer/controller/GiftFormController.class
 vn/insee/admin/retailer/controller/form/QuestionForm.class
 vn/insee/admin/retailer/controller/converter/FormConverter.class
 vn/insee/admin/retailer/message/RejectedStockFormMessage.class

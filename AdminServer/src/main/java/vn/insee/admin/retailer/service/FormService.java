@@ -135,6 +135,9 @@ public class FormService {
         stockFormRepository.saveAndFlush(stockFormEntity);
     }
 
+    public void update(StockFormEntity stockFormEntity) {
+        stockFormRepository.saveAndFlush(stockFormEntity);
+    }
     public FormEntity addGift(int formId, List<Integer> giftIds) {
         FormEntity formEntity = formRepository.getOne(formId);
         formEntity.setGifts(giftIds);

@@ -15,12 +15,15 @@ import vn.insee.admin.retailer.controller.converter.FormConverter;
 import vn.insee.admin.retailer.controller.dto.FormDTO;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.StockFormDTO;
+import vn.insee.admin.retailer.controller.dto.dashboard.CountFormDTO;
+import vn.insee.admin.retailer.controller.dto.dashboard.CountPromotionDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormCityMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormDateMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.FormPromotionMetricDTO;
 import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.service.FormService;
 import vn.insee.admin.retailer.service.PromotionService;
+import vn.insee.common.status.StatusForm;
 import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
@@ -31,6 +34,9 @@ import vn.insee.jpa.metric.FormDateMetric;
 import vn.insee.jpa.metric.FormPromotionMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,12 +98,22 @@ public class FormController {
     }
 
     @GetMapping(path = "/count")
-    public ResponseEntity<BaseResponse> stats(@RequestParam(required = false) List<Integer> promotionIds,
-                                              @RequestParam(required = false) Integer status) {
+    public ResponseEntity<BaseResponse> count(@RequestParam(required = false) Integer status) {
         BaseResponse response = new BaseResponse();
         try{
-            long count = formService.count(promotionIds, status);
-            response.setData(count);
+            List<PromotionEntity> promotionEntityList = promotionService.find(TypePromotion.STOCK_PROMOTION_TYPE,
+                    StatusPromotion.APPROVED);
+            long countPromotion = formService.count(promotionEntityList.stream()
+                    .map(p -> p.getId()).collect(Collectors.toList()), status);
+
+            List<PromotionEntity> engagementPromotionEntityList = promotionService.find(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE,
+                    StatusPromotion.APPROVED);
+            long countEngagement = formService.count(engagementPromotionEntityList.stream().map(p -> p.getId())
+                    .collect(Collectors.toList()), status);
+            CountPromotionDTO promotionDTO = new CountPromotionDTO();
+            promotionDTO.setPromotion((int) countPromotion);
+            promotionDTO.setEngagement((int) countEngagement);
+            response.setData(promotionDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             response.setError(ErrorCode.FAILED);
@@ -185,6 +201,29 @@ public class FormController {
                 return formConverter.map(userDataMetric);
             }).collect(Collectors.toList());
             response.setData(dtos);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/count-by-type-promotion")
+    public ResponseEntity<BaseResponse> countByTypePromotion(@RequestParam(required = true) int type) {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<PromotionEntity> promotionEntityList = promotionService.find(type,StatusPromotion.APPROVED);
+            long total = formService.count(promotionEntityList.stream().map(p -> p.getId()).collect(Collectors.toList()), null);
+            long approved = formService.count(promotionEntityList.stream().map(p -> p.getId()).collect(Collectors.toList()), StatusForm.APPROVED);
+            long init = formService.count(promotionEntityList.stream().map(p -> p.getId()).collect(Collectors.toList()), StatusForm.INIT);
+            long sentGift = formService.count(promotionEntityList.stream().map(p -> p.getId()).collect(Collectors.toList()), StatusForm.SENT_GIFT);
+            CountFormDTO countFormDTO = new CountFormDTO();
+            countFormDTO.setTotal((int) total);
+            countFormDTO.setApproved((int) approved);
+            countFormDTO.setInit((int) init);
+            countFormDTO.setSendGift((int) sentGift);
+            response.setData(countFormDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);

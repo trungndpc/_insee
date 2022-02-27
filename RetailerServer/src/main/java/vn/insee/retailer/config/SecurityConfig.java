@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(cookieAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/api/post/get").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/admin/**").permitAll()
                 .antMatchers("/**").permitAll()
