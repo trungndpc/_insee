@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -23,6 +25,7 @@ public class ZaloService {
     private static final String GET_ACCESS_TOKEN_URL = "https://oauth.zaloapp.com/v3/access_token?app_id={1}&app_secret={2}&code={3}";
     private static final String GET_USER_INFO = "https://graph.zalo.me/v2.0/me?fields=id,name,picture,birthday,gender&access_token=";
     private static final String END_POINT = "https://openapi.zalo.me/v2.0/oa/message?access_token={1}";
+    private static final String ZNS_END_POINT = "https://business.openapi.zalo.me/message/template";
 
     public ZaloService() {
         this.restTemplate = new RestTemplate();
@@ -68,7 +71,19 @@ public class ZaloService {
         ResponseEntity<String> zaloResponseResponseEntity = restTemplate.postForEntity(END_POINT,
                 msWrapper.toString(), String.class,
                 AppCommon.INSTANCE.getAccessToken());
-        LOGGER.info(zaloResponseResponseEntity);
         return zaloResponseResponseEntity.getStatusCode() == HttpStatus.OK;
+    }
+
+    public boolean sendZNS(String phone, String templateId, String trackingDataID, JSONObject templateData) {
+        JSONObject form = new JSONObject();
+        form.put("phone", phone);
+        form.put("template_id", templateId);
+        form.put("tracking_id", trackingDataID);
+        form.put("template_data", trackingDataID);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("access_token", AppCommon.INSTANCE.getAccessToken());
+        HttpEntity<String> entity = new HttpEntity<>(form.toString(), headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(ZNS_END_POINT, entity, String.class);
+        return response.getStatusCode() == HttpStatus.OK;
     }
 }

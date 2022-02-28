@@ -1,6 +1,8 @@
 package vn.insee.retailer.controller.form;
 
 
+import java.util.List;
+
 public class StockForm {
     private Integer id;
     private Integer promotionId;
@@ -8,6 +10,8 @@ public class StockForm {
     private Integer status;
     private Integer type;
     private String detail;
+    private List<Integer> cements;
+    private Integer bags;
 
     public Integer getId() {
         return id;
@@ -55,5 +59,21 @@ public class StockForm {
 
     public void setDetail(String detail) {
         this.detail = detail;
+    }
+
+    public List<Integer> getCements() {
+        return cements;
+    }
+
+    public void setCements(List<Integer> cements) {
+        this.cements = cements;
+    }
+
+    public Integer getBags() {
+        return bags;
+    }
+
+    public void setBags(Integer bags) {
+        this.bags = bags;
     }
 }

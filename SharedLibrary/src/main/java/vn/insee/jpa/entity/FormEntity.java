@@ -23,6 +23,10 @@ public abstract class FormEntity extends BaseEntity {
     private String note;
 
     @Type(type = "list-array")
+    @Column(name = "cements",columnDefinition = "integer[]")
+    private List<Integer> cements;
+
+    @Type(type = "list-array")
     @Column(name = "gift_ids",columnDefinition = "integer[]")
     private List<Integer> gifts;
 
@@ -80,5 +84,13 @@ public abstract class FormEntity extends BaseEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public List<Integer> getCements() {
+        return cements;
+    }
+
+    public void setCements(List<Integer> cements) {
+        this.cements = cements;
     }
 }

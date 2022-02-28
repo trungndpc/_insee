@@ -74,6 +74,10 @@ public class FormService {
         return Page.empty();
     }
 
+    public List<StockFormEntity> findByPromotionId(int promotionId) {
+        return stockFormRepository.findByPromotionId(promotionId);
+    }
+
     public Page<FormEntity> findByPromotions(List<Integer> promotionIds, Integer status, Integer city,
                                               String search, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
@@ -138,6 +142,7 @@ public class FormService {
     public void update(StockFormEntity stockFormEntity) {
         stockFormRepository.saveAndFlush(stockFormEntity);
     }
+
     public FormEntity addGift(int formId, List<Integer> giftIds) {
         FormEntity formEntity = formRepository.getOne(formId);
         formEntity.setGifts(giftIds);

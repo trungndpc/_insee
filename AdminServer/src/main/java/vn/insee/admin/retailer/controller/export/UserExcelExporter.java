@@ -24,7 +24,6 @@ public class UserExcelExporter {
         workbook = new XSSFWorkbook();
     }
 
-
     private void writeHeaderLine() {
         sheet = workbook.createSheet("Users");
         Row row = sheet.createRow(0);

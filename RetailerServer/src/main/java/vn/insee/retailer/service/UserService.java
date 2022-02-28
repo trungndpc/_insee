@@ -53,6 +53,10 @@ public class UserService {
         return userRepository.findByZaloId(String.valueOf(zaloId));
     }
 
+    public UserEntity findByFollowerId(String followerId) {
+        return userRepository.findByFollowerId(followerId);
+    }
+
     public UserEntity saveOrUpdate(UserEntity userEntity) {
         return userRepository.saveAndFlush(userEntity);
     }

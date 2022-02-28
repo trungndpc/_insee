@@ -132,7 +132,7 @@ https://vladmihalcea.com/hypersistence-optimizer/
 2022-02-17 10:09:25.604  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
 2022-02-17 10:09:25.607  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 3 ms
 2022-02-17 10:10:12.256  WARN trungnd2 --- [pool-3-thread-2] o.j.s.BackgroundJobPerformer             : Job(id=aa8de28a-c29b-4e8c-bcae-ebf8ef105048, jobName='PostNormalBroadcastJob') processing failed: An exception occurred during the performance of the job
-org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.PostNormalBroadcastTask' available
+org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.task.PostBroadcastTask' available
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:351)
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:342)
 	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1177)
@@ -251,7 +251,7 @@ https://vladmihalcea.com/hypersistence-optimizer/
 2022-02-17 10:10:36.137  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
 2022-02-17 10:10:36.142  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 4 ms
 2022-02-17 10:11:30.375  WARN trungnd2 --- [pool-3-thread-2] o.j.s.BackgroundJobPerformer             : Job(id=b83539e0-2d99-4be9-a32b-70f28ac9709d, jobName='PostNormalBroadcastJob') processing failed: An exception occurred during the performance of the job
-org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.PostNormalBroadcastTask' available
+org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.task.PostBroadcastTask' available
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:351)
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:342)
 	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1177)
@@ -276,7 +276,7 @@ org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying b
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
 	at java.base/java.lang.Thread.run(Thread.java:829)
 2022-02-17 10:11:45.365  WARN trungnd2 --- [pool-3-thread-3] o.j.s.BackgroundJobPerformer             : Job(id=b83539e0-2d99-4be9-a32b-70f28ac9709d, jobName='PostNormalBroadcastJob') processing failed: An exception occurred during the performance of the job
-org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.PostNormalBroadcastTask' available
+org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'vn.insee.admin.retailer.woker.task.PostBroadcastTask' available
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:351)
 	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBean(DefaultListableBeanFactory.java:342)
 	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1177)
@@ -492,7 +492,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in vn.insee.admin.retailer.woker.PostNormalBroadcastTask required a bean of type 'java.lang.String' that could not be found.
+Parameter 0 of constructor in vn.insee.admin.retailer.woker.task.PostBroadcastTask required a bean of type 'java.lang.String' that could not be found.
 
 
 Action:
@@ -590,7 +590,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in vn.insee.admin.retailer.woker.PostNormalBroadcastTask required a bean of type 'java.lang.String' that could not be found.
+Parameter 0 of constructor in vn.insee.admin.retailer.woker.task.PostBroadcastTask required a bean of type 'java.lang.String' that could not be found.
 
 
 Action:
@@ -685,8 +685,8 @@ https://vladmihalcea.com/hypersistence-optimizer/
 2022-02-17 10:24:14.900  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
 2022-02-17 10:24:14.902  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 1 ms
 2022-02-17 10:24:15.016 ERROR trungnd2 --- [nio-7955-exec-1] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.jobrunr.JobRunrException: Did you register all necessary Jackson Modules?] with root cause
-com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.PostNormalBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
- at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask@37d368a8)","jobDetails":{"className":"vn.insee.admin.retailer.woker.BroadcastJobWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woke"[truncated 445 chars]; line: 1, column: 611] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
+com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.task.PostBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
+ at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask@37d368a8)","jobDetails":{"className":"vn.insee.admin.retailer.woker.PostBroadcastWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woke"[truncated 445 chars]; line: 1, column: 611] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
 	at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
 	at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1615)
 	at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:400)
@@ -1063,8 +1063,8 @@ https://vladmihalcea.com/hypersistence-optimizer/
 2022-02-17 10:36:36.744  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
 2022-02-17 10:36:36.746  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 2 ms
 2022-02-17 10:36:36.852 ERROR trungnd2 --- [nio-7955-exec-1] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.jobrunr.JobRunrException: Did you register all necessary Jackson Modules?] with root cause
-com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.PostNormalBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
- at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask@6b2751d)","jobDetails":{"className":"vn.insee.admin.retailer.woker.BroadcastJobWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woker"[truncated 444 chars]; line: 1, column: 610] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
+com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.task.PostBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
+ at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask@6b2751d)","jobDetails":{"className":"vn.insee.admin.retailer.woker.PostBroadcastWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woker"[truncated 444 chars]; line: 1, column: 610] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
 	at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
 	at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1615)
 	at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:400)
@@ -1253,8 +1253,8 @@ https://vladmihalcea.com/hypersistence-optimizer/
 2022-02-17 10:37:45.683  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Initializing Servlet 'dispatcherServlet'
 2022-02-17 10:37:45.686  INFO trungnd2 --- [nio-7955-exec-1] o.s.w.s.DispatcherServlet                : Completed initialization in 2 ms
 2022-02-17 10:37:45.797 ERROR trungnd2 --- [nio-7955-exec-1] o.a.c.c.C.[.[.[.[dispatcherServlet]      : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is org.jobrunr.JobRunrException: Did you register all necessary Jackson Modules?] with root cause
-com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.PostNormalBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
- at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.BroadcastJobWorker.execute(vn.insee.admin.retailer.woker.PostNormalBroadcastTask@2bb6791)","jobDetails":{"className":"vn.insee.admin.retailer.woker.BroadcastJobWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woker"[truncated 444 chars]; line: 1, column: 610] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
+com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `vn.insee.admin.retailer.woker.task.PostBroadcastTask` (no Creators, like default constructor, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
+ at [Source: (String)"{"version":1,"jobSignature":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask)","jobName":"vn.insee.admin.retailer.woker.PostBroadcastWorker.execute(vn.insee.admin.retailer.woker.task.PostBroadcastTask@2bb6791)","jobDetails":{"className":"vn.insee.admin.retailer.woker.PostBroadcastWorker","staticFieldName":null,"methodName":"execute","jobParameters":[{"className":"vn.insee.admin.retailer.woker.job.Task","actualClassName":"vn.insee.admin.retailer.woker"[truncated 444 chars]; line: 1, column: 610] (through reference chain: org.jobrunr.jobs.Job["jobDetails"]->org.jobrunr.jobs.JobDetails["jobParameters"]->java.util.ArrayList[0]->org.jobrunr.jobs.JobParameter["object"])
 	at com.fasterxml.jackson.databind.exc.InvalidDefinitionException.from(InvalidDefinitionException.java:67)
 	at com.fasterxml.jackson.databind.DeserializationContext.reportBadDefinition(DeserializationContext.java:1615)
 	at com.fasterxml.jackson.databind.DatabindContext.reportBadDefinition(DatabindContext.java:400)

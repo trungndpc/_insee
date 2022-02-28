@@ -113,7 +113,7 @@ public class LightingQuizPromotionController {
             lightingQuizPromotionService.updateStatusTopic(lightingQuizPromotionEntity.getId(), topicId,
                     status);
             if (status == StatusTopicLightingQuizPromotion.DONE) {
-                lightingQuizFormService.summary2Ranking(lightingQuizPromotionEntity.getId(), topicDTO);
+                lightingQuizFormService.summary2Ranking(lightingQuizPromotionEntity.getId(), topicDTO.getId(), topicDTO.getTitle());
             }
         }catch (Exception e) {
             LOGGER.error(e.getMessage());

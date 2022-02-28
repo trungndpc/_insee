@@ -29,6 +29,7 @@ public class Mapper {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         mapper.getConfiguration().setSkipNullEnabled(true);
         this.mapper.addMappings(new FormEntity2FormHistoryDTO());
+//        this.mapper.addMappings(new StockForm2StockFormEntity());
 
     }
     public <S, D> void map(S source, D destination) {

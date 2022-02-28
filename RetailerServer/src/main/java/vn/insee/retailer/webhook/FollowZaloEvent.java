@@ -19,13 +19,11 @@ public class FollowZaloEvent extends ZaloEvent{
     @Autowired
     private UserService userService;
 
-
-
     @Override
     public boolean process(ZaloWebhookMessage zaloWebhookMessage) {
         try{
             FollowZaloWebhookMessage followZaloMsg = (FollowZaloWebhookMessage) zaloWebhookMessage;
-            UserEntity userEntity = userService.findByZaloId(followZaloMsg.userIdByApp);
+            UserEntity userEntity = userService.findByFollowerId(followZaloMsg.follower.id);
             if (userEntity == null) {
                 userEntity = new UserEntity();
                 userEntity.setStatus(StatusUser.WAIT_COMPLETE_PROFILE);

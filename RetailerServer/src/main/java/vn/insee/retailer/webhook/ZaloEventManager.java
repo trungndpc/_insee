@@ -14,6 +14,7 @@ import vn.insee.retailer.bot.script.LightingQuizScript;
 import vn.insee.retailer.service.LightingQuizPromotionService;
 import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.webhook.zalo.FollowZaloWebhookMessage;
+import vn.insee.retailer.webhook.zalo.UserReceivedZNSMessage;
 import vn.insee.retailer.webhook.zalo.UserSendMessage;
 
 import java.util.*;
@@ -35,6 +36,9 @@ public class ZaloEventManager {
     private LightingEvent lightingEvent;
 
     @Autowired
+    private UserReceivedZNSEvent userReceivedZNSEvent;
+
+    @Autowired
     private UserService userService;
 
     public void doing(JSONObject zaloMsg) throws Exception {
@@ -45,13 +49,15 @@ public class ZaloEventManager {
                 FollowZaloWebhookMessage userFollow = objectMapper.readValue(zaloMsg.toString(), FollowZaloWebhookMessage.class);
                 followZaloEvent.process(userFollow);
                 return;
-
+            case "user_received_message":
+                UserReceivedZNSMessage receivedZNSMessage = objectMapper.readValue(zaloMsg.toString(), UserReceivedZNSMessage.class);
+                userReceivedZNSEvent.process(receivedZNSMessage);
+                return;
             case "user_send_text":
                 UserEntity userEntity = userService.findByZaloId(userByAppId);
                 if (userEntity == null) {
                     throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);
                 }
-
                 UserSendMessage userSendText = objectMapper.readValue(zaloMsg.toString(), UserSendMessage.class);
                 String text = userSendText.message.text;
                 Object session = webhookSessionManager.getCurrentSession(userEntity.getId());
@@ -60,7 +66,6 @@ public class ZaloEventManager {
                     lightingEvent.process(userSendText);
                     return;
                 }
-
                 break;
         }
     }
