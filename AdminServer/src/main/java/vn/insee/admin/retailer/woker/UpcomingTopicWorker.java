@@ -11,6 +11,7 @@ import vn.insee.admin.retailer.message.User;
 import vn.insee.admin.retailer.service.LightingQuizPromotionService;
 import vn.insee.admin.retailer.service.PostService;
 import vn.insee.admin.retailer.service.UserService;
+import vn.insee.admin.retailer.woker.task.TopicTask;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.UserEntity;
@@ -21,8 +22,8 @@ import java.util.Optional;
 
 
 @Service
-public class NotyUpcomingTopicWorker {
-    private static final Logger LOGGER = LogManager.getLogger(NotyUpcomingTopicWorker.class);
+public class UpcomingTopicWorker {
+    private static final Logger LOGGER = LogManager.getLogger(UpcomingTopicWorker.class);
 
     @Autowired
     private LightingQuizPromotionService promotionService;
@@ -34,7 +35,7 @@ public class NotyUpcomingTopicWorker {
     private PostService postService;
 
     @Job(name = "NOTY_UPCOMING_TOPIC", retries = 1)
-    public void execute(NotyUpcomingTopicTask task) {
+    public void execute(TopicTask task) {
         try{
             int promotionId = task.getPromotionId();
             String topicId = task.getTopicId();
@@ -62,7 +63,7 @@ public class NotyUpcomingTopicWorker {
                 });
             }
         }catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -76,7 +77,7 @@ public class NotyUpcomingTopicWorker {
             Before5MinMessage msg = new Before5MinMessage(user, topic.getTitle(), post != null ? post.getId() : 0, topic.getTimeStart());
             msg.send();
         }catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

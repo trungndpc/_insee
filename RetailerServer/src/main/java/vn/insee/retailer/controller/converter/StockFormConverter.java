@@ -19,8 +19,6 @@ public class StockFormConverter {
     private Mapper mapper;
 
     public StockFormEntity convert2Entity(StockForm stockForm) {
-        LOGGER.error(stockForm.getPromotionId());
-        LOGGER.error(stockForm.getDetail());
         StockFormEntity stockFormEntity = mapper.map(stockForm, StockFormEntity.class);
         stockFormEntity.setJsonImage(stockForm.getDetail().toString());
         return stockFormEntity;

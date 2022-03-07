@@ -12,12 +12,10 @@ import vn.insee.admin.retailer.controller.converter.UserConverter;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.admin.retailer.util.RenderUtils;
 import vn.insee.admin.retailer.woker.Scheduler;
-import vn.insee.admin.retailer.woker.PostNormalBroadcastTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 
 @RestController

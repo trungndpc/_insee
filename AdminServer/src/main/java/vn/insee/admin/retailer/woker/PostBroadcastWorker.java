@@ -11,6 +11,7 @@ import vn.insee.admin.retailer.message.User;
 import vn.insee.admin.retailer.service.BroadcastService;
 import vn.insee.admin.retailer.service.PostService;
 import vn.insee.admin.retailer.service.UserService;
+import vn.insee.admin.retailer.woker.task.PostBroadcastTask;
 import vn.insee.common.Constant;
 import vn.insee.common.status.StatusBroadcast;
 import vn.insee.jpa.entity.BroadcastEntity;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BroadcastJobWorker {
+public class PostBroadcastWorker {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Autowired
@@ -33,8 +34,8 @@ public class BroadcastJobWorker {
     @Autowired
     private PostService postService;
 
-    @Job(name = "BROADCAST", retries = 1)
-    public void execute(PostNormalBroadcastTask task) {
+    @Job(name = "POST_BROADCAST", retries = 1)
+    public void execute(PostBroadcastTask task) {
         int totalUid = 0;
         int totalUidAfterBuildUser = 0;
         int totalSuccessSend = 0;

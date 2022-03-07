@@ -1,10 +1,10 @@
-package vn.insee.admin.retailer.woker;
+package vn.insee.admin.retailer.woker.task;
 
-public class NotyUpcomingTopicTask {
+public class TopicTask {
     private int promotionId;
     private String topicId;
 
-    public NotyUpcomingTopicTask() {
+    public TopicTask() {
     }
 
     public int getPromotionId() {

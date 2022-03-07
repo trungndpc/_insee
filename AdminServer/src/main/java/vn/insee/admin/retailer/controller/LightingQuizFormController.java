@@ -12,8 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.controller.converter.LQFormConverter;
+import vn.insee.admin.retailer.controller.dto.lq.LQFormDTO;
+import vn.insee.admin.retailer.controller.export.LightingQuizGameExcelExporter;
 import vn.insee.admin.retailer.service.LightingQuizFormService;
 import vn.insee.jpa.entity.form.LightingQuizFormEntity;
+
+import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/lq-form")
@@ -74,6 +83,33 @@ public class LightingQuizFormController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping(path = "/export-excel")
+    public void exportExcel(
+            @RequestParam(required = false) int promotionId,
+            HttpServletResponse response) {
+        try{
+            List<LightingQuizFormEntity> lqFormDTOS = formService.findByPromotionId(promotionId);
+            if (lqFormDTOS == null || lqFormDTOS.isEmpty()) {
+                throw new Exception("list form empty");
+            }
+
+            response.setContentType("application/octet-stream");
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+            String currentDateTime = dateFormatter.format(new Date());
+
+            String headerKey = "Content-Disposition";
+            String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+            response.setHeader(headerKey, headerValue);
+            List<LQFormDTO> stockFormDTOS = lqFormDTOS.stream().map(s -> formConverter
+                    .covert2DTO(s)).collect(Collectors.toList());
+            LightingQuizGameExcelExporter excelExporter = new LightingQuizGameExcelExporter(stockFormDTOS);
+            excelExporter.export(response);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
 
 
 

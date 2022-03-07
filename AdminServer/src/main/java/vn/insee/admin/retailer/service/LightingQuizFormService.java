@@ -49,8 +49,8 @@ public class LightingQuizFormService {
         return true;
     }
 
-    public void summary2Ranking(int promotionId, TopicDTO topic) {
-        List<LightingQuizFormEntity> lightingQuizFormEntityList = lightingQuizFormRepository.findByPromotionIdAndTopicId(promotionId, topic.getId());
+    public void summary2Ranking(int promotionId, String topicId, String title) {
+        List<LightingQuizFormEntity> lightingQuizFormEntityList = lightingQuizFormRepository.findByPromotionIdAndTopicId(promotionId, topicId);
         lightingQuizFormEntityList = ranking(lightingQuizFormEntityList);
         lightingQuizFormEntityList.forEach(lightingQuizFormEntity -> {
             lightingQuizFormEntity.setStatus(StatusLightingQuizForm.APPROVED);
@@ -59,7 +59,7 @@ public class LightingQuizFormService {
         lightingQuizFormEntityList.stream().limit(10).forEach(lightingQuizFormEntity -> {
             UserEntity userEntity = userService.findById(lightingQuizFormEntity.getUserId());
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
-            TopLeaderBoardLightingQuizMessage quizMessage = new TopLeaderBoardLightingQuizMessage(user, topic.getTitle());
+            TopLeaderBoardLightingQuizMessage quizMessage = new TopLeaderBoardLightingQuizMessage(user, title);
             quizMessage.send();
         });
         lightingQuizFormRepository.saveAll(lightingQuizFormEntityList);
@@ -75,5 +75,9 @@ public class LightingQuizFormService {
             }
             return p;
         }).collect(Collectors.toList());
+    }
+
+    public List<LightingQuizFormEntity> findByPromotionId(int promotionId) {
+        return lightingQuizFormRepository.findByPromotionId(promotionId);
     }
 }

@@ -6,23 +6,28 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import vn.insee.admin.retailer.controller.dto.StockFormDTO;
 import vn.insee.admin.retailer.util.City;
-import vn.insee.jpa.entity.UserEntity;
+import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusStockForm;
+import vn.insee.util.insee.CementManager;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class UserExcelExporter {
+public class StockExcelExporter {
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
-    private List<UserEntity> listUsers;
+    private List<StockFormDTO> stockFormEntityList;
 
-    public UserExcelExporter(List<UserEntity> listUsers) {
-        this.listUsers = listUsers;
+    public StockExcelExporter(List<StockFormDTO> stockFormEntityList) {
+        this.stockFormEntityList = stockFormEntityList;
         workbook = new XSSFWorkbook();
     }
+
 
     private void writeHeaderLine() {
         sheet = workbook.createSheet("Users");
@@ -33,13 +38,15 @@ public class UserExcelExporter {
         font.setFontHeight(16);
         style.setFont(font);
 
-        createCell(row, 0, "AVATAR", style);
-        createCell(row, 1, "PHONE", style);
-        createCell(row, 2, "INSEE ID", style);
-        createCell(row, 3, "NAME", style);
-        createCell(row, 4, "CITY", style);
-        createCell(row, 5, "DISTRICT", style);
-        createCell(row, 6, "ADDRESS", style);
+        createCell(row, 0, "NAME", style);
+        createCell(row, 1, "INSEE ID", style);
+        createCell(row, 2, "PHONE", style);
+        createCell(row, 3, "CITY", style);
+        createCell(row, 4, "DISTRICT", style);
+        createCell(row, 5, "STATUS", style);
+        createCell(row, 6, "BAGS", style);
+        createCell(row, 7, "CEMENTS", style);
+        createCell(row, 8, "PHOTOS", style);
     }
 
     private void writeDataLines() {
@@ -50,16 +57,24 @@ public class UserExcelExporter {
         font.setFontHeight(14);
         style.setFont(font);
 
-        for (UserEntity user : listUsers) {
+        for (StockFormDTO stockFormDTO : stockFormEntityList) {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
-            createCell(row, columnCount++, user.getAvatar(), style);
-            createCell(row, columnCount++, user.getPhone(), style);
-            createCell(row, columnCount++, user.getInseeId(), style);
-            createCell(row, columnCount++, user.getName(), style);
-            createCell(row, columnCount++, City.findCityById(user.getCityId()), style);
-            createCell(row, columnCount++, City.findDistrictById(user.getDistrictId()), style);
-            createCell(row, columnCount++, user.getAddress(), style);
+            createCell(row, columnCount++, stockFormDTO.getUser().getName(), style);
+            createCell(row, columnCount++, stockFormDTO.getUser().getInseeId(), style);
+            createCell(row, columnCount++, stockFormDTO.getUser().getPhone(), style);
+            createCell(row, columnCount++, City.findCityById(stockFormDTO.getUser().getCityId()), style);
+            createCell(row, columnCount++, City.findDistrictById(stockFormDTO.getUser().getDistrictId()), style);
+            createCell(row, columnCount++, StatusForm.findByName(stockFormDTO.getStatus()), style);
+            createCell(row, columnCount++, stockFormDTO.getBags(), style);
+            List<Integer> cements = stockFormDTO.getCements();
+            if (cements != null) {
+                String strCements = cements.stream().map(c -> CementManager.findById(c).getName()).collect(Collectors.joining(","));
+                createCell(row, columnCount++, strCements, style);
+            }else {
+                createCell(row, columnCount++, "", style);
+            }
+            createCell(row, columnCount++, stockFormDTO.getJsonImgs(), style);
         }
     }
 

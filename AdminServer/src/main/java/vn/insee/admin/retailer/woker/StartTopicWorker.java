@@ -4,13 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jobrunr.jobs.annotations.Job;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import vn.insee.admin.retailer.controller.dto.TopicDTO;
 import vn.insee.admin.retailer.service.LightingQuizPromotionService;
 import vn.insee.admin.retailer.service.UserService;
+import vn.insee.admin.retailer.woker.task.TopicTask;
 import vn.insee.common.Constant;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 
@@ -33,7 +33,7 @@ public class StartTopicWorker {
     }
 
     @Job(name = "NOTY_UPCOMING_TOPIC", retries = 1)
-    public void execute(NotyUpcomingTopicTask task) {
+    public void execute(TopicTask task) {
         try{
             int promotionId = task.getPromotionId();
             String topicId = task.getTopicId();

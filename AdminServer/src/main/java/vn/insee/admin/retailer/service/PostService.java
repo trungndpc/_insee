@@ -16,6 +16,7 @@ import vn.insee.jpa.specification.PostSpecification;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class PostService {
@@ -77,7 +78,7 @@ public class PostService {
     public PostEntity findPost(int promotionId, UserEntity userEntity) {
         long currentTime = System.currentTimeMillis();
         List<PostEntity> postEntities = postRepository.findAllByOrderByUpdatedTimeDesc();
-        Optional<PostEntity> first = postEntities.stream().filter(post -> post.getPromotionId() == promotionId)
+        Optional<PostEntity> first = postEntities.stream().filter(post -> post.getPromotionId() != null && post.getPromotionId() == promotionId)
                 .filter(post -> {
                     if (post.getDistrictIds() != null) {
                         return post.getDistrictIds().contains(userEntity.getDistrictId());

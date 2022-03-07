@@ -6,10 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import vn.insee.admin.retailer.message.PostBroadcastMessage;
-import vn.insee.admin.retailer.woker.PostNormalBroadcastTask;
+import vn.insee.admin.retailer.woker.task.PostBroadcastTask;
 import vn.insee.admin.retailer.woker.Scheduler;
+import vn.insee.admin.retailer.woker.task.ZNSBroadcastTask;
 import vn.insee.common.status.StatusBroadcast;
+import vn.insee.common.type.TypeBroadcast;
 import vn.insee.jpa.entity.BroadcastEntity;
 import vn.insee.jpa.repository.BroadcastRepository;
 
@@ -60,16 +61,31 @@ public class BroadcastService {
             LocalDateTime triggerTime =
                     LocalDateTime.ofInstant(Instant.ofEpochMilli(broadcastEntity.getTimeStart()),
                             TimeZone.getDefault().toZoneId());
-            PostNormalBroadcastTask postNormalBroadcastTask = new PostNormalBroadcastTask();
-            postNormalBroadcastTask.setBroadcastId(broadcastEntity.getId());
-            postNormalBroadcastTask.setPostId(broadcastEntity.getPostId());
-            postNormalBroadcastTask.setUids(broadcastEntity.getUserIds());
-            String jobId = scheduler.addJob(triggerTime, postNormalBroadcastTask);
-            broadcastEntity.setJobId(jobId);
-            broadcastEntity.setStatus(status);
-            broadcastRepository.saveAndFlush(broadcastEntity);
+
+            if (broadcastEntity.getType() == TypeBroadcast.BROADCAST_NORMAL_POST) {
+
+                PostBroadcastTask postNormalBroadcastTask = new PostBroadcastTask();
+                postNormalBroadcastTask.setBroadcastId(broadcastEntity.getId());
+                postNormalBroadcastTask.setPostId(broadcastEntity.getPostId());
+                postNormalBroadcastTask.setUids(broadcastEntity.getUserIds());
+                String jobId = scheduler.addJob(triggerTime, postNormalBroadcastTask);
+                broadcastEntity.setJobId(jobId);
+                broadcastEntity.setStatus(status);
+                broadcastRepository.saveAndFlush(broadcastEntity);
+            }
+
+            if (broadcastEntity.getType() == TypeBroadcast.REQUEST_REGISTER_ZNS) {
+                ZNSBroadcastTask znsBroadcastTask = new ZNSBroadcastTask();
+                znsBroadcastTask.setBroadcastId(broadcastEntity.getId());
+                znsBroadcastTask.setUids(broadcastEntity.getUserIds());
+                String jobId = scheduler.addZNSBroadcastJob(triggerTime, znsBroadcastTask);
+                broadcastEntity.setJobId(jobId);
+                broadcastEntity.setStatus(status);
+                broadcastRepository.saveAndFlush(broadcastEntity);
+            }
             return 0;
         }
+
         broadcastEntity.setStatus(status);
         broadcastRepository.saveAndFlush(broadcastEntity);
         return 0;
