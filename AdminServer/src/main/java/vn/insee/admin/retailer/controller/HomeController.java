@@ -34,13 +34,10 @@ public class HomeController {
     @Autowired
     private Scheduler scheduler;
 
-    @Autowired
-    ReadFileExcelUtil readFileExcelUtil;
     @GetMapping(value = "/test", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String test(HttpServletRequest request, HttpServletResponse response) throws
             IOException {
-//        readFileExcelUtil.readUser();
         return "OK";
     }
 
