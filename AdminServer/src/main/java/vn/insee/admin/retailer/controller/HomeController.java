@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.controller.converter.UserConverter;
 import vn.insee.admin.retailer.service.UserService;
+import vn.insee.admin.retailer.util.ReadFileExcelUtil;
 import vn.insee.admin.retailer.util.RenderUtils;
 import vn.insee.admin.retailer.woker.Scheduler;
 
@@ -33,11 +34,13 @@ public class HomeController {
     @Autowired
     private Scheduler scheduler;
 
-
+    @Autowired
+    ReadFileExcelUtil readFileExcelUtil;
     @GetMapping(value = "/test", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
     public String test(HttpServletRequest request, HttpServletResponse response) throws
             IOException {
+//        readFileExcelUtil.readUser();
         return "OK";
     }
 

@@ -29,10 +29,12 @@ public class UserReceivedZNSEvent extends ZaloEvent{
             UserReceivedZNSMessage.Content message = userReceivedZNSMessage.getMessage();
             String phoneTracking = message.getTrackingId();
             UserEntity userEntity = userService.findByPhone(phoneTracking);
+            LOGGER.error(userEntity);
             if (userEntity != null) {
                 if (userEntity.getStatus() != StatusUser.WAITING_ACTIVE) {
                     throw new Exception("status user is not waiting active");
                 }
+                LOGGER.error("update: setFollowerId: " + userReceivedZNSMessage.recipient.id);
                 userEntity.setFollowerId(userReceivedZNSMessage.recipient.id);
             }
             userService.saveOrUpdate(userEntity);
