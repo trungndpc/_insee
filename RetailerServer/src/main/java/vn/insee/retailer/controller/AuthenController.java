@@ -42,6 +42,7 @@ public class AuthenController {
                            @RequestParam(required = false) String continueUrl,
                            @RequestParam(required = false) String code,
                            @RequestParam(required = false) String src,
+                           @RequestParam(required = false) String utm,
                            HttpServletResponse response) throws Exception {
         UserEntity user = AuthenticationUtils.getAuthUser(authentication);
         if (user == null && StringUtils.isEmpty(code)) {
@@ -53,9 +54,19 @@ public class AuthenController {
                 if (!StringUtils.isEmpty(src)) {
                     hookBuilder.append("&src=" + src);
                 }
+                if (!StringUtils.isEmpty(utm)) {
+                    hookBuilder.append("&utm=" + utm);
+                }
             }else {
                 if (!StringUtils.isEmpty(src)) {
                     hookBuilder.append("?src=" + src);
+                    if (!StringUtils.isEmpty(utm)) {
+                        hookBuilder.append("&utm=" + utm);
+                    }
+                }else {
+                    if (!StringUtils.isEmpty(utm)) {
+                        hookBuilder.append("?utm=" + utm);
+                    }
                 }
             }
             StringBuilder urlAuthenZaloBuilder = new StringBuilder(AppCommon.INSTANCE.getAuthenZaloUrl());
@@ -82,6 +93,10 @@ public class AuthenController {
             if (user == null) {
                 response.sendRedirect("/oops");
                 return "OK";
+            }
+
+            if (!StringUtils.isEmpty(utm)) {
+                user.setUtm(utm);
             }
 
             user.setRoleId(Permission.RETAILER.getId());

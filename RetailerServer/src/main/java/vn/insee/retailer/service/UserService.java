@@ -7,6 +7,7 @@ import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
 import vn.insee.jpa.specification.UserSpecification;
+import vn.insee.retailer.util.StringUtils;
 
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class UserService {
             }
         }
         userEntity.setStatus(StatusUser.WAIT_APPROVAL);
+        if (!StringUtils.isEmpty(userEntity.getUtm()) && "WORKSHOP_001".equals(userEntity.getUtm())) {
+            userEntity.setStatus(StatusUser.APPROVED);
+        }
         userRepository.saveAndFlush(userEntity);
         return userEntity;
     }

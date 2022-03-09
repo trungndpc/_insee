@@ -95,7 +95,7 @@ public class UserController {
             UserExcelExporter excelExporter = new UserExcelExporter(list);
             excelExporter.export(response);
         }catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

@@ -12,6 +12,9 @@ import vn.insee.jpa.entity.UserEntity;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class UserExcelExporter {
@@ -40,6 +43,7 @@ public class UserExcelExporter {
         createCell(row, 4, "CITY", style);
         createCell(row, 5, "DISTRICT", style);
         createCell(row, 6, "ADDRESS", style);
+        createCell(row, 7, "DATE", style);
     }
 
     private void writeDataLines() {
@@ -57,9 +61,13 @@ public class UserExcelExporter {
             createCell(row, columnCount++, user.getPhone(), style);
             createCell(row, columnCount++, user.getInseeId(), style);
             createCell(row, columnCount++, user.getName(), style);
-            createCell(row, columnCount++, City.findCityById(user.getCityId()), style);
-            createCell(row, columnCount++, City.findDistrictById(user.getDistrictId()), style);
+            createCell(row, columnCount++, (user.getCityId() != null && user.getCityId() > 0 ) ? City.findCityById(user.getCityId()) : "", style);
+            createCell(row, columnCount++, (user.getDistrictId() != null && user.getDistrictId() > 0 ) ? City.findDistrictById(user.getDistrictId()) : "", style);
             createCell(row, columnCount++, user.getAddress(), style);
+            DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm");
+
+            String currentDateTime = dateFormatter.format(new Date(user.getCreatedTime().toEpochSecond() * 1000));
+            createCell(row, columnCount++, currentDateTime, style);
         }
     }
 

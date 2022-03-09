@@ -32,6 +32,7 @@ public class UserEntity extends BaseEntity {
     private Integer pairingId;
     private String inseeId;
     private String note;
+    private String utm;
 
     @Type(type = "list-array")
     @Column(name = "products", columnDefinition = "integers[]")
@@ -187,5 +188,13 @@ public class UserEntity extends BaseEntity {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getUtm() {
+        return utm;
+    }
+
+    public void setUtm(String utm) {
+        this.utm = utm;
     }
 }
