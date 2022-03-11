@@ -28,7 +28,7 @@ public class ApprovedUserMessage extends Message {
 
     private ZaloMessage buildMsg() {
         ZaloMessage zaloMessage = ZaloMessage.toTextMessage("Chúc mừng anh " + title + " đã được xác nhận là khách hàng của INSEE. " +
-                "Giờ đây anh chỉ có thể tham gia các chương trình khuyến mãi độc quyền của INSEE");
+                "Giờ đây anh chị có thể tham gia các chương trình khuyến mãi độc quyền của INSEE");
         return zaloMessage;
     }
 }

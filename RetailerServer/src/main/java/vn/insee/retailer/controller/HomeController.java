@@ -90,7 +90,7 @@ public class HomeController {
                 return "OK";
             }
         }
-        response.sendRedirect("/ko-co-khuyen-mai");
+        response.sendRedirect("/");
         return "OK";
     }
 

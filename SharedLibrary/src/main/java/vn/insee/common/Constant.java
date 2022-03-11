@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Constant {
-    public static String ADMIN_DOMAIN;
+    public static final String ADMIN_DOMAIN = "https://admin.insee.udev.com.vn";
     public static String ADMIN_DOMAIN_WITHOUT_PROTOCOL;
     public static final String CLIENT_DOMAIN = "https://cuahang.insee.udev.com.vn";
     public static String PREFIX_ADMIN_CONTROLLER;
@@ -19,12 +19,6 @@ public class Constant {
     public static String ZALO_OA_REQUEST_OA_INFO;
 
     public static String CONTENT_RESPONSE_TO_REDIRECT = "REDIRECT";
-
-    @Value("${domain.admin}")
-    public void setAdminDomain(String adminDomain) {
-        ADMIN_DOMAIN = adminDomain;
-        ADMIN_DOMAIN_WITHOUT_PROTOCOL = adminDomain.replace("https://", "").replace("http://", "");
-    }
 
     @Value("${domain.prefix.admin.controller}")
     public void setPrefixAdminController(String prefixAdminController) {

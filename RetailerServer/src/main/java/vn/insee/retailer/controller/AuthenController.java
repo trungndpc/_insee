@@ -133,14 +133,18 @@ public class AuthenController {
         if(userEntity == null) {
             userEntity = new UserEntity();
             userEntity.setId(0);
-
             //Waiting event follow
-            Integer id = null;
-            while (id != null) {
-                id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
-                try {
-                    Thread.sleep(200);
-                }catch (Exception e) {
+            Integer id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
+            if (id == null){
+                for (int i = 0; i < 10; i++) {
+                    id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
+                    if (id != null) {
+                        break;
+                    }
+                    try {
+                        Thread.sleep(200);
+                    }catch (Exception e) {
+                    }
                 }
             }
             userEntity = userRepository.getOne(id);

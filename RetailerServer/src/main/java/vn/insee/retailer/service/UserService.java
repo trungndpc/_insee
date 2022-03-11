@@ -1,8 +1,13 @@
 package vn.insee.retailer.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import vn.insee.common.Constant;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.UserRepository;
@@ -13,7 +18,8 @@ import java.util.List;
 
 @Service
 public class UserService {
-
+    private final RestTemplate restTemplate = new RestTemplate();
+    private static final Logger LOGGER = LogManager.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
 
@@ -38,10 +44,12 @@ public class UserService {
             }
         }
         userEntity.setStatus(StatusUser.WAIT_APPROVAL);
-        if (!StringUtils.isEmpty(userEntity.getUtm()) && "WORKSHOP_001".equals(userEntity.getUtm())) {
-            userEntity.setStatus(StatusUser.APPROVED);
-        }
         userRepository.saveAndFlush(userEntity);
+        if (!StringUtils.isEmpty(userEntity.getUtm()) && "WORKSHOP_001".equals(userEntity.getUtm())) {
+            ResponseEntity<String> responseEntity = this.restTemplate.getForEntity(Constant.ADMIN_DOMAIN
+                    + "/int/auto-approved?uid=" + userEntity.getId(), String.class);
+            LOGGER.info(responseEntity);
+        }
         return userEntity;
     }
 

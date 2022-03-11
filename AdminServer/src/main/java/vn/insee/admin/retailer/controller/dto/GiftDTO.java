@@ -9,6 +9,7 @@ public class GiftDTO {
     private Integer status;
     private Integer userId;
     private String title;
+    private UserDTO user;
 
     public Integer getId() {
         return id;
@@ -48,5 +49,13 @@ public class GiftDTO {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
     }
 }

@@ -33,6 +33,9 @@ public class FormConverter {
         PromotionEntity promotionEntity = promotionRepository.getOne(historyDTO.getPromotionId());
         historyDTO.setPromotionName(promotionEntity.getTitle());
         historyDTO.setTime(formEntity.getUpdatedTime().toEpochSecond());
+        if (formEntity.getGifts() != null) {
+            historyDTO.setGiftId(formEntity.getGifts().get(0));
+        }
         return historyDTO;
     }
 

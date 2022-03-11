@@ -46,7 +46,9 @@ public class PostService {
     public PostEntity findPost(int promotionId, UserEntity userEntity) {
         long currentTime = System.currentTimeMillis();
         List<PostEntity> postEntities = postRepository.findAllByOrderByUpdatedTimeDesc();
-        Optional<PostEntity> first = postEntities.stream().filter(post -> post.getPromotionId() == promotionId)
+        Optional<PostEntity> first = postEntities.stream().filter(post -> {
+                    return post.getPromotionId() != null && post.getPromotionId() == promotionId;
+                })
                 .filter(post -> {
                     if (post.getDistrictIds() != null) {
                         return post.getDistrictIds().contains(userEntity.getDistrictId());

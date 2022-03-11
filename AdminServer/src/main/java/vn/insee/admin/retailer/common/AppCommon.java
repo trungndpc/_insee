@@ -9,33 +9,27 @@ public class AppCommon {
     }
 
     public long getOAId() {
-        //Todo
-        return 428332895304538762l;
+        return 2222725635797558435l;
     }
 
     public String getDomain() {
-        //Todo
         return "https://cuahang.insee.udev.com.vn";
     }
 
     public long getZaloAppId() {
-        //Todo
         return 1509917773870835507l;
     }
 
     public String getSecretZaloApp() {
-        //Todo
         return "rVt8VXsrjHrDjT87c6NP";
     }
 
     public String getVersion() {
-        //Todo
         return "1.0.0";
     }
 
     public String getAccessToken() {
-        //Todo
-        return  "KHSc0tA2u1rM6IW1VOBd5bqRBGbvcPrX6nWQFaFvaryw6YufJT3XDYaxA6fOv8Sp9Hym9MNP-6v7G6WCROdEJ4OMULSsZyqSJX1Y00thh61a46eG9Fx7KMHWOWqyeULwNbKkEY6CbcL2HYKI8AlYLMTYAIj1XfD8Qs8OL1gjWZT1IoXv0DNd9N01BtWduvSkOpibKqMkbqW1JmuEMhE840TcEdHSeuvYF5KUVnszjp59O2PV2u6CIK1RF1ShlRiLVoGpRLZT-G0iDdH2NDN83nmHNt1dzkqMEn1WSqcCgXGC4XPi4wp_Bt6Lw1a";
+        return  "kSHIKb19Odg-obnGNqbbSRN8MLXRKcWhsxGNGK5QJM-il6a31L0iGBNH4H0BFtLlbVWlCNGeQ7dZommgSYmoQlEhMJOS9s9alC9JDomNErV0qGCyTrTOOTcrA39sNcbdtO0B1Yb3DMk2nmiG6XHkOxBkB3qQTsvxWV4B0myaCYcHv4Xq7GSIDAtYJLqY93KZdQOAL7HqHGZ8aGbY8MfmGvwQL6ez6Hesfk9cPZGVApAKoabHFY4M3xJwLYCQ9prvigDWAmvbM76PkGu_BJfIQ9dsAXftE6vAuReZ55ayRMAvnY5BsRG96LDUQdu";
     }
 
 }

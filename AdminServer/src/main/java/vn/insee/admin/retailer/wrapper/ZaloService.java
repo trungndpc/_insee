@@ -81,7 +81,7 @@ public class ZaloService {
         form.put("tracking_id", trackingDataID);
         form.put("template_data", templateData);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("access_token", "ij110ywNZo2rtay1mPU8AxxSIWd5ZFzzliPi0OFj-72stMO8l_FGAg7X55U_-8SGdRuwHuQsXW2bbnfPZx6NU9E951AtXR1qZvK2FBEocqQMYYypbhAJLuY71Y60off1cFqK9fRNim3jxN5WoVJU5BodUKd0bySPpfv9GhQdv1YBi71FcAAnC_cI2dZQdee1tOm_PU32yG39_ZvLmkcO0Tx512R4xwD7xUDZ6vBsnb-Lkt8zwFR4QSxlGX_ZyE17ci9E7PVGWNwgc4OEWfw9IO6pCmoW_8bNlFCv5vxiY4t_w4O8J7xt4is0XoG");
+        headers.add("access_token", AppCommon.INSTANCE.getAccessToken());
         HttpEntity<String> entity = new HttpEntity<>(form.toString(), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(ZNS_END_POINT, entity, String.class);
         return response.getStatusCode() == HttpStatus.OK;

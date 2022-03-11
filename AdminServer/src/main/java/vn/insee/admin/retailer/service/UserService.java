@@ -78,6 +78,8 @@ public class UserService {
         }
         return userRepository.findAll(specs, pageable);
     }
+
+
     public List<UserEntity> list(String search, Integer status, Integer location) {
         Specification<UserEntity> specs =  Specification.where(null);
         if (search != null && !search.isEmpty()) {
