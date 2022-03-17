@@ -187,4 +187,42 @@ public class ReadFileExcelUtil {
         }
     }
 
+    public void readUserV2() {
+        try {
+            List<String> phones = readFile2List(City.class.getResourceAsStream("../../../../../data/CUSTOMER.txt"));
+            InputStream inputStream = City.class.getResourceAsStream("../../../../../data/CAMPAIGN_INSEE_ZALO_USER.xlsx");
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet datatypeSheet = workbook.getSheetAt(0);
+            DataFormatter fmt = new DataFormatter();
+            Iterator<Row> iterator = datatypeSheet.iterator();
+            Row firstRow = iterator.next();
+            int count = 0;
+            List<String> phone_2 = new ArrayList<>();
+            StringBuilder builder = new StringBuilder();
+            while (iterator.hasNext()) {
+                try{
+                    UserEntity userEntity = new UserEntity();
+                    Row currentRow = iterator.next();
+                    userEntity.setFollowerId(currentRow.getCell(1).getStringCellValue());
+                    userEntity.setPhone(currentRow.getCell(2).getStringCellValue());
+                    userEntity.setZaloId(currentRow.getCell(7).getStringCellValue());
+                    if (phones.contains(userEntity.getPhone())) {
+                        phone_2.add(userEntity.getPhone());
+                        builder.append(userEntity.getPhone() + ":" + userEntity.getZaloId());
+                        builder.append(",");
+                        count++;
+                    }
+                }catch (Exception e) {
+                }
+            }
+            System.out.println("COUNT: " + count);
+            System.out.println(builder.toString());
+            workbook.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

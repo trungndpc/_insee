@@ -137,6 +137,7 @@ public class AuthenController {
             Integer id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
             if (id == null){
                 for (int i = 0; i < 10; i++) {
+                    userEntity = userRepository.findByZaloId(zaloUserEntity.getId());
                     id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
                     if (id != null) {
                         break;
