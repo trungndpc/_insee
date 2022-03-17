@@ -25,6 +25,7 @@ public class UserReceivedZNSEvent extends ZaloEvent{
     @Override
     public boolean process(ZaloWebhookMessage zaloWebhookMessage) {
         try{
+            LOGGER.info("...................................................");
             UserReceivedZNSMessage userReceivedZNSMessage = ((UserReceivedZNSMessage)zaloWebhookMessage);
             UserReceivedZNSMessage.Content message = userReceivedZNSMessage.getMessage();
             String phoneTracking = message.getTrackingId();
