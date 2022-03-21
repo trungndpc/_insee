@@ -137,7 +137,7 @@ public class AuthenController {
             Integer id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
             if (id == null){
                 for (int i = 0; i < 10; i++) {
-                    userEntity = userRepository.findByZaloId(zaloUserEntity.getId());
+//                    userEntity = userRepository.findByZaloId(zaloUserEntity.getId());
                     id = MAP_FOLLOWER.getOrDefault(zaloUserEntity.getId(), null);
                     if (id != null) {
                         break;
@@ -164,6 +164,20 @@ public class AuthenController {
                 userEntity.setBirthday(TimeUtil.getTime(zaloUserEntity.getBirthday()));
             }
         }
+
+        if (userEntity.getStatus() == StatusUser.WAITING_ACTIVE) {
+            userEntity.setStatus(StatusUser.APPROVED);
+            userEntity.setRoleId(Permission.RETAILER.getId());
+            userEntity.setAvatar(zaloUserEntity.getAvatar());
+            userEntity.setPassword(new String());
+            userEntity.setRoleId(Permission.RETAILER.getId());
+            if (!StringUtils.isEmpty(zaloUserEntity.getBirthday())) {
+                userEntity.setBirthday(TimeUtil.getTime(zaloUserEntity.getBirthday()));
+            }
+            userRepository.saveAndFlush(userEntity);
+            return userEntity;
+        }
+
 
         if (!StringUtils.isEmpty(src)) {
             try {

@@ -61,9 +61,10 @@ public class HomeController {
 
     @GetMapping(value = "/gioi-thieu-chuong-trinh-moi", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String introduce() throws
+    public String introduce(HttpServletResponse response) throws
             IOException {
-        return RenderUtils.render("index.html");
+        response.sendRedirect("/");
+        return "OK";
     }
 
 

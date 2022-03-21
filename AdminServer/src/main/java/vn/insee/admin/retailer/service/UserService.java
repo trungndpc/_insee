@@ -13,6 +13,7 @@ import vn.insee.admin.retailer.common.UserStatus;
 import vn.insee.admin.retailer.message.ApprovedUserMessage;
 import vn.insee.admin.retailer.message.RejectedUserMessage;
 import vn.insee.admin.retailer.message.User;
+import vn.insee.common.Permission;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.metric.UserCityMetric;
@@ -43,6 +44,7 @@ public class UserService {
         if (exitUserEntity != null) {
             throw new Exception("phone is exits!");
         }
+        customer.setRoleId(Permission.RETAILER.getId());
         customer.setStatus(UserStatus.WAITING_ACTIVE);
         customer = userRepository.saveAndFlush(customer);
         return customer;

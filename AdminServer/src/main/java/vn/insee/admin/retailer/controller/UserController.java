@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.common.UserStatus;
@@ -14,10 +15,11 @@ import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.UserDTO;
 import vn.insee.admin.retailer.controller.dto.dashboard.CountUserDTO;
 import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
-import vn.insee.admin.retailer.controller.export.UserExcelExporter;
+import vn.insee.admin.retailer.controller.exporter.UserExcelExporter;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
+import vn.insee.admin.retailer.controller.importer.CustomerExcelImporter;
 import vn.insee.admin.retailer.service.UserService;
-import vn.insee.common.status.StatusUser;
+import vn.insee.common.Permission;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.metric.UserCityMetric;
 import vn.insee.jpa.metric.UserDataMetric;
@@ -199,6 +201,30 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+    @PostMapping("/upload-customer-excel")
+    public ResponseEntity<BaseResponse> uploadFile(@RequestParam("file") MultipartFile file) {
+        BaseResponse response = new BaseResponse();
+        try{
+            List<UserEntity> entityList = CustomerExcelImporter.INSTANCE.read(file.getInputStream());
+            if (entityList == null) {
+                throw new Exception("can not parse file");
+            }
+            if (entityList.size() <= 0) {
+                throw new Exception("file is empty");
+            }
+            for (UserEntity user: entityList) {
+                user.setRoleId(Permission.RETAILER.getId());
+                user.setStatus(UserStatus.WAITING_ACTIVE);
+                userService.saveOrUpdate(user);
+            }
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            response.setError(ErrorCode.FAILED);
+            response.setMsg(e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
 
 
 

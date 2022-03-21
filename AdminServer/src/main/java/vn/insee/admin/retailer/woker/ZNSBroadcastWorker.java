@@ -49,8 +49,9 @@ public class ZNSBroadcastWorker {
                     data.put("order_date", "01/01/2022");
                     String phone = userEntity.getPhone();
                     if (phone.startsWith("0")) {
-                        phone = phone.replace("0", "84");
+                        phone = phone.replaceFirst("0", "84");
                     }
+                    LOGGER.error("SEND................: " + phone);
                     ZaloService.INSTANCE.sendZNS(phone, TEMPLATE_ID, userEntity.getPhone(), data);
                     totalSuccessSend++;
                 }

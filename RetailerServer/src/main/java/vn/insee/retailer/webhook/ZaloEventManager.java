@@ -42,7 +42,7 @@ public class ZaloEventManager {
     private UserService userService;
 
     public void doing(JSONObject zaloMsg) throws Exception {
-        long userByAppId = zaloMsg.getLong("user_id_by_app");
+        LOGGER.info(zaloMsg);
         String eventName = zaloMsg.optString("event_name", "");
         switch (eventName) {
             case "follow":
@@ -54,6 +54,7 @@ public class ZaloEventManager {
                 userReceivedZNSEvent.process(receivedZNSMessage);
                 return;
             case "user_send_text":
+                long userByAppId = zaloMsg.getLong("user_id_by_app");
                 UserEntity userEntity = userService.findByZaloId(userByAppId);
                 if (userEntity == null) {
                     throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);

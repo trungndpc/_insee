@@ -84,6 +84,7 @@ public class ZaloService {
         headers.add("access_token", AppCommon.INSTANCE.getAccessToken());
         HttpEntity<String> entity = new HttpEntity<>(form.toString(), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(ZNS_END_POINT, entity, String.class);
+        LOGGER.info(response);
         return response.getStatusCode() == HttpStatus.OK;
     }
 }
