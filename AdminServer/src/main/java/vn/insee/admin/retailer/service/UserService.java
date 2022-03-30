@@ -125,13 +125,13 @@ public class UserService {
         return userEntity;
     }
 
-    public long count(Integer location, Integer status) {
+    public long count(Integer location, List<Integer> statuses) {
         Specification<UserEntity> specs =  Specification.where(null);
         if (location != null) {
             specs = specs.and(userSpecification.isCity(location));
         }
-        if (status != null) {
-            specs = specs.and(userSpecification.isStatus(status));
+        if (statuses != null) {
+            specs = specs.and(userSpecification.inStatus(statuses));
         }
         return userRepository.count(specs);
     }

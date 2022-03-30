@@ -167,6 +167,7 @@ public class AuthenController {
 
         if (userEntity.getStatus() == StatusUser.WAITING_ACTIVE) {
             userEntity.setStatus(StatusUser.APPROVED);
+            userEntity.setUtm("ZNS");
             userEntity.setRoleId(Permission.RETAILER.getId());
             userEntity.setAvatar(zaloUserEntity.getAvatar());
             userEntity.setPassword(new String());

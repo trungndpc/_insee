@@ -32,6 +32,12 @@ public class UserSpecification {
     }
 
 
+    public Specification<UserEntity> inStatus(List<Integer> statuses) {
+        return (root, query, builder) ->
+                root.get(UserEntity_.status).in(statuses);
+    }
+
+
     public Specification<UserEntity> likePhone(String phone) {
         return (root, query, builder) ->
                 builder.like(root.get(UserEntity_.phone), phone);

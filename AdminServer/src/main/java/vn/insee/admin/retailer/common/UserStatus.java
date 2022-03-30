@@ -7,5 +7,21 @@ public class UserStatus {
     public static final int WAIT_APPROVAL = 8;
     public static final int APPROVED = 10;
 
+    public static String findByName(int id) {
+        switch (id) {
+            case - 1:
+                return "Đã từ chối";
+            case 5 :
+                return "Chưa hoàn thành profile";
+            case 7 :
+                return "Chờ kích hoạt";
+            case 8 :
+                return "Chờ duyệt";
+            case 10 :
+                return "Đã duyệt";
+        }
+        return "";
+    }
+
 
 }

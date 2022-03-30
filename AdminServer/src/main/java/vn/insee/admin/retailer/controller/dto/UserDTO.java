@@ -21,6 +21,7 @@ public class UserDTO extends BaseDTO{
     private String address;
     private String inseeId;
     private Integer pairingId;
+    private String utm;
 
     public Integer getId() {
         return id;
@@ -140,5 +141,13 @@ public class UserDTO extends BaseDTO{
 
     public void setPairingId(Integer pairingId) {
         this.pairingId = pairingId;
+    }
+
+    public String getUtm() {
+        return utm;
+    }
+
+    public void setUtm(String utm) {
+        this.utm = utm;
     }
 }

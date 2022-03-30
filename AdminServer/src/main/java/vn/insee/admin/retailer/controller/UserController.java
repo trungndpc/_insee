@@ -27,6 +27,7 @@ import vn.insee.jpa.metric.UserDataMetric;
 import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,6 +95,7 @@ public class UserController {
             String headerKey = "Content-Disposition";
             String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
             response.setHeader(headerKey, headerValue);
+            list = list.stream().sorted((a, b) -> a.getCreatedTime().compareTo(b.getCreatedTime())).collect(Collectors.toList());
             UserExcelExporter excelExporter = new UserExcelExporter(list);
             excelExporter.export(response);
         }catch (Exception e) {
@@ -154,10 +156,10 @@ public class UserController {
         BaseResponse response = new BaseResponse();
         try{
             CountUserDTO countUserDTO = new CountUserDTO();
-            countUserDTO.setNumUser(userService.count(location, null));
-            countUserDTO.setNumApprovedUser(userService.count(location, UserStatus.APPROVED));
-            countUserDTO.setNumWaitingActiveUser(userService.count(location, UserStatus.WAITING_ACTIVE));
-            countUserDTO.setNumWaitingReviewUser(userService.count(location, UserStatus.WAIT_APPROVAL));
+            countUserDTO.setNumUser(userService.count(location, Arrays.asList(UserStatus.APPROVED, UserStatus.WAITING_ACTIVE, UserStatus.WAIT_APPROVAL)));
+            countUserDTO.setNumApprovedUser(userService.count(location, Arrays.asList(UserStatus.APPROVED)));
+            countUserDTO.setNumWaitingActiveUser(userService.count(location, Arrays.asList(UserStatus.WAITING_ACTIVE)));
+            countUserDTO.setNumWaitingReviewUser(userService.count(location, Arrays.asList(UserStatus.WAIT_APPROVAL)));
             response.setData(countUserDTO);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -213,7 +215,14 @@ public class UserController {
             if (entityList.size() <= 0) {
                 throw new Exception("file is empty");
             }
+            for (UserEntity user : entityList) {
+                if (userService.findByPhone(user.getPhone()) != null) {
+                    throw new Exception("phone is exits : "  + user.getPhone());
+                }
+            }
+
             for (UserEntity user: entityList) {
+                LOGGER.info("imported: " + user.getId());
                 user.setRoleId(Permission.RETAILER.getId());
                 user.setStatus(UserStatus.WAITING_ACTIVE);
                 userService.saveOrUpdate(user);
@@ -225,8 +234,4 @@ public class UserController {
         }
         return ResponseEntity.ok(response);
     }
-
-
-
-
 }
