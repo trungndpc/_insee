@@ -2,3 +2,5 @@
 RetailerServer/target/
 
 SharedLibrary/target/
+
+*.class
