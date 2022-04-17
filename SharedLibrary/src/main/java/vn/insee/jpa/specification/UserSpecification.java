@@ -31,6 +31,11 @@ public class UserSpecification {
                 root.get(UserEntity_.districtId).in(districtIds);
     }
 
+    public Specification<UserEntity> inStatus(List<Integer> statuses) {
+        return (root, query, builder) ->
+                root.get(UserEntity_.status).in(statuses);
+    }
+
 
     public Specification<UserEntity> inStatus(List<Integer> statuses) {
         return (root, query, builder) ->

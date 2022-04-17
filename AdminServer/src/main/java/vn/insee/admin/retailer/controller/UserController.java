@@ -156,7 +156,8 @@ public class UserController {
         BaseResponse response = new BaseResponse();
         try{
             CountUserDTO countUserDTO = new CountUserDTO();
-            countUserDTO.setNumUser(userService.count(location, Arrays.asList(UserStatus.APPROVED, UserStatus.WAITING_ACTIVE, UserStatus.WAIT_APPROVAL)));
+            countUserDTO.setNumUser(userService.count(location, Arrays.asList(UserStatus.APPROVED,
+                    UserStatus.WAITING_ACTIVE, UserStatus.WAIT_APPROVAL)));
             countUserDTO.setNumApprovedUser(userService.count(location, Arrays.asList(UserStatus.APPROVED)));
             countUserDTO.setNumWaitingActiveUser(userService.count(location, Arrays.asList(UserStatus.WAITING_ACTIVE)));
             countUserDTO.setNumWaitingReviewUser(userService.count(location, Arrays.asList(UserStatus.WAIT_APPROVAL)));
