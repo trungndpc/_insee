@@ -1,5 +1,7 @@
 package vn.insee.admin.retailer.controller.importer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CustomerExcelImporter {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final CustomerExcelImporter INSTANCE = new CustomerExcelImporter();
 
     public List<UserEntity> read(InputStream inputStream) throws Exception {
@@ -27,16 +30,19 @@ public class CustomerExcelImporter {
         while (iterator.hasNext()) {
             UserEntity userEntity = new UserEntity();
             Row currentRow = iterator.next();
-            userEntity.setPhone(currentRow.getCell(0).getStringCellValue());
-            if (!userEntity.getPhone().startsWith("0")) {
-                throw new Exception("phone is valid");
+            Cell phoneCell = currentRow.getCell(0);
+            if (phoneCell != null) {
+                userEntity.setPhone(phoneCell.getStringCellValue());
+                if (!userEntity.getPhone().startsWith("0")) {
+                    throw new Exception("phone is valid");
+                }
+                userEntity = getInseeCode(currentRow.getCell(1), userEntity);
+                userEntity = getName(currentRow.getCell(2), userEntity);
+                userEntity = getCity(currentRow.getCell(4), userEntity);
+                userEntity = getDistrict(currentRow.getCell(3), userEntity);
+                userEntity = getCements(currentRow.getCell(5), userEntity);
+                users.add(userEntity);
             }
-            userEntity = getInseeCode(currentRow.getCell(1), userEntity);
-            userEntity = getName(currentRow.getCell(2), userEntity);
-            userEntity = getCity(currentRow.getCell(4), userEntity);
-            userEntity = getDistrict(currentRow.getCell(3), userEntity);
-            userEntity = getCements(currentRow.getCell(5), userEntity);
-            users.add(userEntity);
         }
         workbook.close();
         return users;

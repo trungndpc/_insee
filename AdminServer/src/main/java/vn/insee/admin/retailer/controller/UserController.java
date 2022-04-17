@@ -222,13 +222,13 @@ public class UserController {
             }
 
             for (UserEntity user: entityList) {
-                LOGGER.info("imported: " + user.getId());
+                LOGGER.info("imported: " + user.getPhone());
                 user.setRoleId(Permission.RETAILER.getId());
                 user.setStatus(UserStatus.WAITING_ACTIVE);
                 userService.saveOrUpdate(user);
             }
         }catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             response.setError(ErrorCode.FAILED);
             response.setMsg(e.getMessage());
         }
