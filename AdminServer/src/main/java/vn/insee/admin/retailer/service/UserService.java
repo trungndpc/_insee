@@ -140,8 +140,8 @@ public class UserService {
         return userRepository.statisticUserByCity();
     }
 
-    public List<UserDataMetric> statisticUserByDate() {
-        return userRepository.statisticUserByDate();
+    public List<UserDataMetric> statisticUserByDate(List<Integer> statuses) {
+        return userRepository.statisticUserByDate(statuses);
     }
 
     public List<UserEntity> findBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {

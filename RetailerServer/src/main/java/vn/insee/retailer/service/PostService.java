@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.common.status.StatusPost;
+import vn.insee.common.type.TypeUser;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PostRepository;
@@ -24,22 +25,13 @@ public class PostService {
     public List<PostEntity> findPost(UserEntity userEntity) {
         long currentTime = System.currentTimeMillis();
         List<PostEntity> postEntities = postRepository.findAllByOrderByUpdatedTimeDesc();
-        postEntities = postEntities.stream().filter(post -> post.getStatus() == StatusPost.PUBLISHED)
-        .filter(post -> {
-            if (post.getCityIds() != null) {
-                return post.getCityIds().contains(userEntity.getCityId());
-            }
-            return true;
-        }).filter(post -> {
-            if (post.getDistrictIds() != null) {
-                return post.getDistrictIds().contains(userEntity.getDistrictId());
-            }
-            return true;
-        }).filter(post -> {
-            return currentTime >= post.getTimeStart();
-        }).filter(post -> {
-            return currentTime <= post.getTimeEnd();
-        }).collect(Collectors.toList());
+        postEntities = postEntities.stream()
+                .filter(post -> post.getUserTarget() == TypeUser.CONSTRUCTOR)
+                .filter(post -> post.getStatus() == StatusPost.PUBLISHED)
+                .filter(post -> post.getCityIds() != null ? post.getCityIds().contains(userEntity.getCityId()) : true)
+                .filter(post -> post.getDistrictIds() != null ? post.getDistrictIds().contains(userEntity.getDistrictId()) : true)
+                .filter(post -> currentTime >= post.getTimeStart() && currentTime <= post.getTimeEnd())
+                .collect(Collectors.toList());
         return postEntities;
     }
 

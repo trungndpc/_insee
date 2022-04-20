@@ -3,6 +3,7 @@ package vn.insee.jpa.custom.impl;
 import org.springframework.stereotype.Repository;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.custom.UserRepositoryCustom;
+import vn.insee.jpa.entity.FormEntity_;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.UserEntity_;
 import vn.insee.jpa.metric.UserCityMetric;
@@ -40,11 +41,12 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public List<UserDataMetric> statisticUserByDate() {
+    public List<UserDataMetric> statisticUserByDate(List<Integer> statuses) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         Root<UserEntity> root = query.from(UserEntity.class);
         Expression<Date> dateExpression = root.get(UserEntity_.createdTime).as(Date.class);
+        query.where(root.get(UserEntity_.status).in(statuses));
         query.groupBy(dateExpression);
         query.orderBy(cb.desc(dateExpression));
         query.multiselect(dateExpression, cb.count(root.get(UserEntity_.id)));

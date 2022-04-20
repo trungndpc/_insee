@@ -3,7 +3,6 @@ package vn.insee.admin.retailer.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
-import vn.insee.admin.retailer.controller.dto.TopicDTO;
 import vn.insee.admin.retailer.message.TopLeaderBoardLightingQuizMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusLightingQuizForm;

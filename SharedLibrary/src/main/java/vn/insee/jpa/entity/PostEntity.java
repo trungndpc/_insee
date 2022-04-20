@@ -33,6 +33,8 @@ public class PostEntity extends BaseEntity {
     @Column(name = "district_ids",columnDefinition = "integer[]")
     private List<Integer> districtIds;
 
+    private int userTarget;
+
 
     public Integer getId() {
         return id;
@@ -120,5 +122,13 @@ public class PostEntity extends BaseEntity {
 
     public void setDistrictIds(List<Integer> districtIds) {
         this.districtIds = districtIds;
+    }
+
+    public int getUserTarget() {
+        return userTarget;
+    }
+
+    public void setUserTarget(int userTarget) {
+        this.userTarget = userTarget;
     }
 }

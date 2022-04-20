@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface UserRepositoryCustom {
     List<UserCityMetric> statisticUserByCity();
-    List<UserDataMetric> statisticUserByDate();
+    List<UserDataMetric> statisticUserByDate(List<Integer> statuses);
 }

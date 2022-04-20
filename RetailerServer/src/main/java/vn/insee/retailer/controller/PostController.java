@@ -35,10 +35,6 @@ public class PostController {
     public ResponseEntity<BaseResponse> getById(@RequestParam(required = true) int id, Authentication auth) {
         BaseResponse response = new BaseResponse();
         try{
-//            UserEntity user = AuthenticationUtils.getAuthUser(auth);
-//            if (user == null) {
-//                throw new Exception("not permission");
-//            }
             PostEntity postEntity = postService.get(id);
             response.setData(postConverter.convert2DTO(postEntity));
         }catch (Exception e) {

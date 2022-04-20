@@ -1,0 +1,6 @@
+2022-03-28 08:53:18.902  INFO trungnd2 --- [extShutdownHook] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'taskScheduler'
+2022-03-28 08:53:18.908  INFO trungnd2 --- [extShutdownHook] o.j.d.JobRunrDashboardWebServer          : JobRunr dashboard stopped
+2022-03-28 08:53:18.911  INFO trungnd2 --- [extShutdownHook] o.j.s.BackgroundJobServer                : BackgroundJobServer and BackgroundJobPerformers stopped
+2022-03-28 08:53:18.911  INFO trungnd2 --- [extShutdownHook] o.s.s.c.ThreadPoolTaskExecutor           : Shutting down ExecutorService 'applicationTaskExecutor'
+2022-03-28 08:53:18.917  INFO trungnd2 --- [extShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2022-03-28 08:53:18.918  INFO trungnd2 --- [extShutdownHook] c.z.h.HikariDataSource                   : HikariPool-1 - Shutdown initiated...

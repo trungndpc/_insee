@@ -68,7 +68,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <sources>
-                                <source>target/generated-sources/annotations</source>
+                                <basedir>${basedir}/target/generated-sources/annotations</basedir>
                             </sources>
                         </configuration>
                     </execution>

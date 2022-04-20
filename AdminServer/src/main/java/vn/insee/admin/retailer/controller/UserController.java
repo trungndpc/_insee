@@ -20,6 +20,7 @@ import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.controller.importer.CustomerExcelImporter;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.common.Permission;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.metric.UserCityMetric;
 import vn.insee.jpa.metric.UserDataMetric;
@@ -174,7 +175,7 @@ public class UserController {
     public ResponseEntity<BaseResponse> statisticUserByDate() {
         BaseResponse response = new BaseResponse();
         try{
-            List<UserDataMetric> userDataMetrics = userService.statisticUserByDate();
+            List<UserDataMetric> userDataMetrics = userService.statisticUserByDate(Arrays.asList(StatusUser.APPROVED));
             List<UserDataMetricDTO> dtos = userDataMetrics.stream().map(userDataMetric -> {
                 return userConverter.convert2DTO(userDataMetric);
             }).collect(Collectors.toList());
