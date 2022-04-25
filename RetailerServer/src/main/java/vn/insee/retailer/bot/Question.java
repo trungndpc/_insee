@@ -2,6 +2,7 @@ package vn.insee.retailer.bot;
 
 import vn.insee.retailer.webhook.zalo.ZaloWebhookMessage;
 import java.io.Serializable;
+import java.util.UUID;
 
 public abstract class Question implements Serializable, Conversation {
     private User user;
@@ -13,6 +14,11 @@ public abstract class Question implements Serializable, Conversation {
     public Question(User user, String id) {
         this.user = user;
         this.id = id;
+    }
+
+    public Question(User user) {
+        this.user = user;
+        this.id = UUID.randomUUID().toString();
     }
 
     public abstract boolean ask();

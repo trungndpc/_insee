@@ -64,8 +64,6 @@ public class LightingQuizScript  {
     }
 
     public void start(LightingQuizPromotionEntity promotion, TopicDTO topic) throws JsonProcessingException {
-        LOGGER.error("start....: " + topic.getId());
-        LOGGER.error("session.getWaitingQuestionId(): "  + session.getWaitingQuestionId());
         if (StringUtils.isEmpty(session.getWaitingQuestionId())) {
             ReadyToStartLightingQuizQuestion startQuestion = new ReadyToStartLightingQuizQuestion(user);
             startQuestion.ask();
