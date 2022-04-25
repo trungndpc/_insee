@@ -1,5 +1,8 @@
 package vn.insee.admin.retailer.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class LightingQuizFormService {
-
+    private static final Logger LOGGER = LogManager.getLogger();
     @Autowired
     private LightingQuizFormRepository lightingQuizFormRepository;
 
@@ -26,9 +29,10 @@ public class LightingQuizFormService {
     public Page<LightingQuizFormEntity> findByPromotionIdAndTopicId(int promotionId, String topicId, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         List<LightingQuizFormEntity> quizFormEntities = lightingQuizFormRepository.findByPromotionIdAndTopicId(promotionId, topicId);
+        quizFormEntities = ranking(quizFormEntities);
         if (quizFormEntities != null && !quizFormEntities.isEmpty()) {
             List<LightingQuizFormEntity> list = ranking(quizFormEntities);
-            final int start = (int)pageable.getOffset();
+            final int start = (int) pageable.getOffset();
             final int end = Math.min((start + pageable.getPageSize()), list.size());
             return new PageImpl<>(list.subList(start, end), pageable, list.size());
         }
@@ -56,7 +60,7 @@ public class LightingQuizFormService {
             lightingQuizFormEntity.setStatus(StatusLightingQuizForm.APPROVED);
         });
 
-        lightingQuizFormEntityList.stream().limit(10).forEach(lightingQuizFormEntity -> {
+        lightingQuizFormEntityList.stream().limit(5).forEach(lightingQuizFormEntity -> {
             UserEntity userEntity = userService.findById(lightingQuizFormEntity.getUserId());
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
             TopLeaderBoardLightingQuizMessage quizMessage = new TopLeaderBoardLightingQuizMessage(user, title);
@@ -67,10 +71,13 @@ public class LightingQuizFormService {
 
     private List<LightingQuizFormEntity> ranking(List<LightingQuizFormEntity> quizFormEntities) {
         return quizFormEntities.stream().sorted((entity1, entity2) -> {
-            int p = entity1.getPoint() - entity2.getPoint();
+            int p = entity2.getPoint() - entity1.getPoint();
             if (p == 0) {
-                long duration1 = entity1.getTimeEnd() - entity1.getTimeStart();
-                long duration2 = entity2.getTimeEnd() - entity2.getTimeStart();
+                JSONObject json1 = new JSONObject(entity1.getJsonDetail());
+                JSONObject json2 = new JSONObject(entity2.getJsonDetail());
+
+                long duration1 = json1.getLong("timeEnd") - json1.getLong("timeStart");
+                long duration2 = json2.getLong("timeEnd") - json2.getLong("timeStart");
                 return (int) (duration1 - duration2);
             }
             return p;
