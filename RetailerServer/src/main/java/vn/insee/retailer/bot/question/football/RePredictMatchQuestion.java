@@ -1,7 +1,9 @@
 package vn.insee.retailer.bot.question.football;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import vn.insee.retailer.bot.Question;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.entity.football.PredictMatchBotEntity;
@@ -20,6 +22,11 @@ public class RePredictMatchQuestion extends Question {
     private Boolean answer;
     private PredictMatchBotEntity predict;
 
+    public RePredictMatchQuestion(JSONObject data) throws JsonProcessingException {
+        super(data);
+        this.answer = data.optBoolean("answer", false);
+        this.predict = mapper.readValue(data.getJSONObject("predict").toString(), PredictMatchBotEntity.class);
+    }
 
     public RePredictMatchQuestion(User user, PredictMatchBotEntity predict) {
         super(user);
@@ -82,15 +89,40 @@ public class RePredictMatchQuestion extends Question {
     }
 
     private String toTextResult() {
-        if (predict.getGoalTeamA() > predict.getGoalTeamB()) {
+        if (predict.getTeamWin() == 1) {
             return predict.getMatch().getTeamA()
-                    + " thắng " + predict.getMatch().getTeamB() + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
-        }else if (predict.getGoalTeamB() > predict.getGoalTeamA()) {
+                    + " thắng " + predict.getMatch().getTeamB();
+//            + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
+        }else if (predict.getTeamWin() == 2) {
             return predict.getMatch().getTeamB()
-                    + " thắng " + predict.getMatch().getTeamA() + " với tỉ số: " + predict.getGoalTeamB() + " - " + predict.getGoalTeamA();
+                    + " thắng " + predict.getMatch().getTeamA();
+//            + " với tỉ số: " + predict.getGoalTeamB() + " - " + predict.getGoalTeamA();
         }else {
             return predict.getMatch().getTeamA()
-                    + " hòa " + predict.getMatch().getTeamB() + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
+                    + " hòa " + predict.getMatch().getTeamB();
+//                    + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
         }
+//
+//        if (predict.getGoalTeamA() > predict.getGoalTeamB()) {
+//            return predict.getMatch().getTeamA()
+//                    + " thắng " + predict.getMatch().getTeamB();
+////            + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
+//        }else if (predict.getGoalTeamB() > predict.getGoalTeamA()) {
+//            return predict.getMatch().getTeamB()
+//                    + " thắng " + predict.getMatch().getTeamA();
+////            + " với tỉ số: " + predict.getGoalTeamB() + " - " + predict.getGoalTeamA();
+//        }else {
+//            return predict.getMatch().getTeamA()
+//                    + " hòa " + predict.getMatch().getTeamB();
+////                    + " với tỉ số: " + predict.getGoalTeamA() + " - " + predict.getGoalTeamB();
+//        }
+    }
+
+    public Boolean getAnswer() {
+        return answer;
+    }
+
+    public PredictMatchBotEntity getPredict() {
+        return predict;
     }
 }

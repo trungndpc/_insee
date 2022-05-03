@@ -16,8 +16,4 @@ public class PostSpecification {
         return (root, query, builder) -> builder.equal(root.get(PostEntity_.status), status);
     }
 
-    public Specification<PostEntity> isUserTarget(int userTarget) {
-        return (root, query, builder) -> builder.equal(root.get(PostEntity_.userTarget), userTarget);
-    }
-
 }

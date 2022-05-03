@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.retailer.bot.LightingSession;
+import vn.insee.retailer.bot.PredictFootballSession;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.script.LightingQuizScript;
 import vn.insee.retailer.service.LightingQuizPromotionService;
@@ -41,6 +42,9 @@ public class ZaloEventManager {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PredictFootballEvent predictFootballEvent;
+
     public void doing(JSONObject zaloMsg) throws Exception {
         LOGGER.info(zaloMsg);
         String eventName = zaloMsg.optString("event_name", "");
@@ -63,8 +67,17 @@ public class ZaloEventManager {
                 String text = userSendText.message.text;
                 Object session = webhookSessionManager.getCurrentSession(userEntity.getId());
 
+                if (session != null) {
+                    LOGGER.error("session: " + session.getClass());
+                }
+
                 if (text.equals("#nhanh_nhu_chop") || session instanceof LightingSession) {
                     lightingEvent.process(userSendText);
+                    return;
+                }
+
+                if (text.equals("#du_doan_bong_da") || session instanceof PredictFootballSession) {
+                    predictFootballEvent.process(userSendText);
                     return;
                 }
                 break;

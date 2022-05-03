@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.PostEntity;
-import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.LightingQuizFormEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
@@ -14,7 +13,7 @@ import vn.insee.retailer.bot.LightingSession;
 import vn.insee.retailer.bot.User;
 import vn.insee.retailer.bot.message.Before5MinMessage;
 import vn.insee.retailer.bot.message.DoneFormMessage;
-import vn.insee.retailer.bot.message.NotFoundLQPromotionMessage;
+import vn.insee.retailer.bot.message.NotFoundPromotionMessage;
 import vn.insee.retailer.bot.message.Time2StartGameMessage;
 import vn.insee.retailer.bot.script.LightingQuizScript;
 import vn.insee.retailer.controller.dto.TopicDTO;
@@ -64,7 +63,7 @@ public class LightingEvent extends ZaloEvent{
             if (text.equals("#nhanh_nhu_chop")) {
                 LightingQuizPromotionEntity promotionEntity = getPromotion(userEntity);
                 if (promotionEntity == null) {
-                    NotFoundLQPromotionMessage notFoundLQPromotionMessage = new NotFoundLQPromotionMessage(user);
+                    NotFoundPromotionMessage notFoundLQPromotionMessage = new NotFoundPromotionMessage(user);
                     notFoundLQPromotionMessage.send();
                     return true;
                 }

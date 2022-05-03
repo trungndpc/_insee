@@ -1,19 +1,23 @@
-package vn.insee.jpa.entity.form;
+package vn.insee.admin.retailer.controller.dto;
 
-import vn.insee.jpa.entity.FormEntity;
+public class PredictMatchFootballDTO {
+    private UserDTO user;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "predict_match_football_form", schema = "public")
-public class PredictMatchFootballFormEntity extends FormEntity {
+    private MatchFootballDTO match;
     private int matchId;
     private String season;
     private Integer teamOneScore;
     private Integer teamTwoScore;
-
     private Integer teamWin;
+    private int status;
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
 
     public int getMatchId() {
         return matchId;
@@ -53,5 +57,21 @@ public class PredictMatchFootballFormEntity extends FormEntity {
 
     public void setTeamWin(Integer teamWin) {
         this.teamWin = teamWin;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public MatchFootballDTO getMatch() {
+        return match;
+    }
+
+    public void setMatch(MatchFootballDTO match) {
+        this.match = match;
     }
 }

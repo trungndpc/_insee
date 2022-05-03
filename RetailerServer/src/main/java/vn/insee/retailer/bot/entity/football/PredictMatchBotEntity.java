@@ -5,10 +5,17 @@ public class PredictMatchBotEntity {
     private int goalTeamA;
     private int goalTeamB;
 
-    public PredictMatchBotEntity(MatchBotEntity match, int goalTeamA, int goalTeamB) {
+    private int teamWin;
+
+    private Integer id;
+
+
+    public PredictMatchBotEntity() {
+    }
+
+    public PredictMatchBotEntity(MatchBotEntity match, int teamWin) {
         this.match = match;
-        this.goalTeamA = goalTeamA;
-        this.goalTeamB = goalTeamB;
+        this.teamWin  = teamWin;
     }
 
     public MatchBotEntity getMatch() {
@@ -33,5 +40,21 @@ public class PredictMatchBotEntity {
 
     public void setGoalTeamB(int goalTeamB) {
         this.goalTeamB = goalTeamB;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public int getTeamWin() {
+        return teamWin;
+    }
+
+    public void setTeamWin(int teamWin) {
+        this.teamWin = teamWin;
     }
 }

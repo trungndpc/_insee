@@ -4,9 +4,7 @@ import org.jobrunr.jobs.JobId;
 import org.jobrunr.scheduling.JobScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vn.insee.admin.retailer.woker.task.PostBroadcastTask;
-import vn.insee.admin.retailer.woker.task.TopicTask;
-import vn.insee.admin.retailer.woker.task.ZNSBroadcastTask;
+import vn.insee.admin.retailer.woker.task.*;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +29,12 @@ public class Scheduler {
     @Autowired
     private ZNSBroadcastWorker znsBroadcastWorker;
 
+    @Autowired
+    private Notify2PredictMatchFootballWorker notify2PredictMatchFootballWorker;
+
+    @Autowired
+    private UpdateStatusMatchFootballWorker updateStatusMatchFootballWorker;
+
     public String addJob(LocalDateTime localDateTime, PostBroadcastTask job) {
         JobId jobId = jobScheduler.schedule(localDateTime, () -> service.execute(job));
         return jobId.asUUID().toString();
@@ -54,6 +58,16 @@ public class Scheduler {
     public String addZNSBroadcastJob(LocalDateTime localDateTime, ZNSBroadcastTask task) {
         JobId jobId = jobScheduler.schedule(localDateTime, () -> znsBroadcastWorker.execute(task));
         return jobId.asUUID().toString();
+    }
+
+    public String addNotify2PredictFootball(LocalDateTime localDateTime, Notify2PredictMatchFootballTask task) {
+        JobId schedule = jobScheduler.schedule(localDateTime, () -> notify2PredictMatchFootballWorker.execute(task));
+        return schedule.asUUID().toString();
+    }
+
+    public String addUpdateStatusMatch(LocalDateTime localDateTime, UpdateStatusMatchTask task) {
+        JobId schedule = jobScheduler.schedule(localDateTime, () -> updateStatusMatchFootballWorker.execute(task));
+        return schedule.asUUID().toString();
     }
 
     public void remove(String id) {

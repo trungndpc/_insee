@@ -26,7 +26,6 @@ public class PostService {
         long currentTime = System.currentTimeMillis();
         List<PostEntity> postEntities = postRepository.findAllByOrderByUpdatedTimeDesc();
         postEntities = postEntities.stream()
-                .filter(post -> post.getUserTarget() == TypeUser.CONSTRUCTOR)
                 .filter(post -> post.getStatus() == StatusPost.PUBLISHED)
                 .filter(post -> post.getCityIds() != null ? post.getCityIds().contains(userEntity.getCityId()) : true)
                 .filter(post -> post.getDistrictIds() != null ? post.getDistrictIds().contains(userEntity.getDistrictId()) : true)

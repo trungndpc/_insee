@@ -1,22 +1,13 @@
-package vn.insee.jpa.entity;
+package vn.insee.admin.retailer.controller.dto;
 
-import vn.insee.jpa.entity.base.BaseEntity;
 
-import javax.persistence.*;
-import java.time.ZonedDateTime;
-
-@Entity
-@Table(name = "match_football", schema = "public")
-public class MatchFootballEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MatchFootballDTO {
     private int id;
     private String teamOne;
     private String teamTwo;
     private String logoTeamOne;
     private String logoTeamTwo;
-    private ZonedDateTime timeStart;
-    private ZonedDateTime timeEnd;
+    private long timeStart;
     private int status;
     private Integer teamOneScore;
     private Integer teamTwoScore;
@@ -46,20 +37,28 @@ public class MatchFootballEntity extends BaseEntity {
         this.teamTwo = teamTwo;
     }
 
-    public ZonedDateTime getTimeStart() {
+    public String getLogoTeamOne() {
+        return logoTeamOne;
+    }
+
+    public void setLogoTeamOne(String logoTeamOne) {
+        this.logoTeamOne = logoTeamOne;
+    }
+
+    public String getLogoTeamTwo() {
+        return logoTeamTwo;
+    }
+
+    public void setLogoTeamTwo(String logoTeamTwo) {
+        this.logoTeamTwo = logoTeamTwo;
+    }
+
+    public long getTimeStart() {
         return timeStart;
     }
 
-    public void setTimeStart(ZonedDateTime timeStart) {
+    public void setTimeStart(long timeStart) {
         this.timeStart = timeStart;
-    }
-
-    public ZonedDateTime getTimeEnd() {
-        return timeEnd;
-    }
-
-    public void setTimeEnd(ZonedDateTime timeEnd) {
-        this.timeEnd = timeEnd;
     }
 
     public int getStatus() {
@@ -92,21 +91,5 @@ public class MatchFootballEntity extends BaseEntity {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public String getLogoTeamOne() {
-        return logoTeamOne;
-    }
-
-    public void setLogoTeamOne(String logoTeamOne) {
-        this.logoTeamOne = logoTeamOne;
-    }
-
-    public String getLogoTeamTwo() {
-        return logoTeamTwo;
-    }
-
-    public void setLogoTeamTwo(String logoTeamTwo) {
-        this.logoTeamTwo = logoTeamTwo;
     }
 }

@@ -14,4 +14,9 @@ public class PredictFootballMatchService {
     public PredictMatchFootballFormEntity findByUserIdAndMatchId(int userId, int matchId) {
         return repository.findByUserIdAndMatchId(userId, matchId);
     }
+
+    public PredictMatchFootballFormEntity createOrSave(PredictMatchFootballFormEntity entity) {
+        return repository.saveAndFlush(entity);
+    }
+
 }

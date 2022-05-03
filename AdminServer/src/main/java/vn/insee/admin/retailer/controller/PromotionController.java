@@ -8,18 +8,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
+import vn.insee.admin.retailer.controller.converter.FootballPromotionConverter;
 import vn.insee.admin.retailer.controller.converter.LQConverter;
 import vn.insee.admin.retailer.controller.converter.PromotionConverter;
 import vn.insee.admin.retailer.controller.converter.StockConverter;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.PromotionDTO;
 import vn.insee.admin.retailer.controller.form.PromotionForm;
+import vn.insee.admin.retailer.service.FootballPromotionService;
 import vn.insee.admin.retailer.service.LightingQuizPromotionService;
 import vn.insee.admin.retailer.service.PromotionService;
 import vn.insee.admin.retailer.service.StockPromotionService;
+import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
+import vn.insee.jpa.entity.promotion.PredictFootballPromotionEntity;
 import vn.insee.jpa.entity.promotion.StockPromotionEntity;
 
 import java.util.List;
@@ -46,20 +50,35 @@ public class PromotionController {
     @Autowired
     private LQConverter lqConverter;
 
+    @Autowired
+    private FootballPromotionConverter footballPromotionConverter;
+
+    @Autowired
+    private FootballPromotionService footballPromotionService;
 
     @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BaseResponse> create(@RequestBody PromotionForm form) {
         BaseResponse response = new BaseResponse();
         try{
-            if (form.getType() == TypePromotion.STOCK_PROMOTION_TYPE) {
-                StockPromotionEntity stockPromotionEntity = stockConverter.convert2Entity(form);
-                stockPromotionEntity = stockPromotionService.create(stockPromotionEntity);
-                response.setData(promotionConverter.convert2DTO(stockPromotionEntity));
-            }else if (form.getType() == TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE) {
-                LightingQuizPromotionEntity lightingQuizPromotionEntity = lqConverter.convert2Entity(form);
-                lightingQuizPromotionEntity = lightingQuizPromotionService.create(lightingQuizPromotionEntity);
-                response.setData(promotionConverter.convert2DTO(lightingQuizPromotionEntity));
+            switch (form.getType()) {
+                case TypePromotion.STOCK_PROMOTION_TYPE :
+                    StockPromotionEntity stockPromotionEntity = stockConverter.convert2Entity(form);
+                    stockPromotionEntity = stockPromotionService.create(stockPromotionEntity);
+                    response.setData(promotionConverter.convert2DTO(stockPromotionEntity));
+                    break;
+                case TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE:
+                    LightingQuizPromotionEntity lightingQuizPromotionEntity = lqConverter.convert2Entity(form);
+                    lightingQuizPromotionEntity = lightingQuizPromotionService.create(lightingQuizPromotionEntity);
+                    response.setData(promotionConverter.convert2DTO(lightingQuizPromotionEntity));
+                    break;
+                case TypePromotion.PREDICT_FOOTBALL:
+                    PredictFootballPromotionEntity footballPromotionEntity = footballPromotionConverter.convert2Entity(form);
+                    footballPromotionEntity.setStatus(StatusPromotion.INIT);
+                    footballPromotionEntity = footballPromotionService.createOrUpdate(footballPromotionEntity);
+                    response.setData(promotionConverter.convert2DTO(footballPromotionEntity));
+                    break;
             }
+
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             response.setError(ErrorCode.FAILED);

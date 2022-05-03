@@ -13,6 +13,8 @@ public class PromotionForm {
     private List<Integer> cityIds;
     private List<Integer> districtIds;
 
+    private String season;
+
     public Integer getId() {
         return id;
     }
@@ -83,5 +85,13 @@ public class PromotionForm {
 
     public void setDistrictIds(List<Integer> districtIds) {
         this.districtIds = districtIds;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
     }
 }

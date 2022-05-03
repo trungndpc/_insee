@@ -1,7 +1,10 @@
 package vn.insee.retailer.bot.question.football;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import vn.insee.common.Constant;
 import vn.insee.retailer.bot.Question;
 import vn.insee.retailer.bot.User;
@@ -17,16 +20,23 @@ import java.util.List;
 
 public class WhichMatchQuestion extends Question{
     private static final Logger LOGGER = LogManager.getLogger(WhichMatchQuestion.class);
-    private static final String TEXT_QUESTION = "";
+    private static final String TEXT_QUESTION = "Anh/chị muốn dự đoán trận đấu nào dưới đây?";
     private static final String FORMAT_NAME_MATCH = "%s - %s";
     private List<MatchBotEntity> matches;
+    private MatchBotEntity selectedMatch;
 
-    public WhichMatchQuestion(User user, String id, List<MatchBotEntity> matches) {
-        super(user, id);
+    public WhichMatchQuestion(JSONObject data) throws JsonProcessingException {
+        super(data);
+        this.matches = mapper.readValue(data.getJSONArray("matches").toString(), new TypeReference<List<MatchBotEntity>>() {
+        });
+        this.selectedMatch = mapper.readValue(data.get("selectedMatch").toString(), MatchBotEntity.class);
+    }
+
+    public WhichMatchQuestion(User user, List<MatchBotEntity> matches) {
+        super(user);
         this.matches = matches;
     }
 
-    private MatchBotEntity selectedMatch;
 
     @Override
     public boolean ask() {
@@ -77,6 +87,7 @@ public class WhichMatchQuestion extends Question{
         button.title = "Thể lệ chương trình";
         ZaloMessage.Attachment.Payload.Button.ButtonPayload btnPayload = new ZaloMessage.Attachment.Payload.Button.ButtonPayload();
         btnPayload.url = Constant.CLIENT_DOMAIN + "/thach-thuc-phen-man";
+        button.payload = btnPayload;
         payload.buttons.add(button);
 
         ZaloMessage.Attachment attachment = new ZaloMessage.Attachment();
@@ -87,4 +98,11 @@ public class WhichMatchQuestion extends Question{
         return zaloMessage;
     }
 
+    public List<MatchBotEntity> getMatches() {
+        return matches;
+    }
+
+    public MatchBotEntity getSelectedMatch() {
+        return selectedMatch;
+    }
 }
