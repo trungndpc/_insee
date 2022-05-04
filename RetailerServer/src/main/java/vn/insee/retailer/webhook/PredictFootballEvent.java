@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vn.insee.common.status.StatusUser;
+import vn.insee.jpa.entity.MatchFootballEntity;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
@@ -50,10 +51,6 @@ public class PredictFootballEvent extends ZaloEvent{
             UserEntity userEntity = userService.findByZaloId(userSendMessage.userIdByApp);
             Object currentSession = webhookSessionManager.getCurrentSession(userEntity.getId());
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
-            if (currentSession != null && currentSession instanceof PredictFootballSession) {
-                new FootballScript(user).process(userSendMessage);
-                return true;
-            }
 
             if (text.equals("#du_doan_bong_da")) {
                 PredictFootballPromotionEntity promotionEntity = getPromotion(userEntity);
@@ -66,6 +63,12 @@ public class PredictFootballEvent extends ZaloEvent{
                 return true;
             }
 
+            if (currentSession != null && currentSession instanceof PredictFootballSession) {
+                new FootballScript(user).process(userSendMessage);
+                return true;
+            }
+
+
         }catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -77,6 +80,16 @@ public class PredictFootballEvent extends ZaloEvent{
         try {
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
             new FootballScript(user).start(promotionEntity);
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+
+    public void start(PredictFootballPromotionEntity promotionEntity, UserEntity userEntity, MatchFootballEntity match) {
+        try {
+            User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
+            new FootballScript(user).start(promotionEntity, match);
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
         }

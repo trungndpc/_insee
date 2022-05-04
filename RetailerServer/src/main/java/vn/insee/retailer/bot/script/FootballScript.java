@@ -140,8 +140,6 @@ public class FootballScript {
         entity.setSeason(this.session.getSeason());
         entity.setPromotionId(this.session.getPromotionId());
         entity.setTeamWin(predict.getTeamWin());
-//        entity.setTeamOneScore(predict.getGoalTeamA());
-//        entity.setTeamTwoScore(predict.getGoalTeamB());
         entity.setStatus(StatusForm.INIT);
         PREDICT_FOOTBALL_MATCH_SERVICE.createOrSave(entity);
     }
@@ -149,6 +147,7 @@ public class FootballScript {
     public void start(PredictFootballPromotionEntity promotionEntity) throws JsonProcessingException {
         List<MatchFootballEntity> top5MostRecent =
                 MATCH_FOOTBALL_SERVICE.findTop5MostRecent(promotionEntity.getSeason());
+        LOGGER.error("X: " + top5MostRecent.size());
         if (top5MostRecent == null || top5MostRecent.isEmpty()) {
             new NotFoundMatchMessage(user).send();
             return;
@@ -166,6 +165,24 @@ public class FootballScript {
         JSONObject json = new JSONObject(this.objectMapper.writeValueAsString(whichMatchQuestion));
         this.session.putQuestion(whichMatchQuestion.getId(), new PredictFootballSession.PredictFootballSS(whichMatchQuestion.getId(),
                 WhichMatchQuestion.class, json));
+        this.session.setPromotionId(promotionEntity.getId());
+        this.session.setTimeStart(System.currentTimeMillis());
+        this.session.setSeason(promotionEntity.getSeason());
+        WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
+        return;
+    }
+
+    public void start(PredictFootballPromotionEntity promotionEntity, MatchFootballEntity match) throws JsonProcessingException {
+        MatchBotEntity matchBotEntity = new MatchBotEntity();
+        matchBotEntity.setId(match.getId());
+        matchBotEntity.setTeamA(match.getTeamOne());
+        matchBotEntity.setTeamB(match.getTeamTwo());
+        WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, matchBotEntity);
+        whichTeamQuestion.ask();
+        this.session.setWaitingQuestionId(whichTeamQuestion.getId());
+        JSONObject json = new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion));
+        this.session.putQuestion(whichTeamQuestion.getId(), new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
+                WhichTeamQuestion.class, json));
         this.session.setPromotionId(promotionEntity.getId());
         this.session.setTimeStart(System.currentTimeMillis());
         this.session.setSeason(promotionEntity.getSeason());

@@ -1,6 +1,10 @@
 package vn.insee.admin.retailer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.common.type.TypeAccumulation;
@@ -28,11 +32,19 @@ public class AccumulationService {
         Specification<AccumulationEntity> specs =  Specification.where(null);
         specs = specs.and(specification.isType(TypeAccumulation.PREDICT_FOOTBALL_COLLECT_POINT_TYPE_ONE));
         specs = specs.and(specification.isUserId(uid));
-        specs = specs.and(specification.inPromotion(promotionId));
+        specs = specs.and(specification.isPromotion(promotionId));
         Optional<AccumulationEntity> optional = repository.findOne(specs);
         if (optional.isPresent()) {
             return optional.get();
         }
         return null;
+    }
+
+    public Page<AccumulationEntity> findByPromotionAndType(int promotionId, int type, int page, int pageSize) {
+        Specification<AccumulationEntity> specs =  Specification.where(null);
+        specs = specs.and(specification.isType(type));
+        specs = specs.and(specification.isPromotion(promotionId));
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "point"));
+        return repository.findAll(specs, pageable);
     }
 }

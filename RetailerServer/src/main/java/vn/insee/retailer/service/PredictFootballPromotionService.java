@@ -23,11 +23,16 @@ public class PredictFootballPromotionService extends PromotionService{
         if (promotionEntities == null || promotionEntities.isEmpty()) {
             return null;
         }
-        promotionEntities = promotionEntities.stream().filter(pre -> pre.getTimeStart() <= currentTime && pre.getTimeEnd() >= currentTime)
+        promotionEntities = promotionEntities.stream().filter(pre -> pre.getTimeStart() <= currentTime
+                && pre.getTimeEnd() >= currentTime)
                 .collect(Collectors.toList());
         if (promotionEntities == null || promotionEntities.isEmpty()) {
             return null;
         }
         return (PredictFootballPromotionEntity) promotionEntities.get(0);
+    }
+
+    public PredictFootballPromotionEntity findById(int promotionId) {
+        return repository.getOne(promotionId);
     }
 }

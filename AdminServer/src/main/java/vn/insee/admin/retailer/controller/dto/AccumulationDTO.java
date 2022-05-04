@@ -1,27 +1,25 @@
-package vn.insee.jpa.entity;
+package vn.insee.admin.retailer.controller.dto;
 
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import vn.insee.jpa.entity.base.BaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.util.List;
 
-@Entity
-@Table(name = "accumulation", schema = "public")
-@TypeDef(name = "list-array",typeClass = ListArrayType.class)
-public class AccumulationEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AccumulationDTO {
     private Integer id;
-
     private int uid;
-
-    private Integer promotionId;
-
+    private List<Integer> promotionIds;
     private Integer point;
     private int type;
+    private UserDTO user;
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
 
     public Integer getId() {
         return id;
@@ -39,6 +37,14 @@ public class AccumulationEntity extends BaseEntity {
         this.uid = uid;
     }
 
+    public List<Integer> getPromotionIds() {
+        return promotionIds;
+    }
+
+    public void setPromotionIds(List<Integer> promotionIds) {
+        this.promotionIds = promotionIds;
+    }
+
     public Integer getPoint() {
         return point;
     }
@@ -53,13 +59,5 @@ public class AccumulationEntity extends BaseEntity {
 
     public void setType(int type) {
         this.type = type;
-    }
-
-    public Integer getPromotionId() {
-        return promotionId;
-    }
-
-    public void setPromotionId(Integer promotionId) {
-        this.promotionId = promotionId;
     }
 }

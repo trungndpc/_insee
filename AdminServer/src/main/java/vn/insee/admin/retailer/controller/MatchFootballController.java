@@ -113,7 +113,7 @@ public class MatchFootballController {
                             accumulationEntity = new AccumulationEntity();
                             accumulationEntity.setType(TypeAccumulation.PREDICT_FOOTBALL_COLLECT_POINT_TYPE_ONE);
                             accumulationEntity.setUid(entity.getUserId());
-                            accumulationEntity.setPromotionIds(Arrays.asList(promotionId));
+                            accumulationEntity.setPromotionId(promotionId);
                             accumulationEntity.setPoint(0);
                         }
                         accumulationEntity.setPoint(accumulationEntity.getPoint() + 1);

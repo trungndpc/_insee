@@ -30,9 +30,10 @@ public class UpdateStatusMatchFootballWorker {
     private MatchFootballService matchFootballService;
 
 
-    @Job(name = "NOTY_UPCOMING_TOPIC", retries = 1)
+    @Job(name = "UPDATE_STATUS_MATCH_FOOTBALL", retries = 1)
     public void execute(UpdateStatusMatchTask task) {
         try{
+            System.out.println("UPDATE_STATUS");
             MatchFootballEntity matchFootballEntity = matchFootballService.getById(task.getMatchId());
             matchFootballEntity.setStatus(MatchFootballStatus.PROCESSING);
             matchFootballService.createOrUpdate(matchFootballEntity);

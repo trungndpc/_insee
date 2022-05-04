@@ -1,5 +1,7 @@
 package vn.insee.retailer.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.insee.common.status.MatchFootballStatus;
@@ -24,7 +26,7 @@ public class MatchFootBallService {
 
     public List<MatchFootballEntity> findTop5MostRecent(String season) {
         ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(Instant.now(), DEFAULT_ZONE);
-        return repository.findTop3ByTimeStartGreaterThanAndStatusAndSeason(zonedDateTime, MatchFootballStatus.INIT, season);
+        return repository.findTop3ByTimeStartGreaterThanAndStatusAndSeasonOrderByIdAsc(zonedDateTime, MatchFootballStatus.INIT, season);
     }
 
 
