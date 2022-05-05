@@ -16,9 +16,9 @@ import java.util.Arrays;
 
 public class RePredictMatchQuestion extends Question {
     private static final Logger LOGGER = LogManager.getLogger(RePredictMatchQuestion.class);
-    private static final String FORMAT = "Anh/chị đã đự đoán:\n" +
+    private static final String FORMAT = "Anh/Chị đã dự đoán:\n" +
             "%s\n" +
-            "Anh có muốn thay đổi?";
+            "Anh/Chị có muốn thay đổi dự đoán?";
     private Boolean answer;
     private PredictMatchBotEntity predict;
 

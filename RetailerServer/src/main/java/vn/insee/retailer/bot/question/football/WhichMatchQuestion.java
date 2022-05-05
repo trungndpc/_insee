@@ -20,7 +20,7 @@ import java.util.List;
 
 public class WhichMatchQuestion extends Question{
     private static final Logger LOGGER = LogManager.getLogger(WhichMatchQuestion.class);
-    private static final String TEXT_QUESTION = "Anh/chị muốn dự đoán trận đấu nào dưới đây?";
+    private static final String TEXT_QUESTION = "Anh/Chị hãy tham gia chương trình Dự đoán kết quả Seagames 31 cùng INSEE ngay!";
     private static final String FORMAT_NAME_MATCH = "%s - %s";
     private List<MatchBotEntity> matches;
     private MatchBotEntity selectedMatch;

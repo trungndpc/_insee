@@ -98,7 +98,8 @@ public class FootballScript {
                                     whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
                         }
                     } else {
-                        ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("Dạ!"));
+                        ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("INSEE đã ghi nhận kết quả dự đoán của Anh/Chị.\n" +
+                                "Hãy tận hưởng trận đấu và chờ đợi kết quả thôi nào!"));
                     }
                 } else if (question instanceof WhichTeamQuestion) {
                     WhichTeamQuestion whichTeamQuestion = (WhichTeamQuestion) question;
