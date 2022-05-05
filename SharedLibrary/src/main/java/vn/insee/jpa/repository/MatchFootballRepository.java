@@ -8,6 +8,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public interface MatchFootballRepository extends JpaRepository<MatchFootballEntity, Integer>, JpaSpecificationExecutor<MatchFootballEntity> {
-    List<MatchFootballEntity> findTop3ByTimeStartGreaterThanAndStatusAndSeasonOrderByIdAsc(ZonedDateTime zonedDateTime, int status, String season);
+    List<MatchFootballEntity> findTop2ByTimeStartGreaterThanAndStatusAndSeasonOrderByIdAsc(ZonedDateTime zonedDateTime, int status, String season);
     List<MatchFootballEntity> findByStatus(int status);
 }

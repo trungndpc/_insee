@@ -146,8 +146,7 @@ public class FootballScript {
 
     public void start(PredictFootballPromotionEntity promotionEntity) throws JsonProcessingException {
         List<MatchFootballEntity> top5MostRecent =
-                MATCH_FOOTBALL_SERVICE.findTop5MostRecent(promotionEntity.getSeason());
-        LOGGER.error("X: " + top5MostRecent.size());
+                MATCH_FOOTBALL_SERVICE.findTop2MostRecent(promotionEntity.getSeason());
         if (top5MostRecent == null || top5MostRecent.isEmpty()) {
             new NotFoundMatchMessage(user).send();
             return;
