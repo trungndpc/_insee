@@ -16,10 +16,7 @@ import vn.insee.retailer.bot.entity.football.MatchBotEntity;
 import vn.insee.retailer.bot.entity.football.PredictMatchBotEntity;
 import vn.insee.retailer.bot.message.football.CompletePredictMessage;
 import vn.insee.retailer.bot.message.football.NotFoundMatchMessage;
-import vn.insee.retailer.bot.question.football.RePredictMatchQuestion;
-import vn.insee.retailer.bot.question.football.SummaryPredictMatchQuestion;
-import vn.insee.retailer.bot.question.football.WhichMatchQuestion;
-import vn.insee.retailer.bot.question.football.WhichTeamQuestion;
+import vn.insee.retailer.bot.question.football.*;
 import vn.insee.retailer.service.MatchFootBallService;
 import vn.insee.retailer.service.PredictFootballMatchService;
 import vn.insee.retailer.util.BeanUtil;
@@ -29,6 +26,7 @@ import vn.insee.retailer.wrapper.ZaloService;
 import vn.insee.retailer.wrapper.entity.ZaloMessage;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class FootballScript {
@@ -47,85 +45,98 @@ public class FootballScript {
     }
 
     public void process(ZaloWebhookMessage msg) throws Exception {
+        LOGGER.error("PROCESS------>>>>");
         String waitingQuestionId = session.getWaitingQuestionId();
         if (waitingQuestionId != null) {
-            Question question = initWaitingQuestion(waitingQuestionId);
-            if (question == null) {
-                throw new Exception("can not init waiting question | " + waitingQuestionId);
-            }
-            boolean isAccept = question.ans(msg);
-            //store session
-            String jsonQuestion = this.objectMapper.writeValueAsString(question);
-            PredictFootballSession.PredictFootballSS predictFootballSS = new PredictFootballSession.PredictFootballSS(question.getId(),
-                    question.getClass(), new JSONObject(jsonQuestion));
-            this.session.putQuestion(question.getId(), predictFootballSS);
-            this.session.setWaitingQuestionId(question.getId());
-            WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
-            if (isAccept) {
-                PredictFootballSession.PredictFootballSS questionSS = null;
-                if (question instanceof WhichMatchQuestion) {
-                    WhichMatchQuestion whichMatchQuestion = (WhichMatchQuestion) question;
-                    MatchBotEntity match = (MatchBotEntity) whichMatchQuestion.getUserAnswer();
-                    this.session.setMatch(match);
+            try {
+                Question question = initWaitingQuestion(waitingQuestionId);
+                if (question == null) {
+                    throw new Exception("can not init waiting question | " + waitingQuestionId);
+                }
+                boolean isAccept = question.ans(msg);
+                //store session
+                String jsonQuestion = this.objectMapper.writeValueAsString(question);
+                PredictFootballSession.PredictFootballSS predictFootballSS = new PredictFootballSession.PredictFootballSS(question.getId(),
+                        question.getClass(), new JSONObject(jsonQuestion));
+                this.session.putQuestion(question.getId(), predictFootballSS);
+                WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
 
-                    PredictMatchFootballFormEntity matchEntity = PREDICT_FOOTBALL_MATCH_SERVICE.findByUserIdAndMatchId(user.getUid(), match.getId());
-                    if (matchEntity == null) {
-                        //ask which team
-                        WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, match);
-                        if (whichTeamQuestion.ask()) {
-                            questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
-                                    whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
-                        }
-                    } else {
-                        PredictMatchBotEntity predictMatchBot = new PredictMatchBotEntity(match, matchEntity.getTeamWin());
-                        predictMatchBot.setId(matchEntity.getId());
-                        this.session.setPredictId(matchEntity.getId());
-                        //ask edit
-                        RePredictMatchQuestion rePredictMatchQuestion = new RePredictMatchQuestion(user, predictMatchBot);
-                        if (rePredictMatchQuestion.ask()) {
-                            questionSS = new PredictFootballSession.PredictFootballSS(rePredictMatchQuestion.getId(),
-                                    rePredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(rePredictMatchQuestion)));
-                        }
-                    }
-                } else if (question instanceof RePredictMatchQuestion) {
-                    RePredictMatchQuestion rePredictMatchQuestion = (RePredictMatchQuestion) question;
-                    Boolean isOk = (Boolean) rePredictMatchQuestion.getUserAnswer();
-                    if (isOk) {
-                        //ask which team
-                        WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, this.session.getMatch());
-                        if (whichTeamQuestion.ask()) {
-                            questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
-                                    whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
-                        }
-                    } else {
-                        ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("INSEE đã ghi nhận kết quả dự đoán của Anh/Chị.\n" +
-                                "Hãy tận hưởng trận đấu và chờ đợi kết quả thôi nào!"));
-                    }
-                } else if (question instanceof WhichTeamQuestion) {
-                    WhichTeamQuestion whichTeamQuestion = (WhichTeamQuestion) question;
-                    PredictMatchBotEntity predictMatchBot = (PredictMatchBotEntity) whichTeamQuestion.getUserAnswer();
-                    this.session.setPredict(predictMatchBot);
 
-                    //ask which summary
-                    SummaryPredictMatchQuestion summaryPredictMatchQuestion = new SummaryPredictMatchQuestion(user, predictMatchBot);
-                    if (summaryPredictMatchQuestion.ask()) {
-                        questionSS = new PredictFootballSession.PredictFootballSS(summaryPredictMatchQuestion.getId(),
-                                summaryPredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(summaryPredictMatchQuestion)));
-                    }
-                } else if (question instanceof SummaryPredictMatchQuestion) {
-                    SummaryPredictMatchQuestion summaryPredictMatchQuestion = (SummaryPredictMatchQuestion) question;
-                    Boolean isOK = (Boolean) summaryPredictMatchQuestion.getUserAnswer();
-                    if (isOK) {
-                        complete();
-                        CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
-                        completePredictMessage.send();
-                        WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
-                    } else {
-                        questionSS = this.session.getQuestion(WhichTeamQuestion.class);
+                if (isAccept) {
+                    PredictFootballSession.PredictFootballSS questionSS = null;
+                    if (question instanceof WhichMatchQuestion) {
+                        WhichMatchQuestion whichMatchQuestion = (WhichMatchQuestion) question;
+                        MatchBotEntity match = (MatchBotEntity) whichMatchQuestion.getUserAnswer();
+                        askResultMatch(match);
+
+                    } else if (question instanceof RePredictMatchQuestion) {
+                        RePredictMatchQuestion rePredictMatchQuestion = (RePredictMatchQuestion) question;
+                        Boolean isOk = (Boolean) rePredictMatchQuestion.getUserAnswer();
+                        if (isOk) {
+                            //ask which team
+                            WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, this.session.getMatch());
+                            if (whichTeamQuestion.ask()) {
+                                this.session.setWaitingQuestionId(whichTeamQuestion.getId());
+                                questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
+                                        whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
+                                this.session.putQuestion(whichTeamQuestion.getId(), questionSS);
+                            }
+                        } else {
+                            ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("INSEE đã ghi nhận kết quả dự đoán của Anh/Chị.\n" +
+                                    "Hãy tận hưởng trận đấu và chờ đợi kết quả thôi nào!"));
+                        }
+                    } else if (question instanceof WhichTeamQuestion) {
+                        WhichTeamQuestion whichTeamQuestion = (WhichTeamQuestion) question;
+                        PredictMatchBotEntity predictMatchBot = (PredictMatchBotEntity) whichTeamQuestion.getUserAnswer();
+                        this.session.setPredict(predictMatchBot);
+
+                        SummaryPredictMatchQuestion summaryPredictMatchQuestion = new SummaryPredictMatchQuestion(user, predictMatchBot);
+                        if (summaryPredictMatchQuestion.ask()) {
+                            this.session.setWaitingQuestionId(summaryPredictMatchQuestion.getId());
+                            questionSS = new PredictFootballSession.PredictFootballSS(summaryPredictMatchQuestion.getId(),
+                                    summaryPredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(summaryPredictMatchQuestion)));
+                            this.session.putQuestion(summaryPredictMatchQuestion.getId(), questionSS);
+                        }
+                    } else if (question instanceof SummaryPredictMatchQuestion) {
+                        SummaryPredictMatchQuestion summaryPredictMatchQuestion = (SummaryPredictMatchQuestion) question;
+                        Boolean isOK = (Boolean) summaryPredictMatchQuestion.getUserAnswer();
+                        if (isOK) {
+                            complete();
+                            MatchBotEntity nextMatchOnDay = getNextMatchOnDay();
+                            if (nextMatchOnDay != null) {
+                                NextMatchQuestion nextMatchQuestion = new NextMatchQuestion(user, nextMatchOnDay);
+                                if (nextMatchQuestion.ask()) {
+                                    this.session.setWaitingQuestionId(nextMatchQuestion.getId());
+                                    questionSS = new PredictFootballSession.PredictFootballSS(nextMatchQuestion.getId(),
+                                            nextMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(nextMatchQuestion)));
+                                    this.session.putQuestion(nextMatchQuestion.getId(), questionSS);
+                                }
+                            } else {
+                                CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
+                                completePredictMessage.send();
+                                this.session = null;
+                                WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
+                            }
+                        } else {
+                            questionSS = this.session.getQuestion(WhichTeamQuestion.class);
+                            this.session.setWaitingQuestionId(questionSS.getId());
+                            this.session.putQuestion(questionSS.getId(), questionSS);
+                        }
+                    } else if (question instanceof NextMatchQuestion) {
+                        NextMatchQuestion nextMatchQuestion = (NextMatchQuestion) question;
+                        boolean isOk = (boolean) nextMatchQuestion.getUserAnswer();
+                        if (isOk) {
+                            askResultMatch(nextMatchQuestion.getMatch());
+                        } else {
+                            CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
+                            completePredictMessage.send();
+                            this.session = null;
+                            WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
+                        }
                     }
                 }
-                if (questionSS != null) {
-                    this.session.putQuestion(question.getId(), questionSS);
+            } finally {
+                if (this.session != null) {
                     WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
                 }
             }
@@ -201,10 +212,60 @@ public class FootballScript {
                 return new SummaryPredictMatchQuestion(predictFootballSS.getJson());
             case "RePredictMatchQuestion":
                 return new RePredictMatchQuestion(predictFootballSS.getJson());
+            case "NextMatchQuestion":
+                return new NextMatchQuestion(predictFootballSS.getJson());
         }
         return null;
     }
 
+    private MatchBotEntity getNextMatchOnDay() {
+        List<MatchFootballEntity> top5MostRecent =
+                MATCH_FOOTBALL_SERVICE.findTop2MostRecent(this.session.getSeason());
+        Optional<MatchFootballEntity> optional = top5MostRecent.stream()
+                .filter(matchFootballEntity -> this.session.getMatch().getId() != matchFootballEntity.getId())
+                .findFirst();
+        if (optional.isPresent()) {
+            MatchFootballEntity matchFootballEntity = optional.get();
+            MatchBotEntity rs = new MatchBotEntity();
+            rs.setId(matchFootballEntity.getId());
+            rs.setTeamA(matchFootballEntity.getTeamOne());
+            rs.setTeamB(matchFootballEntity.getTeamTwo());
+            return rs;
+        }
+        return null;
+    }
+
+    private void askResultMatch(MatchBotEntity match) throws JsonProcessingException {
+        this.session.setMatch(match);
+        this.session.setPredict(null);
+        this.session.setPredictId(null);
+        PredictFootballSession.PredictFootballSS questionSS = null;
+        PredictMatchFootballFormEntity predictEntity = PREDICT_FOOTBALL_MATCH_SERVICE.findByUserIdAndMatchId(user.getUid(), match.getId());
+
+        if (predictEntity == null) {
+            WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, match);
+            if (whichTeamQuestion.ask()) {
+                this.session.setWaitingQuestionId(whichTeamQuestion.getId());
+                questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
+                        whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
+                this.session.putQuestion(whichTeamQuestion.getId(), questionSS);
+            }
+
+        } else {
+            PredictMatchBotEntity predictMatchBot = new PredictMatchBotEntity(match, predictEntity.getTeamWin());
+            predictMatchBot.setId(predictEntity.getId());
+            this.session.setPredictId(predictEntity.getId());
+            this.session.setPredict(predictMatchBot);
+
+            RePredictMatchQuestion rePredictMatchQuestion = new RePredictMatchQuestion(user, predictMatchBot);
+            if (rePredictMatchQuestion.ask()) {
+                this.session.setWaitingQuestionId(rePredictMatchQuestion.getId());
+                questionSS = new PredictFootballSession.PredictFootballSS(rePredictMatchQuestion.getId(),
+                        rePredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(rePredictMatchQuestion)));
+                this.session.putQuestion(rePredictMatchQuestion.getId(), questionSS);
+            }
+        }
+    }
 
     private void initSession(User user) {
         Object currentSession = WEBHOOK_SESSION_MANAGER.getCurrentSession(user.getUid());

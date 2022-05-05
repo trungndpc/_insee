@@ -66,11 +66,11 @@ public class ZaloService {
         msWrapper.put("recipient", recipient);
         String value = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(message);
         msWrapper.put("message", new JSONObject(value));
-        LOGGER.info(msWrapper);
+//        LOGGER.info(msWrapper);
         ResponseEntity<String> zaloResponseResponseEntity = restTemplate.postForEntity(END_POINT,
                 msWrapper.toString(), String.class,
                 AppCommon.INSTANCE.getAccessToken());
-        LOGGER.info(zaloResponseResponseEntity);
+//        LOGGER.info(zaloResponseResponseEntity);
         return zaloResponseResponseEntity.getStatusCode() == HttpStatus.OK;
     }
 }
