@@ -86,7 +86,7 @@ public class WhichMatchQuestion extends Question{
         scheduleButton.type = "oa.open.url";
         scheduleButton.title = "Lịch thi đấu";
         ZaloMessage.Attachment.Payload.Button.ButtonPayload scheduleButtonPayload = new ZaloMessage.Attachment.Payload.Button.ButtonPayload();
-        scheduleButtonPayload.url = "https://rd.zapps.vn/locked?pageId=2222725635797558435";
+        scheduleButtonPayload.url = "https://rd.zapps.vn/detail/2222725635797558435?id=d8794fd4f3911acf4380&pageId=2222725635797558435";
         scheduleButton.payload = scheduleButtonPayload;
         payload.buttons.add(scheduleButton);
 
@@ -94,7 +94,7 @@ public class WhichMatchQuestion extends Question{
         button.type = "oa.open.url";
         button.title = "Thể lệ chương trình";
         ZaloMessage.Attachment.Payload.Button.ButtonPayload btnPayload = new ZaloMessage.Attachment.Payload.Button.ButtonPayload();
-        btnPayload.url = "https://rd.zapps.vn/locked?pageId=2222725635797558435";
+        btnPayload.url = "https://rd.zapps.vn/detail/2222725635797558435?id=301c67b3dbf632a86be7&pageId=2222725635797558435";
         button.payload = btnPayload;
         payload.buttons.add(button);
 
