@@ -45,7 +45,6 @@ public class FootballScript {
     }
 
     public void process(ZaloWebhookMessage msg) throws Exception {
-        LOGGER.error("PROCESS------>>>>");
         String waitingQuestionId = session.getWaitingQuestionId();
         if (waitingQuestionId != null) {
             try {
@@ -103,13 +102,14 @@ public class FootballScript {
                         if (isOK) {
                             complete();
                             MatchBotEntity nextMatchOnDay = getNextMatchOnDay();
-                            if (nextMatchOnDay != null) {
+                            if (nextMatchOnDay != null && this.session.getCount() == 0) {
                                 NextMatchQuestion nextMatchQuestion = new NextMatchQuestion(user, nextMatchOnDay);
                                 if (nextMatchQuestion.ask()) {
                                     this.session.setWaitingQuestionId(nextMatchQuestion.getId());
                                     questionSS = new PredictFootballSession.PredictFootballSS(nextMatchQuestion.getId(),
                                             nextMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(nextMatchQuestion)));
                                     this.session.putQuestion(nextMatchQuestion.getId(), questionSS);
+                                    this.session.setCount(this.session.getCount() + 1);
                                 }
                             } else {
                                 CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
@@ -190,6 +190,7 @@ public class FootballScript {
         matchBotEntity.setTeamB(match.getTeamTwo());
         WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, matchBotEntity);
         whichTeamQuestion.ask();
+        this.session.setMatch(matchBotEntity);
         this.session.setWaitingQuestionId(whichTeamQuestion.getId());
         JSONObject json = new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion));
         this.session.putQuestion(whichTeamQuestion.getId(), new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),

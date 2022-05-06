@@ -19,6 +19,8 @@ public class PredictFootballSession {
 
     private String season;
 
+    private int count = 0;
+
     public PredictFootballSession() {
     }
 
@@ -135,5 +137,13 @@ public class PredictFootballSession {
 
     public void setPredictId(Integer predictId) {
         this.predictId = predictId;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

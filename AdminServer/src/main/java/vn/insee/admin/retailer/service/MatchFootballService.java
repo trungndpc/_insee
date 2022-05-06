@@ -66,14 +66,18 @@ public class MatchFootballService {
                 if (timeStart.getHour() == 19) {
                     zonedDateTime = timeStart.minusHours(9).minusMinutes(40);
                 }
-                Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
-                task.setMatchId(entity.getId());
-                task.setPromotionId(promotionId);
-                scheduler.addNotify2PredictFootball(zonedDateTime.toLocalDateTime(), task);
+                if (zonedDateTime.isAfter(ZonedDateTime.now())) {
+                    Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
+                    task.setMatchId(entity.getId());
+                    task.setPromotionId(promotionId);
+                    scheduler.addNotify2PredictFootball(zonedDateTime.toLocalDateTime(), task);
+                }
 
-                UpdateStatusMatchTask updateStatusMatchTask = new UpdateStatusMatchTask();
-                updateStatusMatchTask.setMatchId(entity.getId());
-                scheduler.addUpdateStatusMatch(timeStart.toLocalDateTime(), updateStatusMatchTask);
+                if (timeStart.isAfter(ZonedDateTime.now())) {
+                    UpdateStatusMatchTask updateStatusMatchTask = new UpdateStatusMatchTask();
+                    updateStatusMatchTask.setMatchId(entity.getId());
+                    scheduler.addUpdateStatusMatch(timeStart.toLocalDateTime(), updateStatusMatchTask);
+                }
             });
         }
     }
