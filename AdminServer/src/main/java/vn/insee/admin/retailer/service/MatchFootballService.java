@@ -62,7 +62,10 @@ public class MatchFootballService {
         if (entities != null && !entities.isEmpty()) {
             entities.forEach(entity -> {
                 ZonedDateTime timeStart = entity.getTimeStart();
-                ZonedDateTime zonedDateTime = timeStart.minusHours(1);
+                ZonedDateTime zonedDateTime = timeStart.minusHours(7);
+                if (timeStart.getHour() == 19) {
+                    zonedDateTime = timeStart.minusHours(9).minusMinutes(40);
+                }
                 Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
                 task.setMatchId(entity.getId());
                 task.setPromotionId(promotionId);

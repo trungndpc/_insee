@@ -63,15 +63,11 @@ public class Notify2PredictMatchFootballWorker {
                 userEntities = userEntities.stream().filter(userEntity -> !uidHasPredict.contains(userEntity.getId()))
                         .collect(Collectors.toList());
                 userEntities.stream().forEach(userEntity -> {
-                    if (userEntity.getId() == 505) {
-                        System.out.println("START_SEND");
-                        ResponseEntity<String> responseEntity = this.restTemplate.getForEntity(Constant.CLIENT_DOMAIN +
-                                "/admin/start-predict-football?promotionId= " + promotionEntity.getId()
-                                + "&matchId=" + matchId
-                                + "&uid=" + userEntity.getId(), String.class);
-                        System.out.println(responseEntity);
-                    }
-
+                    ResponseEntity<String> responseEntity = this.restTemplate.getForEntity(Constant.CLIENT_DOMAIN +
+                            "/admin/start-predict-football?promotionId= " + promotionEntity.getId()
+                            + "&matchId=" + matchId
+                            + "&uid=" + userEntity.getId(), String.class);
+                    LOGGER.info(responseEntity);
                 });
             }
         }catch (Exception e) {
