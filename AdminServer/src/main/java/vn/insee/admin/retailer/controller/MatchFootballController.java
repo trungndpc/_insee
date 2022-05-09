@@ -11,15 +11,15 @@ import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.controller.converter.MatchFootballConverter;
 import vn.insee.admin.retailer.controller.dto.MatchFootballDTO;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
-import vn.insee.admin.retailer.service.AccumulationService;
-import vn.insee.admin.retailer.service.FootballPromotionService;
-import vn.insee.admin.retailer.service.MatchFootballService;
-import vn.insee.admin.retailer.service.PredictFootballFormService;
+import vn.insee.admin.retailer.message.User;
+import vn.insee.admin.retailer.message.football.SuccessPredictMatchMessage;
+import vn.insee.admin.retailer.service.*;
 import vn.insee.common.status.MatchFootballStatus;
 import vn.insee.common.status.PredictMatchFootballStatus;
 import vn.insee.common.type.TypeAccumulation;
 import vn.insee.jpa.entity.AccumulationEntity;
 import vn.insee.jpa.entity.MatchFootballEntity;
+import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.PredictMatchFootballFormEntity;
 import vn.insee.jpa.entity.promotion.PredictFootballPromotionEntity;
 
@@ -45,6 +45,9 @@ public class MatchFootballController {
 
     @Autowired
     private AccumulationService accumulationService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(path = "/list")
     public ResponseEntity<BaseResponse> find(@RequestParam(required = true) int promotionId,
@@ -118,8 +121,21 @@ public class MatchFootballController {
                         }
                         accumulationEntity.setPoint(accumulationEntity.getPoint() + 1);
                         accumulationService.createOrUpdate(accumulationEntity);
+                        sendMsgSuccessPredictMatch(entity.getUserId(), match, accumulationEntity.getPoint());
                     });
+        }
+    }
 
+    private void sendMsgSuccessPredictMatch(int uid, MatchFootballEntity match, int point) {
+        try{
+            UserEntity userEntity = userService.findById(uid);
+            User user = new User();
+            user.setUid(uid);
+            user.setFollowerId(userEntity.getFollowerId());
+            user.setName(userEntity.getName());
+            new SuccessPredictMatchMessage(user, match.getTeamOne(), match.getTeamTwo(), point).send();
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

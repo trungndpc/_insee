@@ -68,7 +68,7 @@ public class NextMatchQuestion extends Question {
 
         ZaloMessage.Attachment.Payload.Button yesButton = new ZaloMessage.Attachment.Payload.Button();
         yesButton.type = "oa.query.show";
-        yesButton.title = "Có, Tôi muốn dự đoán lại";
+        yesButton.title = "Có";
         yesButton.payload = "Có";
 
         ZaloMessage.Attachment.Payload.Button noButton = new ZaloMessage.Attachment.Payload.Button();

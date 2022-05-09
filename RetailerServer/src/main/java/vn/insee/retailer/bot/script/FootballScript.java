@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import vn.insee.common.status.MatchFootballStatus;
 import vn.insee.common.status.StatusForm;
 import vn.insee.jpa.entity.MatchFootballEntity;
 import vn.insee.jpa.entity.form.PredictMatchFootballFormEntity;
@@ -66,8 +67,7 @@ public class FootballScript {
                     if (question instanceof WhichMatchQuestion) {
                         WhichMatchQuestion whichMatchQuestion = (WhichMatchQuestion) question;
                         MatchBotEntity match = (MatchBotEntity) whichMatchQuestion.getUserAnswer();
-                        askResultMatch(match);
-
+                        askResultMatch(match, true);
                     } else if (question instanceof RePredictMatchQuestion) {
                         RePredictMatchQuestion rePredictMatchQuestion = (RePredictMatchQuestion) question;
                         Boolean isOk = (Boolean) rePredictMatchQuestion.getUserAnswer();
@@ -118,15 +118,13 @@ public class FootballScript {
                                 WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
                             }
                         } else {
-                            questionSS = this.session.getQuestion(WhichTeamQuestion.class);
-                            this.session.setWaitingQuestionId(questionSS.getId());
-                            this.session.putQuestion(questionSS.getId(), questionSS);
+                            askResultMatch(this.session.getMatch(), false);
                         }
                     } else if (question instanceof NextMatchQuestion) {
                         NextMatchQuestion nextMatchQuestion = (NextMatchQuestion) question;
                         boolean isOk = (boolean) nextMatchQuestion.getUserAnswer();
                         if (isOk) {
-                            askResultMatch(nextMatchQuestion.getMatch());
+                            askResultMatch(nextMatchQuestion.getMatch(), true);
                         } else {
                             CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
                             completePredictMessage.send();
@@ -236,35 +234,45 @@ public class FootballScript {
         return null;
     }
 
-    private void askResultMatch(MatchBotEntity match) throws JsonProcessingException {
+    private void askResultMatch(MatchBotEntity match, boolean isCheckPredict) throws JsonProcessingException {
+        MatchFootballEntity matchFootballEntity = MATCH_FOOTBALL_SERVICE.get(match.getId());
+        if (matchFootballEntity.getStatus() == MatchFootballStatus.PROCESSING) {
+            ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("Trận đấu đang diễn ra."));
+            return;
+        }
+
+        if (matchFootballEntity.getStatus() == MatchFootballStatus.DONE) {
+            ZaloService.INSTANCE.send(user.getFollowerId(), ZaloMessage.toTextMessage("Trận đấu đã kết thúc"));
+            return;
+        }
+
         this.session.setMatch(match);
         this.session.setPredict(null);
         this.session.setPredictId(null);
         PredictFootballSession.PredictFootballSS questionSS = null;
         PredictMatchFootballFormEntity predictEntity = PREDICT_FOOTBALL_MATCH_SERVICE.findByUserIdAndMatchId(user.getUid(), match.getId());
-
-        if (predictEntity == null) {
-            WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, match);
-            if (whichTeamQuestion.ask()) {
-                this.session.setWaitingQuestionId(whichTeamQuestion.getId());
-                questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
-                        whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
-                this.session.putQuestion(whichTeamQuestion.getId(), questionSS);
-            }
-
-        } else {
+        if (predictEntity != null) {
             PredictMatchBotEntity predictMatchBot = new PredictMatchBotEntity(match, predictEntity.getTeamWin());
             predictMatchBot.setId(predictEntity.getId());
             this.session.setPredictId(predictEntity.getId());
             this.session.setPredict(predictMatchBot);
-
-            RePredictMatchQuestion rePredictMatchQuestion = new RePredictMatchQuestion(user, predictMatchBot);
-            if (rePredictMatchQuestion.ask()) {
-                this.session.setWaitingQuestionId(rePredictMatchQuestion.getId());
-                questionSS = new PredictFootballSession.PredictFootballSS(rePredictMatchQuestion.getId(),
-                        rePredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(rePredictMatchQuestion)));
-                this.session.putQuestion(rePredictMatchQuestion.getId(), questionSS);
+            if (isCheckPredict) {
+                RePredictMatchQuestion rePredictMatchQuestion = new RePredictMatchQuestion(user, predictMatchBot);
+                if (rePredictMatchQuestion.ask()) {
+                    this.session.setWaitingQuestionId(rePredictMatchQuestion.getId());
+                    questionSS = new PredictFootballSession.PredictFootballSS(rePredictMatchQuestion.getId(),
+                            rePredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(rePredictMatchQuestion)));
+                    this.session.putQuestion(rePredictMatchQuestion.getId(), questionSS);
+                }
+                return;
             }
+        }
+        WhichTeamQuestion whichTeamQuestion = new WhichTeamQuestion(user, match);
+        if (whichTeamQuestion.ask()) {
+            this.session.setWaitingQuestionId(whichTeamQuestion.getId());
+            questionSS = new PredictFootballSession.PredictFootballSS(whichTeamQuestion.getId(),
+                    whichTeamQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(whichTeamQuestion)));
+            this.session.putQuestion(whichTeamQuestion.getId(), questionSS);
         }
     }
 
