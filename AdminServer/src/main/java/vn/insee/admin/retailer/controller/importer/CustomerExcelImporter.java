@@ -32,20 +32,40 @@ public class CustomerExcelImporter {
             Row currentRow = iterator.next();
             Cell phoneCell = currentRow.getCell(0);
             if (phoneCell != null) {
-                userEntity.setPhone(phoneCell.getStringCellValue());
-                if (!userEntity.getPhone().startsWith("0")) {
-                    throw new Exception("phone is valid");
-                }
+                userEntity = getPhone(phoneCell, userEntity);
                 userEntity = getInseeCode(currentRow.getCell(1), userEntity);
                 userEntity = getName(currentRow.getCell(2), userEntity);
-                userEntity = getCity(currentRow.getCell(4), userEntity);
-                userEntity = getDistrict(currentRow.getCell(3), userEntity);
+                userEntity = getCity(currentRow.getCell(3), userEntity);
+                userEntity = getDistrict(currentRow.getCell(4), userEntity);
                 userEntity = getCements(currentRow.getCell(5), userEntity);
                 users.add(userEntity);
             }
         }
         workbook.close();
         return users;
+    }
+
+    private UserEntity getPhone(Cell cell, UserEntity userEntity) throws Exception {
+        try{
+            String phone = "";
+            switch (cell.getCellType()) {
+                case STRING:
+                    phone = cell.getStringCellValue();
+                    break;
+                case NUMERIC:
+                    phone = "0" + Double.toString(cell.getNumericCellValue());
+                    break;
+            }
+            if (!phone.startsWith("0")) {
+                throw new Exception("phone is valid");
+            }
+            userEntity.setPhone(phone);
+        }catch (Exception e) {
+            double numericCellValue = cell.getNumericCellValue();
+            LOGGER.error(numericCellValue);
+            throw new Exception(e.getMessage());
+        }
+        return userEntity;
     }
 
 

@@ -37,4 +37,13 @@ public class PredictFootballFormService {
         return repository.saveAll(entities);
    }
 
+   public long countByMatchAndStatus(int match, Integer status) {
+       Specification<PredictMatchFootballFormEntity> specs =  Specification.where(null);
+       specs = specs.and(matchFootballFormSpecification.isMatchId(match));
+       if (status != null) {
+           specs = specs.and(matchFootballFormSpecification.isStatus(status));
+       }
+       return repository.count(specs);
+   }
+
 }

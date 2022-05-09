@@ -13,6 +13,12 @@ public class MatchFootballDTO {
     private Integer teamTwoScore;
     private String season;
 
+    private long totalPredict;
+
+    private long totalWin;
+
+    private long totalFailed;
+
     public int getId() {
         return id;
     }
@@ -91,5 +97,29 @@ public class MatchFootballDTO {
 
     public void setSeason(String season) {
         this.season = season;
+    }
+
+    public long getTotalPredict() {
+        return totalPredict;
+    }
+
+    public void setTotalPredict(long totalPredict) {
+        this.totalPredict = totalPredict;
+    }
+
+    public long getTotalWin() {
+        return totalWin;
+    }
+
+    public void setTotalWin(long totalWin) {
+        this.totalWin = totalWin;
+    }
+
+    public long getTotalFailed() {
+        return totalFailed;
+    }
+
+    public void setTotalFailed(long totalFailed) {
+        this.totalFailed = totalFailed;
     }
 }

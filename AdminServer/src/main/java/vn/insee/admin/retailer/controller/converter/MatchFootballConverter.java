@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import vn.insee.admin.retailer.controller.dto.MatchFootballDTO;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.mapper.Mapper;
+import vn.insee.admin.retailer.service.PredictFootballFormService;
+import vn.insee.common.status.MatchFootballStatus;
+import vn.insee.common.status.PredictMatchFootballStatus;
 import vn.insee.jpa.entity.MatchFootballEntity;
 
 import java.util.ArrayList;
@@ -22,8 +25,19 @@ public class MatchFootballConverter {
     @Autowired
     private Mapper mapper;
 
+    @Autowired
+    private PredictFootballFormService predictFootballFormService;
+
     public MatchFootballDTO convert2DTO(MatchFootballEntity entity) {
-        return mapper.map(entity, MatchFootballDTO.class);
+        MatchFootballDTO dto = mapper.map(entity, MatchFootballDTO.class);
+        dto.setTotalPredict(predictFootballFormService.countByMatchAndStatus(entity.getId(), null));
+        if (entity.getStatus() == MatchFootballStatus.DONE) {
+            long win = predictFootballFormService.countByMatchAndStatus(entity.getId(), PredictMatchFootballStatus.CORRECT_TEAM);
+            dto.setTotalWin(win);
+            long wrong = predictFootballFormService.countByMatchAndStatus(entity.getId(), PredictMatchFootballStatus.WRONG);
+            dto.setTotalFailed(wrong);
+        }
+        return dto;
     }
 
     public PageDTO<MatchFootballDTO> convertToPageDTO(Page<MatchFootballEntity> entities)  {
