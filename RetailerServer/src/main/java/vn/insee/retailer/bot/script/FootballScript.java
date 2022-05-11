@@ -61,7 +61,6 @@ public class FootballScript {
                 this.session.putQuestion(question.getId(), predictFootballSS);
                 WEBHOOK_SESSION_MANAGER.saveSession(user.getUid(), this.session);
 
-
                 if (isAccept) {
                     PredictFootballSession.PredictFootballSS questionSS = null;
                     if (question instanceof WhichMatchQuestion) {
@@ -87,49 +86,18 @@ public class FootballScript {
                     } else if (question instanceof WhichTeamQuestion) {
                         WhichTeamQuestion whichTeamQuestion = (WhichTeamQuestion) question;
                         PredictMatchBotEntity predictMatchBot = (PredictMatchBotEntity) whichTeamQuestion.getUserAnswer();
-                        this.session.setPredict(predictMatchBot);
-
-                        SummaryPredictMatchQuestion summaryPredictMatchQuestion = new SummaryPredictMatchQuestion(user, predictMatchBot);
-                        if (summaryPredictMatchQuestion.ask()) {
-                            this.session.setWaitingQuestionId(summaryPredictMatchQuestion.getId());
-                            questionSS = new PredictFootballSession.PredictFootballSS(summaryPredictMatchQuestion.getId(),
-                                    summaryPredictMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(summaryPredictMatchQuestion)));
-                            this.session.putQuestion(summaryPredictMatchQuestion.getId(), questionSS);
-                        }
-                    } else if (question instanceof SummaryPredictMatchQuestion) {
-                        SummaryPredictMatchQuestion summaryPredictMatchQuestion = (SummaryPredictMatchQuestion) question;
-                        Boolean isOK = (Boolean) summaryPredictMatchQuestion.getUserAnswer();
-                        if (isOK) {
+                        if (predictMatchBot != null) {
+                            this.session.setPredict(predictMatchBot);
                             complete();
                             MatchBotEntity nextMatchOnDay = getNextMatchOnDay();
                             if (nextMatchOnDay != null && this.session.getCount() == 0) {
-                                NextMatchQuestion nextMatchQuestion = new NextMatchQuestion(user, nextMatchOnDay);
-                                if (nextMatchQuestion.ask()) {
-                                    this.session.setWaitingQuestionId(nextMatchQuestion.getId());
-                                    questionSS = new PredictFootballSession.PredictFootballSS(nextMatchQuestion.getId(),
-                                            nextMatchQuestion.getClass(), new JSONObject(this.objectMapper.writeValueAsString(nextMatchQuestion)));
-                                    this.session.putQuestion(nextMatchQuestion.getId(), questionSS);
-                                    this.session.setCount(this.session.getCount() + 1);
-                                }
+                                askResultMatch(nextMatchOnDay, false);
                             } else {
                                 CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
                                 completePredictMessage.send();
                                 this.session = null;
                                 WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
                             }
-                        } else {
-                            askResultMatch(this.session.getMatch(), false);
-                        }
-                    } else if (question instanceof NextMatchQuestion) {
-                        NextMatchQuestion nextMatchQuestion = (NextMatchQuestion) question;
-                        boolean isOk = (boolean) nextMatchQuestion.getUserAnswer();
-                        if (isOk) {
-                            askResultMatch(nextMatchQuestion.getMatch(), true);
-                        } else {
-                            CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
-                            completePredictMessage.send();
-                            this.session = null;
-                            WEBHOOK_SESSION_MANAGER.clearSession(user.getUid());
                         }
                     }
                 }
@@ -292,7 +260,6 @@ public class FootballScript {
             match.setTeamA(matchEntity.getTeamOne());
             match.setTeamB(matchEntity.getTeamTwo());
             this.session.setMatch(match);
-
 
             //update latest predict
             PredictMatchFootballFormEntity predict = PREDICT_FOOTBALL_MATCH_SERVICE.findByUserIdAndMatchId(user.getUid(), match.getId());
