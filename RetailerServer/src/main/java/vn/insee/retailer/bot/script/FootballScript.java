@@ -89,8 +89,11 @@ public class FootballScript {
                         if (predictMatchBot != null) {
                             this.session.setPredict(predictMatchBot);
                             complete();
+                            int count = this.session.getCount();
+                            count++;
+                            this.session.setCount(count);
                             MatchBotEntity nextMatchOnDay = getNextMatchOnDay();
-                            if (nextMatchOnDay != null && this.session.getCount() == 0) {
+                            if (nextMatchOnDay != null && this.session.getCount() <= 1) {
                                 askResultMatch(nextMatchOnDay, false);
                             } else {
                                 CompletePredictMessage completePredictMessage = new CompletePredictMessage(user);
