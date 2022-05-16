@@ -45,10 +45,11 @@ public class UserService {
         }
         userEntity.setStatus(StatusUser.WAIT_APPROVAL);
         userRepository.saveAndFlush(userEntity);
-        if (!StringUtils.isEmpty(userEntity.getUtm()) && "WORKSHOP_001".equals(userEntity.getUtm())) {
-            ResponseEntity<String> responseEntity = this.restTemplate.getForEntity(Constant.ADMIN_DOMAIN
+
+        String utm = userEntity.getUtm();
+        if (!StringUtils.isEmpty(utm) && ("WORKSHOP_001".equals(utm) || "SALER".equals(utm))) {
+            this.restTemplate.getForEntity(Constant.ADMIN_DOMAIN
                     + "/int/auto-approved?uid=" + userEntity.getId(), String.class);
-            LOGGER.info(responseEntity);
         }
         return userEntity;
     }
