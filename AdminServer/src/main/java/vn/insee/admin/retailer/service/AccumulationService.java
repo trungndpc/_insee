@@ -9,10 +9,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.insee.common.type.TypeAccumulation;
 import vn.insee.jpa.entity.AccumulationEntity;
-import vn.insee.jpa.entity.MatchFootballEntity;
 import vn.insee.jpa.repository.AccumulationRepository;
 import vn.insee.jpa.specification.AccumulationSpecification;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,5 +46,9 @@ public class AccumulationService {
         specs = specs.and(specification.isPromotion(promotionId));
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "point"));
         return repository.findAll(specs, pageable);
+    }
+
+    public List<AccumulationEntity> getAll() {
+        return repository.findAll();
     }
 }

@@ -52,8 +52,8 @@ public class MatchFootballService {
 
     @EventListener
     public void test(ContextRefreshedEvent event) {
-        final int PROMOTION_ID_PREDICT_FOOTBALL = 376;
-        scheduleFootball(PROMOTION_ID_PREDICT_FOOTBALL);
+//        final int PROMOTION_ID_PREDICT_FOOTBALL = 376;
+//        scheduleFootball(PROMOTION_ID_PREDICT_FOOTBALL);
     }
 
     private void scheduleFootball(int promotionId) {

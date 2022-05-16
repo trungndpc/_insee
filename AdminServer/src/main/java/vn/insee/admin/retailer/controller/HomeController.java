@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.controller.converter.UserConverter;
+import vn.insee.admin.retailer.service.AccumulationService;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.admin.retailer.util.ReadFileExcelUtil;
 import vn.insee.admin.retailer.util.RenderUtils;
@@ -50,13 +51,7 @@ public class HomeController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping(value = "/test", produces = MediaType.TEXT_HTML_VALUE)
-    @ResponseBody
-    public String test(HttpServletRequest request, HttpServletResponse response) throws
-            IOException {
-
-        return "OK";
-    }
+    private AccumulationService accumulationService;
 
     @GetMapping(value = "/**", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody

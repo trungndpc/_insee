@@ -26,6 +26,10 @@ public class PredictMatchFootballFormSpecification {
         return (root, query, builder) -> builder.equal(root.get(PredictMatchFootballFormEntity_.matchId), matchId);
     }
 
+    public Specification<PredictMatchFootballFormEntity> isUid(int uid) {
+        return (root, query, builder) -> builder.equal(root.get(PredictMatchFootballFormEntity_.userId), uid);
+    }
+
 
 
 }

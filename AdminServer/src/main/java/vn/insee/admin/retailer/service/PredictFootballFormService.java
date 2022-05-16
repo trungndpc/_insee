@@ -46,4 +46,10 @@ public class PredictFootballFormService {
        return repository.count(specs);
    }
 
+   public long countUserByStatus(int uid, int status) {
+       Specification<PredictMatchFootballFormEntity> specs =  Specification.where(null);
+        specs = specs.and(matchFootballFormSpecification.isStatus(status));
+        specs = specs.and(matchFootballFormSpecification.isUid(uid));
+        return repository.count(specs);
+   }
 }

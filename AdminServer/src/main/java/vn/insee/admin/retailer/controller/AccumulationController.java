@@ -3,6 +3,8 @@ package vn.insee.admin.retailer.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +43,9 @@ public class AccumulationController {
     @Autowired
     private AccumulationService accumulationService;
 
+    @Autowired
+    private PredictFootballFormService predictFootballFormService;
+
     @GetMapping(path = "/list")
     public ResponseEntity<BaseResponse> find(@RequestParam(required = true) int promotionId,
             @RequestParam(required = true) int type,
@@ -60,8 +65,22 @@ public class AccumulationController {
 
 
 
-
-
+//    @EventListener
+//    public void recheck(ContextRefreshedEvent event) {
+//        System.out.println("DONE");
+//        int wrong = 0;
+//        List<AccumulationEntity> all = accumulationService.getAll();
+//        for (AccumulationEntity entity: all) {
+//            long count = predictFootballFormService.countUserByStatus(entity.getUid(), PredictMatchFootballStatus.CORRECT_TEAM);
+//            Integer now = entity.getPoint();
+//            if (count != now) {
+//                entity.setPoint((int) count);
+//                System.out.println("CURRENT: " + now + " | WRONG: " + count);
+//                wrong++;
+//            }
+//        }
+//        System.out.println("WRONG: " + wrong);
+//    }
 
 
 }
