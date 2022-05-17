@@ -17,9 +17,6 @@ import vn.insee.jpa.entity.MatchFootballEntity;
 import vn.insee.jpa.repository.MatchFootballRepository;
 import vn.insee.jpa.specification.MatchFootballSpecification;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -37,7 +34,7 @@ public class MatchFootballService {
 
     public Page<MatchFootballEntity> find(String season, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, "id"));
-        Specification<MatchFootballEntity> specs =  Specification.where(null);
+        Specification<MatchFootballEntity> specs = Specification.where(null);
         specs = specs.and(footballSpecification.isSeason(season));
         return repository.findAll(specs, pageable);
     }
@@ -52,8 +49,8 @@ public class MatchFootballService {
 
     @EventListener
     public void test(ContextRefreshedEvent event) {
-//        final int PROMOTION_ID_PREDICT_FOOTBALL = 376;
-//        scheduleFootball(PROMOTION_ID_PREDICT_FOOTBALL);
+        final int PROMOTION_ID_PREDICT_FOOTBALL = 376;
+        scheduleFootball(PROMOTION_ID_PREDICT_FOOTBALL);
     }
 
     private void scheduleFootball(int promotionId) {
@@ -61,16 +58,22 @@ public class MatchFootballService {
                 repository.findByStatus(MatchFootballStatus.INIT);
         if (entities != null && !entities.isEmpty()) {
             entities.forEach(entity -> {
+
+
                 ZonedDateTime timeStart = entity.getTimeStart();
                 ZonedDateTime zonedDateTime = timeStart.minusHours(7);
                 if (timeStart.getHour() == 19) {
                     zonedDateTime = timeStart.minusHours(9).minusMinutes(40);
                 }
-                if (zonedDateTime.isAfter(ZonedDateTime.now())) {
-                    Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
-                    task.setMatchId(entity.getId());
-                    task.setPromotionId(promotionId);
-                    scheduler.addNotify2PredictFootball(zonedDateTime.toLocalDateTime(), task);
+
+                //Only push match id: 22
+                if (entity.getId() == 22) {
+                    if (zonedDateTime.isAfter(ZonedDateTime.now())) {
+                        Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
+                        task.setMatchId(entity.getId());
+                        task.setPromotionId(promotionId);
+                        scheduler.addNotify2PredictFootball(zonedDateTime.toLocalDateTime(), task);
+                    }
                 }
 
                 if (timeStart.isAfter(ZonedDateTime.now())) {
@@ -78,6 +81,7 @@ public class MatchFootballService {
                     updateStatusMatchTask.setMatchId(entity.getId());
                     scheduler.addUpdateStatusMatch(timeStart.toLocalDateTime(), updateStatusMatchTask);
                 }
+
             });
         }
     }

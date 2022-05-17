@@ -1,17 +1,29 @@
 package vn.insee.admin.retailer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import vn.insee.admin.retailer.message.User;
+import vn.insee.admin.retailer.message.football.SuccessPredictMatchMessage;
+import vn.insee.admin.retailer.woker.Scheduler;
+import vn.insee.admin.retailer.woker.task.ReportGroupStageSeagameTask;
 import vn.insee.common.type.TypeAccumulation;
 import vn.insee.jpa.entity.AccumulationEntity;
+import vn.insee.jpa.entity.MatchFootballEntity;
+import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.AccumulationRepository;
 import vn.insee.jpa.specification.AccumulationSpecification;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +35,9 @@ public class AccumulationService {
 
     @Autowired
     private AccumulationSpecification specification;
+
+    @Autowired
+    private Scheduler scheduler;
 
     public AccumulationEntity createOrUpdate(AccumulationEntity entity) {
         return repository.saveAndFlush(entity);
@@ -50,5 +65,15 @@ public class AccumulationService {
 
     public List<AccumulationEntity> getAll() {
         return repository.findAll();
+    }
+
+    @EventListener
+    public void test(ContextRefreshedEvent event) {
+        LocalDate localDate = LocalDate.of(2022, 05, 18);
+        LocalTime localTime = LocalTime.of(9,  00);
+        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
+
+        ZonedDateTime timeStamp = ZonedDateTime.of( localDate, localTime, zoneId);
+        scheduler.addReportStageSeagame(timeStamp.toLocalDateTime(), new ReportGroupStageSeagameTask());
     }
 }

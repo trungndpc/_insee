@@ -14,22 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.controller.converter.AccumulationConverter;
-import vn.insee.admin.retailer.controller.converter.MatchFootballConverter;
-import vn.insee.admin.retailer.controller.dto.MatchFootballDTO;
-import vn.insee.admin.retailer.controller.dto.PageDTO;
+import vn.insee.admin.retailer.message.User;
+import vn.insee.admin.retailer.message.football.SuccessGroupStageMessage;
 import vn.insee.admin.retailer.service.AccumulationService;
-import vn.insee.admin.retailer.service.FootballPromotionService;
-import vn.insee.admin.retailer.service.MatchFootballService;
 import vn.insee.admin.retailer.service.PredictFootballFormService;
-import vn.insee.common.status.MatchFootballStatus;
+import vn.insee.admin.retailer.service.UserService;
 import vn.insee.common.status.PredictMatchFootballStatus;
-import vn.insee.common.type.TypeAccumulation;
 import vn.insee.jpa.entity.AccumulationEntity;
-import vn.insee.jpa.entity.MatchFootballEntity;
-import vn.insee.jpa.entity.form.PredictMatchFootballFormEntity;
-import vn.insee.jpa.entity.promotion.PredictFootballPromotionEntity;
+import vn.insee.jpa.entity.UserEntity;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -45,6 +38,9 @@ public class AccumulationController {
 
     @Autowired
     private PredictFootballFormService predictFootballFormService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping(path = "/list")
     public ResponseEntity<BaseResponse> find(@RequestParam(required = true) int promotionId,
@@ -63,24 +59,22 @@ public class AccumulationController {
         return ResponseEntity.ok(response);
     }
 
-
-
 //    @EventListener
-//    public void recheck(ContextRefreshedEvent event) {
-//        System.out.println("DONE");
-//        int wrong = 0;
-//        List<AccumulationEntity> all = accumulationService.getAll();
-//        for (AccumulationEntity entity: all) {
-//            long count = predictFootballFormService.countUserByStatus(entity.getUid(), PredictMatchFootballStatus.CORRECT_TEAM);
-//            Integer now = entity.getPoint();
-//            if (count != now) {
-//                entity.setPoint((int) count);
-//                System.out.println("CURRENT: " + now + " | WRONG: " + count);
-//                wrong++;
-//            }
-//        }
-//        System.out.println("WRONG: " + wrong);
-//    }
+    public void recheck(ContextRefreshedEvent event) {
+        System.out.println("DONE");
+        int wrong = 0;
+        List<AccumulationEntity> all = accumulationService.getAll();
+        for (AccumulationEntity entity: all) {
+            long count = predictFootballFormService.countUserByStatus(entity.getUid(), PredictMatchFootballStatus.CORRECT_TEAM);
+            Integer now = entity.getPoint();
+            if (count != now) {
+                entity.setPoint((int) count);
+                System.out.println("CURRENT: " + now + " | WRONG: " + count);
+                wrong++;
+            }
+        }
+        System.out.println("WRONG: " + wrong);
+    }
 
 
 }

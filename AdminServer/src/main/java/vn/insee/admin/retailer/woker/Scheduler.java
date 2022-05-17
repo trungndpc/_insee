@@ -33,6 +33,9 @@ public class Scheduler {
     private Notify2PredictMatchFootballWorker notify2PredictMatchFootballWorker;
 
     @Autowired
+    private ReportGroupStageSeagameWorker reportGroupStageSeagameWorker;
+
+    @Autowired
     private UpdateStatusMatchFootballWorker updateStatusMatchFootballWorker;
 
     public String addJob(LocalDateTime localDateTime, PostBroadcastTask job) {
@@ -67,6 +70,11 @@ public class Scheduler {
 
     public String addUpdateStatusMatch(LocalDateTime localDateTime, UpdateStatusMatchTask task) {
         JobId schedule = jobScheduler.schedule(localDateTime, () -> updateStatusMatchFootballWorker.execute(task));
+        return schedule.asUUID().toString();
+    }
+
+    public String addReportStageSeagame(LocalDateTime localDateTime, ReportGroupStageSeagameTask task) {
+        JobId schedule = jobScheduler.schedule(localDateTime, () -> reportGroupStageSeagameWorker.execute(task));
         return schedule.asUUID().toString();
     }
 

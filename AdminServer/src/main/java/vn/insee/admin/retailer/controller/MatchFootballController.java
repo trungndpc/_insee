@@ -121,7 +121,8 @@ public class MatchFootballController {
                         }
                         accumulationEntity.setPoint(accumulationEntity.getPoint() + 1);
                         accumulationService.createOrUpdate(accumulationEntity);
-                        sendMsgSuccessPredictMatch(entity.getUserId(), match, accumulationEntity.getPoint());
+                        // khong thong bao diem nua
+//                        sendMsgSuccessPredictMatch(entity.getUserId(), match, accumulationEntity.getPoint());
                     });
         }
     }
@@ -138,9 +139,5 @@ public class MatchFootballController {
             LOGGER.error(e.getMessage(), e);
         }
     }
-
-
-
-
 
 }

@@ -3,6 +3,8 @@ package vn.insee.admin.retailer.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +52,7 @@ public class UserService {
         return customer;
     }
 
-    public UserEntity findByPhone(String phone){
+    public UserEntity findByPhone(String phone) {
         return userRepository.findByPhone(phone);
     }
 
@@ -68,7 +70,7 @@ public class UserService {
 
     public Page<UserEntity> find(String search, Integer status, Integer location, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<UserEntity> specs = Specification.where(null);
         if (search != null && !search.isEmpty()) {
             specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
         }
@@ -83,7 +85,7 @@ public class UserService {
 
 
     public List<UserEntity> list(String search, Integer status, Integer location) {
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<UserEntity> specs = Specification.where(null);
         if (search != null && !search.isEmpty()) {
             specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
         }
@@ -126,7 +128,7 @@ public class UserService {
     }
 
     public long count(Integer location, List<Integer> statuses) {
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<UserEntity> specs = Specification.where(null);
         if (location != null) {
             specs = specs.and(userSpecification.isCity(location));
         }
@@ -145,7 +147,7 @@ public class UserService {
     }
 
     public List<UserEntity> findBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<UserEntity> specs = Specification.where(null);
         if (status != null) {
             specs = specs.and(userSpecification.isStatus(status));
         }
@@ -160,7 +162,7 @@ public class UserService {
     }
 
     public long countBy(List<Integer> cityIds, List<Integer> districtIds, Integer status) {
-        Specification<UserEntity> specs =  Specification.where(null);
+        Specification<UserEntity> specs = Specification.where(null);
         if (status != null) {
             specs = specs.and(userSpecification.isStatus(status));
         }
