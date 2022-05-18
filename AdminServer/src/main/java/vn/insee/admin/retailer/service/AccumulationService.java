@@ -67,7 +67,7 @@ public class AccumulationService {
         return repository.findAll();
     }
 
-    @EventListener
+//    @EventListener
     public void test(ContextRefreshedEvent event) {
         LocalDate localDate = LocalDate.of(2022, 05, 18);
         LocalTime localTime = LocalTime.of(9,  00);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
+import vn.insee.admin.retailer.common.UserStatus;
 import vn.insee.admin.retailer.controller.converter.AccumulationConverter;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.admin.retailer.message.football.SuccessGroupStageMessage;
@@ -65,6 +66,10 @@ public class AccumulationController {
         int wrong = 0;
         List<AccumulationEntity> all = accumulationService.getAll();
         for (AccumulationEntity entity: all) {
+            UserEntity userEntity = userService.findById(entity.getUid());
+            if (userEntity.getStatus() != UserStatus.APPROVED) {
+                System.out.println("userName: " + userEntity.getName() + ", point: " + entity.getPoint());
+            }
             long count = predictFootballFormService.countUserByStatus(entity.getUid(), PredictMatchFootballStatus.CORRECT_TEAM);
             Integer now = entity.getPoint();
             if (count != now) {
