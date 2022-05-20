@@ -66,8 +66,8 @@ public class MatchFootballService {
                     zonedDateTime = timeStart.minusHours(9).minusMinutes(40);
                 }
 
-                //Only push match id: 22
-                if (entity.getId() == 22) {
+                //Only push match id: 24
+                if (entity.getId() == 24) {
                     if (zonedDateTime.isAfter(ZonedDateTime.now())) {
                         Notify2PredictMatchFootballTask task = new Notify2PredictMatchFootballTask();
                         task.setMatchId(entity.getId());

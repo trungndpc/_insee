@@ -47,7 +47,7 @@ public class UserService {
         userRepository.saveAndFlush(userEntity);
 
         String utm = userEntity.getUtm();
-        if (!StringUtils.isEmpty(utm) && ("WORKSHOP_001".equals(utm) || "SALER".equals(utm))) {
+        if (!StringUtils.isEmpty(utm) && ("WORKSHOP_001".equals(utm) || "SALER".equals(utm) || "TRADER".equals(utm))) {
             this.restTemplate.getForEntity(Constant.ADMIN_DOMAIN
                     + "/int/auto-approved?uid=" + userEntity.getId(), String.class);
         }
