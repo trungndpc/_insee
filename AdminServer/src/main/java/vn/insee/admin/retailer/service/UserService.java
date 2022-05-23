@@ -98,6 +98,20 @@ public class UserService {
         return userRepository.findAll(specs);
     }
 
+    public List<UserEntity> findOnlyId(String search, Integer status, Integer location) {
+        Specification<UserEntity> specs = Specification.where(null);
+        if (search != null && !search.isEmpty()) {
+            specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
+        }
+        if (status != null) {
+            specs = specs.and(userSpecification.isStatus(status));
+        }
+        if (location != null) {
+            specs = specs.and(userSpecification.isCity(location));
+        }
+        return userRepository.findAllWithIdOnly(specs);
+    }
+
 
     public UserEntity updateStatus(int uid, int status, String note) throws Exception {
         UserEntity userEntity = userRepository.getOne(uid);

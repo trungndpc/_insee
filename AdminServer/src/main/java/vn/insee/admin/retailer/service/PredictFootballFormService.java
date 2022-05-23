@@ -1,6 +1,8 @@
 package vn.insee.admin.retailer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +50,16 @@ public class PredictFootballFormService {
 
    public long countUserByStatus(int uid, int status) {
        Specification<PredictMatchFootballFormEntity> specs =  Specification.where(null);
-        specs = specs.and(matchFootballFormSpecification.isStatus(status));
+//        specs = specs.and(matchFootballFormSpecification.isStatus(status));
         specs = specs.and(matchFootballFormSpecification.isUid(uid));
         return repository.count(specs);
+   }
+
+    @EventListener
+   public void test(ContextRefreshedEvent event) {
+       long l = countUserByStatus(1247, 1);
+       System.out.println(l);
+       long l1 = countUserByStatus(1399, 1);
+       System.out.println(l1);
    }
 }

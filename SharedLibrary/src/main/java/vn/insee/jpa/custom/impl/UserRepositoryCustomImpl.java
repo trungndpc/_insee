@@ -1,5 +1,6 @@
 package vn.insee.jpa.custom.impl;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.custom.UserRepositoryCustom;
@@ -11,12 +12,12 @@ import vn.insee.jpa.metric.UserDataMetric;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import javax.persistence.metamodel.SingularAttribute;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,5 +57,35 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         List<Object[]> resultList = typedQuery.getResultList();
         return resultList.stream().map(r -> new UserDataMetric(r[0].toString(), Integer.parseInt(r[1].toString())))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserEntity> findAllWithIdOnly(Specification<UserEntity> spec) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleQuery = criteriaBuilder.createTupleQuery();
+        Root<UserEntity> root = tupleQuery.from(UserEntity.class);
+        tupleQuery.multiselect(getSelection(root, UserEntity_.id),
+                getSelection(root, UserEntity_.name));
+        if (spec != null) {
+            tupleQuery.where(spec.toPredicate(root, tupleQuery, criteriaBuilder));
+        }
+
+        List<Tuple> CustomerNames = entityManager.createQuery(tupleQuery).getResultList();
+        return createEntitiesFromTuples(CustomerNames);
+    }
+
+    private Selection<?> getSelection(Root<UserEntity> root,
+                                      SingularAttribute<UserEntity, ?> attribute) {
+        return root.get(attribute).alias(attribute.getName());
+    }
+
+    private List<UserEntity> createEntitiesFromTuples(List<Tuple> CustomerNames) {
+        List<UserEntity> userEntities = new ArrayList<>();
+        for (Tuple tuple : CustomerNames) {
+            UserEntity userEntity = new UserEntity();
+            userEntity.setId(tuple.get(UserEntity_.id.getName(), Integer.class));
+            userEntities.add(userEntity);
+        }
+        return userEntities;
     }
 }
