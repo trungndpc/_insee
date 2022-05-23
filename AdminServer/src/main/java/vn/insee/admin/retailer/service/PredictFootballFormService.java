@@ -48,18 +48,12 @@ public class PredictFootballFormService {
        return repository.count(specs);
    }
 
-   public long countUserByStatus(int uid, int status) {
+   public long countUserByStatus(int uid, Integer status) {
        Specification<PredictMatchFootballFormEntity> specs =  Specification.where(null);
-//        specs = specs.and(matchFootballFormSpecification.isStatus(status));
+       if (status != null) {
+           specs = specs.and(matchFootballFormSpecification.isStatus(status));
+       }
         specs = specs.and(matchFootballFormSpecification.isUid(uid));
         return repository.count(specs);
-   }
-
-    @EventListener
-   public void test(ContextRefreshedEvent event) {
-       long l = countUserByStatus(1247, 1);
-       System.out.println(l);
-       long l1 = countUserByStatus(1399, 1);
-       System.out.println(l1);
    }
 }

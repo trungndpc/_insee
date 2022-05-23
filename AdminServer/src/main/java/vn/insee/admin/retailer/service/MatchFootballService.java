@@ -2,7 +2,6 @@ package vn.insee.admin.retailer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +46,7 @@ public class MatchFootballService {
         return repository.saveAndFlush(entity);
     }
 
-    @EventListener
-    public void test(ContextRefreshedEvent event) {
+    public void scan2Schedule(ContextRefreshedEvent event) {
         final int PROMOTION_ID_PREDICT_FOOTBALL = 376;
         scheduleFootball(PROMOTION_ID_PREDICT_FOOTBALL);
     }

@@ -15,8 +15,6 @@ import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
 import vn.insee.admin.retailer.common.UserStatus;
 import vn.insee.admin.retailer.controller.converter.AccumulationConverter;
-import vn.insee.admin.retailer.message.User;
-import vn.insee.admin.retailer.message.football.SuccessGroupStageMessage;
 import vn.insee.admin.retailer.service.AccumulationService;
 import vn.insee.admin.retailer.service.PredictFootballFormService;
 import vn.insee.admin.retailer.service.UserService;
@@ -58,27 +56,6 @@ public class AccumulationController {
             response.setMsg(e.getMessage());
         }
         return ResponseEntity.ok(response);
-    }
-
-//    @EventListener
-    public void recheck(ContextRefreshedEvent event) {
-        System.out.println("DONE");
-        int wrong = 0;
-        List<AccumulationEntity> all = accumulationService.getAll();
-        for (AccumulationEntity entity: all) {
-            UserEntity userEntity = userService.findById(entity.getUid());
-            if (userEntity.getStatus() != UserStatus.APPROVED) {
-                System.out.println("userName: " + userEntity.getName() + ", point: " + entity.getPoint());
-            }
-            long count = predictFootballFormService.countUserByStatus(entity.getUid(), PredictMatchFootballStatus.CORRECT_TEAM);
-            Integer now = entity.getPoint();
-            if (count != now) {
-                entity.setPoint((int) count);
-                System.out.println("CURRENT: " + now + " | WRONG: " + count);
-                wrong++;
-            }
-        }
-        System.out.println("WRONG: " + wrong);
     }
 
 

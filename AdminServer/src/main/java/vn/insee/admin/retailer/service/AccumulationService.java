@@ -9,13 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.insee.admin.retailer.message.User;
-import vn.insee.admin.retailer.message.football.SuccessPredictMatchMessage;
+import vn.insee.admin.retailer.util.City;
 import vn.insee.admin.retailer.woker.Scheduler;
 import vn.insee.admin.retailer.woker.task.ReportGroupStageSeagameTask;
 import vn.insee.common.type.TypeAccumulation;
 import vn.insee.jpa.entity.AccumulationEntity;
-import vn.insee.jpa.entity.MatchFootballEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.AccumulationRepository;
 import vn.insee.jpa.specification.AccumulationSpecification;
@@ -63,17 +61,22 @@ public class AccumulationService {
         return repository.findAll(specs, pageable);
     }
 
-    public List<AccumulationEntity> getAll() {
-        return repository.findAll();
+    public List<AccumulationEntity> findByPromotionId(int promotionId) {
+        return repository.findByPromotionId(promotionId);
     }
 
-//    @EventListener
-    public void test(ContextRefreshedEvent event) {
-        LocalDate localDate = LocalDate.of(2022, 05, 18);
+    public void delete(int id) {
+        repository.deleteById(id);
+    }
+
+    @EventListener
+    public void schedule2Report(ContextRefreshedEvent event) {
+        LocalDate localDate = LocalDate.of(2022, 05, 24);
         LocalTime localTime = LocalTime.of(9,  00);
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
-
         ZonedDateTime timeStamp = ZonedDateTime.of( localDate, localTime, zoneId);
         scheduler.addReportStageSeagame(timeStamp.toLocalDateTime(), new ReportGroupStageSeagameTask());
     }
+    @Autowired
+    private UserService userService;
 }
