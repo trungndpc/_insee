@@ -77,6 +77,4 @@ public class AccumulationService {
         ZonedDateTime timeStamp = ZonedDateTime.of( localDate, localTime, zoneId);
         scheduler.addReportStageSeagame(timeStamp.toLocalDateTime(), new ReportGroupStageSeagameTask());
     }
-    @Autowired
-    private UserService userService;
 }
