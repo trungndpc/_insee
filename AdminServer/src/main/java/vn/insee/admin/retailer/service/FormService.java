@@ -3,6 +3,8 @@ package vn.insee.admin.retailer.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -10,20 +12,21 @@ import vn.insee.admin.retailer.message.ApprovedStockPromotionMessage;
 import vn.insee.admin.retailer.message.RejectedStockFormMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.status.StatusStockForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
+import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.metric.FormCityMetric;
 import vn.insee.jpa.metric.FormDateMetric;
 import vn.insee.jpa.metric.FormPromotionMetric;
-import vn.insee.jpa.metric.UserDataMetric;
 import vn.insee.jpa.repository.FormRepository;
 import vn.insee.jpa.repository.StockFormRepository;
 import vn.insee.jpa.specification.FormSpecification;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +79,10 @@ public class FormService {
 
     public List<StockFormEntity> findByPromotionId(int promotionId) {
         return stockFormRepository.findByPromotionId(promotionId);
+    }
+
+    public List<FormEntity> findByPromotionIds(int promotionId) {
+        return formRepository.findByPromotionId(promotionId);
     }
 
     public Page<FormEntity> findByPromotions(List<Integer> promotionIds, Integer status, Integer city,
@@ -173,5 +180,30 @@ public class FormService {
     public List<FormPromotionMetric> statisticFormByPromotion() {
         return formRepository.statisticFormByPromotion();
     }
+
+    public List<Integer> findDistinctUid() {
+        return formRepository.findDistinctUid();
+    }
+
+
+    @Autowired
+    private PromotionService promotionService;
+    @EventListener
+    private void reportActiveUser(ContextRefreshedEvent event) {
+        List<PromotionEntity> promotionEntities = promotionService.find(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE, StatusPromotion.APPROVED);
+        promotionEntities.addAll(promotionService.find(TypePromotion.PREDICT_FOOTBALL, StatusPromotion.APPROVED));
+
+
+        System.out.println(promotionEntities);
+        final Set<Integer> uids = new HashSet<>();
+        promotionEntities.forEach(promotionEntity -> {
+            List<FormEntity> formEntities = findByPromotionIds(promotionEntity.getId());
+            System.out.println(formEntities.size());
+            uids.addAll(formEntities.stream().map(FormEntity::getUserId)
+                    .collect(Collectors.toList()));
+        });
+        System.out.println("uids:" + uids.size());
+    }
+
 
 }
