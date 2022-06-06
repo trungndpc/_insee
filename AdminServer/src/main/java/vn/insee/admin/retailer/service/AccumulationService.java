@@ -69,7 +69,6 @@ public class AccumulationService {
         repository.deleteById(id);
     }
 
-    @EventListener
     public void schedule2Report(ContextRefreshedEvent event) {
         LocalDate localDate = LocalDate.of(2022, 05, 24);
         LocalTime localTime = LocalTime.of(9,  00);

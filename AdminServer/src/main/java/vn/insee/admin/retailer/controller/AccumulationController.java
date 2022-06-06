@@ -58,5 +58,14 @@ public class AccumulationController {
         return ResponseEntity.ok(response);
     }
 
+    public void schedule2Report(ContextRefreshedEvent event) {
+            Page<AccumulationEntity> accumulationEntities = accumulationService.findByPromotionAndType(376, 1, 0, 1000);
+            accumulationEntities.stream().limit(50).forEach(entity -> {
+                long total = predictFootballFormService.countUserByStatus(entity.getUid(), null);
+                UserEntity userEntity = userService.findById(entity.getUid());
+                System.out.println(userEntity.getName() + "\t" + userEntity.getPhone() + "\t" + entity.getPoint() + "/" + total);
+            });
+        }
+
 
 }
