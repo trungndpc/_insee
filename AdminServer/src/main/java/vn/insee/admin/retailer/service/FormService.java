@@ -185,25 +185,22 @@ public class FormService {
         return formRepository.findDistinctUid();
     }
 
-
-    @Autowired
-    private PromotionService promotionService;
-    @EventListener
-    private void reportActiveUser(ContextRefreshedEvent event) {
-        List<PromotionEntity> promotionEntities = promotionService.find(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE, StatusPromotion.APPROVED);
-        promotionEntities.addAll(promotionService.find(TypePromotion.PREDICT_FOOTBALL, StatusPromotion.APPROVED));
-
-
-        System.out.println(promotionEntities);
-        final Set<Integer> uids = new HashSet<>();
-        promotionEntities.forEach(promotionEntity -> {
-            List<FormEntity> formEntities = findByPromotionIds(promotionEntity.getId());
-            System.out.println(formEntities.size());
-            uids.addAll(formEntities.stream().map(FormEntity::getUserId)
-                    .collect(Collectors.toList()));
-        });
-        System.out.println("uids:" + uids.size());
-    }
+//    @EventListener
+//    private void reportActiveUser(ContextRefreshedEvent event) {
+//        List<PromotionEntity> promotionEntities = promotionService.find(TypePromotion.LIGHTING_QUIZ_GAME_PROMOTION_TYPE, StatusPromotion.APPROVED);
+//        promotionEntities.addAll(promotionService.find(TypePromotion.PREDICT_FOOTBALL, StatusPromotion.APPROVED));
+//
+//
+//        System.out.println(promotionEntities);
+//        final Set<Integer> uids = new HashSet<>();
+//        promotionEntities.forEach(promotionEntity -> {
+//            List<FormEntity> formEntities = findByPromotionIds(promotionEntity.getId());
+//            System.out.println(formEntities.size());
+//            uids.addAll(formEntities.stream().map(FormEntity::getUserId)
+//                    .collect(Collectors.toList()));
+//        });
+//        System.out.println("uids:" + uids.size());
+//    }
 
 
 }
