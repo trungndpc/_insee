@@ -33,12 +33,14 @@ public class CustomerExcelImporter {
             Cell phoneCell = currentRow.getCell(0);
             if (phoneCell != null) {
                 userEntity = getPhone(phoneCell, userEntity);
-                userEntity = getInseeCode(currentRow.getCell(1), userEntity);
-                userEntity = getName(currentRow.getCell(2), userEntity);
-                userEntity = getCity(currentRow.getCell(3), userEntity);
-                userEntity = getDistrict(currentRow.getCell(4), userEntity);
-                userEntity = getCements(currentRow.getCell(5), userEntity);
-                users.add(userEntity);
+                if (userEntity != null) {
+                    userEntity = getInseeCode(currentRow.getCell(1), userEntity);
+                    userEntity = getName(currentRow.getCell(2), userEntity);
+                    userEntity = getCity(currentRow.getCell(3), userEntity);
+                    userEntity = getDistrict(currentRow.getCell(4), userEntity);
+                    userEntity = getCements(currentRow.getCell(5), userEntity);
+                    users.add(userEntity);
+                }
             }
         }
         workbook.close();
@@ -61,9 +63,10 @@ public class CustomerExcelImporter {
             }
             userEntity.setPhone(phone);
         }catch (Exception e) {
-            double numericCellValue = cell.getNumericCellValue();
-            LOGGER.error(numericCellValue);
-            throw new Exception(e.getMessage());
+//            double numericCellValue = cell.getNumericCellValue();
+//            LOGGER.error(numericCellValue);
+//            throw new Exception(e.getMessage());
+            return null;
         }
         return userEntity;
     }

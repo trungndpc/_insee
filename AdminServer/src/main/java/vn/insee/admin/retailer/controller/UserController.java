@@ -217,14 +217,14 @@ public class UserController {
             if (entityList.size() <= 0) {
                 throw new Exception("file is empty");
             }
-            for (UserEntity user : entityList) {
-                if (userService.findByPhone(user.getPhone()) != null) {
-                    throw new Exception("phone is exits : "  + user.getPhone());
-                }
-            }
-
+            entityList = entityList.stream().filter(user -> userService.findByPhone(user.getPhone()) == null)
+                    .collect(Collectors.toList());
+//            for (UserEntity user : entityList) {
+//                if (userService.findByPhone(user.getPhone()) != null) {
+//                    throw new Exception("phone is exits : "  + user.getPhone());
+//                }
+//            }
             for (UserEntity user: entityList) {
-                LOGGER.info("imported: " + user.getPhone());
                 user.setRoleId(Permission.RETAILER.getId());
                 user.setStatus(UserStatus.WAITING_ACTIVE);
                 userService.saveOrUpdate(user);

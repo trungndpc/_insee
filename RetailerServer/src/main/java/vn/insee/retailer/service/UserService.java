@@ -41,6 +41,7 @@ public class UserService {
                 userEntity.setAddress(exitUserEntity.getAddress());
                 userEntity.setDistrictId(exitUserEntity.getDistrictId());
                 userEntity.setCityId(exitUserEntity.getCityId());
+                userEntity.setInseeId(exitUserEntity.getInseeId());
             }
         }
         userEntity.setStatus(StatusUser.WAIT_APPROVAL);
