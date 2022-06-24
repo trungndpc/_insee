@@ -16,6 +16,11 @@ public class UserSpecification {
                 builder.equal(root.get(UserEntity_.status), status);
     }
 
+    public Specification<UserEntity> isNotStatus(int status) {
+        return (root, query, builder) ->
+                builder.notEqual(root.get(UserEntity_.status), status);
+    }
+
     public Specification<UserEntity> isCity(int location) {
         return (root, query, builder) ->
                 builder.equal(root.get(UserEntity_.cityId), location);

@@ -70,7 +70,7 @@ public class UserService {
 
     public Page<UserEntity> find(String search, Integer status, Integer location, int page, int pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Specification<UserEntity> specs = Specification.where(null);
+        Specification<UserEntity> specs = userSpecification.isNotStatus(UserStatus.DISABLED);
         if (search != null && !search.isEmpty()) {
             specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
         }
