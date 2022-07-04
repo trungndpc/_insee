@@ -18,10 +18,13 @@ import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.controller.exporter.UserExcelExporter;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.controller.importer.CustomerExcelImporter;
+import vn.insee.admin.retailer.service.GreetingFriendFormService;
+import vn.insee.admin.retailer.service.GreetingFriendPromotionService;
 import vn.insee.admin.retailer.service.UserService;
 import vn.insee.common.Permission;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.jpa.metric.UserCityMetric;
 import vn.insee.jpa.metric.UserDataMetric;
 
@@ -44,6 +47,13 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private GreetingFriendPromotionService greetingFriendPromotionService;
+
+    @Autowired
+    private GreetingFriendFormService greetingFriendFormService;
+
 
     @GetMapping(path = "/get")
     public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id) {
@@ -143,7 +153,11 @@ public class UserController {
                                                      @RequestParam(required = false) String note) {
         BaseResponse response = new BaseResponse();
         try{
-            userService.updateStatus(uid, status, note);
+            UserEntity userEntity = userService.updateStatus(uid, status, note);
+            //approved chao ban moi
+            if (userEntity.getStatus() == StatusUser.APPROVED && status != StatusUser.APPROVED) {
+                checkAndActiveGreetingNewFriendPromotion(userEntity);
+            }
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);
@@ -235,5 +249,14 @@ public class UserController {
             response.setMsg(e.getMessage());
         }
         return ResponseEntity.ok(response);
+    }
+
+    private void checkAndActiveGreetingNewFriendPromotion(UserEntity userEntity) {
+        List<GreetingFriendPromotionEntity> list = greetingFriendPromotionService.findActive(userEntity);
+        if (list != null) {
+            list.forEach(entity -> {
+                greetingFriendFormService.activeGreetingNewFriendPromotion(entity, userEntity);
+            });
+        }
     }
 }

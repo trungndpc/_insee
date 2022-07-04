@@ -26,6 +26,14 @@ public class UserService {
     @Autowired
     private UserSpecification userSpecification;
 
+    public UserEntity createOrUpdate(UserEntity userEntity) {
+        return userRepository.saveAndFlush(userEntity);
+    }
+
+    public void delete(int id) {
+        userRepository.deleteById(id);
+    }
+
     public UserEntity register(UserEntity userEntity) throws Exception {
         if (userEntity.getStatus() != StatusUser.WAIT_COMPLETE_PROFILE) {
             throw new Exception("status is not valid to update profile | status: " + userEntity.getStatus() + ", id: " + userEntity.getId());
@@ -63,8 +71,8 @@ public class UserService {
         return userRepository.getOne(id);
     }
 
-    public UserEntity findByZaloId(long zaloId) {
-        return userRepository.findByZaloId(String.valueOf(zaloId));
+    public UserEntity findByZaloId(String zaloId) {
+        return userRepository.findByZaloId(zaloId);
     }
 
     public UserEntity findByFollowerId(String followerId) {

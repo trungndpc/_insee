@@ -8,10 +8,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.common.Permission;
+import vn.insee.common.status.StatusForm;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.jpa.repository.UserRepository;
+import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
+import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.retailer.common.AppCommon;
+import vn.insee.retailer.service.GreetingFriendFormService;
+import vn.insee.retailer.service.GreetingFriendPromotionService;
+import vn.insee.retailer.service.UserService;
 import vn.insee.retailer.util.AuthenticationUtils;
 import vn.insee.retailer.util.ListUtils;
 import vn.insee.retailer.util.RenderUtils;
@@ -19,20 +24,24 @@ import vn.insee.retailer.util.StringUtils;
 import vn.insee.retailer.wrapper.ZaloService;
 import vn.insee.retailer.wrapper.entity.ZaloUserEntity;
 import vn.insee.util.HttpUtil;
-import vn.insee.util.NoiseUtil;
 import vn.insee.util.TimeUtil;
 import vn.insee.util.TokenUtil;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 public class AuthenController {
     private static final Logger LOGGER = LogManager.getLogger(AuthenController.class);
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
+
+    @Autowired
+    private GreetingFriendPromotionService greetingFriendPromotionService;
+
+    @Autowired
+    private GreetingFriendFormService greetingFriendFormService;
 
     public static final ConcurrentHashMap<String, Integer> MAP_FOLLOWER = new ConcurrentHashMap<>();
 
@@ -101,12 +110,12 @@ public class AuthenController {
 
             user.setRoleId(Permission.RETAILER.getId());
             //to get user id to store into session
-            user = userRepository.saveAndFlush(user);
+            user = userService.createOrUpdate(user);
             String session = TokenUtil.generate(user.getId(), user.getPhone(), 43200000L);
             AuthenticationUtils.writeCookie("_rtl_insee_ss", session, response);
             List<String> lstSession = ListUtils.putWithMaximumSize(session, user.getSessions());
             user.setSessions(lstSession);
-            user = userRepository.saveAndFlush(user);
+            user = userService.createOrUpdate(user);
 
             if (StringUtils.isEmpty(user.getFollowerId())) {
                 response.sendRedirect(new StringBuilder("https://zalo.me/")
@@ -129,7 +138,7 @@ public class AuthenController {
     }
 
     private UserEntity convert2UserEntity(ZaloUserEntity zaloUserEntity, String src) {
-        UserEntity userEntity = userRepository.findByZaloId(zaloUserEntity.getId());
+        UserEntity userEntity = userService.findByZaloId(zaloUserEntity.getId());
         if(userEntity == null) {
             userEntity = new UserEntity();
             userEntity.setId(0);
@@ -148,7 +157,7 @@ public class AuthenController {
                     }
                 }
             }
-            userEntity = userRepository.getOne(id);
+            userEntity = userService.findById(id);
         }
 
         //Remove to ignore over heap
@@ -171,11 +180,13 @@ public class AuthenController {
             userEntity.setRoleId(Permission.RETAILER.getId());
             userEntity.setAvatar(zaloUserEntity.getAvatar());
             userEntity.setPassword(new String());
-            userEntity.setRoleId(Permission.RETAILER.getId());
             if (!StringUtils.isEmpty(zaloUserEntity.getBirthday())) {
                 userEntity.setBirthday(TimeUtil.getTime(zaloUserEntity.getBirthday()));
             }
-            userRepository.saveAndFlush(userEntity);
+
+            //chao ban moi
+            checkAndActiveGreetingNewFriendPromotion(userEntity);
+            userService.createOrUpdate(userEntity);
             return userEntity;
         }
 
@@ -183,7 +194,7 @@ public class AuthenController {
         if (!StringUtils.isEmpty(src)) {
             try {
                 int customerId =  Integer.parseInt(src);
-                UserEntity customer = userRepository.getOne(customerId);
+                UserEntity customer = userService.findById(customerId);
                 if (customer != null && customer.getStatus() == StatusUser.WAITING_ACTIVE) {
                     userEntity = link2CustomerProfile(userEntity, customer);
                 }
@@ -202,9 +213,18 @@ public class AuthenController {
         newUserEntity.setDistrictId(customer.getDistrictId());
         newUserEntity.setAddress(customer.getAddress());
         newUserEntity.setStatus(StatusUser.APPROVED);
-        userRepository.delete(customer);
-        userRepository.saveAndFlush(newUserEntity);
+        userService.delete(customer.getId());
+        userService.createOrUpdate(newUserEntity);
         return newUserEntity;
+    }
+
+    private void checkAndActiveGreetingNewFriendPromotion(UserEntity userEntity) {
+        List<GreetingFriendPromotionEntity> list = greetingFriendPromotionService.findActive(userEntity);
+        if (list != null) {
+            list.forEach(entity -> {
+                greetingFriendFormService.activeGreetingNewFriendPromotion(entity, userEntity);
+            });
+        }
     }
 
 }

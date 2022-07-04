@@ -59,7 +59,7 @@ public class ZaloEventManager {
                 return;
             case "user_send_text":
                 long userByAppId = zaloMsg.getLong("user_id_by_app");
-                UserEntity userEntity = userService.findByZaloId(userByAppId);
+                UserEntity userEntity = userService.findByZaloId(String.valueOf(userByAppId));
                 if (userEntity == null) {
                     throw new Exception("not found user user_id_by_app: " + userByAppId + ", zaloMsg: " + zaloMsg);
                 }

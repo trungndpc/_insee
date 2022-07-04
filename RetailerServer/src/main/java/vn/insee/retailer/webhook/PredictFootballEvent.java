@@ -48,7 +48,7 @@ public class PredictFootballEvent extends ZaloEvent{
         try{
             UserSendMessage userSendMessage = (UserSendMessage) zSendMessage;
             String text = userSendMessage.message.text;
-            UserEntity userEntity = userService.findByZaloId(userSendMessage.userIdByApp);
+            UserEntity userEntity = userService.findByZaloId(String.valueOf(userSendMessage.userIdByApp));
             Object currentSession = webhookSessionManager.getCurrentSession(userEntity.getId());
             User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
 

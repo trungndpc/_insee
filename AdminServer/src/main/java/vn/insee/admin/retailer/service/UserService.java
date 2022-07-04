@@ -98,29 +98,15 @@ public class UserService {
         return userRepository.findAll(specs);
     }
 
-    public List<UserEntity> findOnlyId(String search, Integer status, Integer location) {
-        Specification<UserEntity> specs = Specification.where(null);
-        if (search != null && !search.isEmpty()) {
-            specs = specs.and(userSpecification.likePhone(search).or(userSpecification.likeName(search)));
-        }
-        if (status != null) {
-            specs = specs.and(userSpecification.isStatus(status));
-        }
-        if (location != null) {
-            specs = specs.and(userSpecification.isCity(location));
-        }
-        return userRepository.findAllWithIdOnly(specs);
-    }
-
-
     public UserEntity updateStatus(int uid, int status, String note) throws Exception {
         UserEntity userEntity = userRepository.getOne(uid);
-        if (userEntity.getStatus() == StatusUser.APPROVED) {
+        if (userEntity.getStatus() == StatusUser.APPROVED && status != StatusUser.DISABLED) {
             throw new Exception("user is approved uid: " + uid);
         }
-        if (userEntity.getStatus() != StatusUser.WAIT_APPROVAL) {
+        if (status != StatusUser.DISABLED && userEntity.getStatus() != StatusUser.WAIT_APPROVAL) {
             throw new Exception("user do not need approval uid: " + uid);
         }
+
         userEntity.setStatus(status);
         User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
         if (status == StatusUser.APPROVED) {
@@ -137,7 +123,7 @@ public class UserService {
             RejectedUserMessage rejectedUserMessage = new RejectedUserMessage(user, note);
             rejectedUserMessage.send();
         }
-        userRepository.saveAndFlush(userEntity);
+        userEntity = userRepository.saveAndFlush(userEntity);
         return userEntity;
     }
 

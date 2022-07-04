@@ -8,20 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
-import vn.insee.admin.retailer.controller.converter.FootballPromotionConverter;
-import vn.insee.admin.retailer.controller.converter.LQConverter;
-import vn.insee.admin.retailer.controller.converter.PromotionConverter;
-import vn.insee.admin.retailer.controller.converter.StockConverter;
+import vn.insee.admin.retailer.controller.converter.*;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.dto.PromotionDTO;
 import vn.insee.admin.retailer.controller.form.PromotionForm;
-import vn.insee.admin.retailer.service.FootballPromotionService;
-import vn.insee.admin.retailer.service.LightingQuizPromotionService;
-import vn.insee.admin.retailer.service.PromotionService;
-import vn.insee.admin.retailer.service.StockPromotionService;
+import vn.insee.admin.retailer.service.*;
 import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.PromotionEntity;
+import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.jpa.entity.promotion.PredictFootballPromotionEntity;
 import vn.insee.jpa.entity.promotion.StockPromotionEntity;
@@ -56,6 +51,12 @@ public class PromotionController {
     @Autowired
     private FootballPromotionService footballPromotionService;
 
+    @Autowired
+    private GreetingFriendConverter greetingFriendConverter;
+
+    @Autowired
+    private GreetingFriendPromotionService greetingFriendPromotionService;
+
     @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BaseResponse> create(@RequestBody PromotionForm form) {
         BaseResponse response = new BaseResponse();
@@ -76,6 +77,12 @@ public class PromotionController {
                     footballPromotionEntity.setStatus(StatusPromotion.INIT);
                     footballPromotionEntity = footballPromotionService.createOrUpdate(footballPromotionEntity);
                     response.setData(promotionConverter.convert2DTO(footballPromotionEntity));
+                    break;
+                case TypePromotion.GREETING_FRIEND:
+                    GreetingFriendPromotionEntity greetingFriendPromotionEntity = greetingFriendConverter.convert2Entity(form);
+                    greetingFriendPromotionEntity.setStatus(StatusPromotion.INIT);
+                    greetingFriendPromotionEntity = greetingFriendPromotionService.create(greetingFriendPromotionEntity);
+                    response.setData(promotionConverter.convert2DTO(greetingFriendPromotionEntity));
                     break;
             }
 
