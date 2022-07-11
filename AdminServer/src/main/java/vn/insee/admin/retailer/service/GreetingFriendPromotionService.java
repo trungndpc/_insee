@@ -6,44 +6,16 @@ import vn.insee.common.status.StatusPromotion;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.jpa.repository.GreetingFriendPromotionRepository;
+import vn.insee.service.GreetingFriendPromotionServiceCommon;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class GreetingFriendPromotionService {
-
-    @Autowired
-    private GreetingFriendPromotionRepository repository;
+public class GreetingFriendPromotionService extends GreetingFriendPromotionServiceCommon {
 
     public GreetingFriendPromotionEntity create(GreetingFriendPromotionEntity entity) {
-        entity = repository.saveAndFlush(entity);
-        return entity;
-    }
-
-    public List<GreetingFriendPromotionEntity> findActive(UserEntity userEntity) {
-        List<GreetingFriendPromotionEntity> list =
-                repository.findByStatus(StatusPromotion.APPROVED);
-        if (list == null) {
-            return null;
-        }
-        return list.stream()
-                .filter(p -> {
-                    if (p.getCityIds() != null) {
-                        return p.getCityIds().contains(userEntity.getCityId());
-                    }
-                    return true;
-                })
-                .filter(p -> {
-                    if (p.getDistrictIds() != null) {
-                        return p.getDistrictIds().contains(userEntity.getDistrictId());
-                    }
-                    return true;
-                })
-                .filter(p -> {
-                    long currentTime = System.currentTimeMillis();
-                    return p.getTimeStart() <= currentTime && p.getTimeEnd() >= currentTime;
-                }).collect(Collectors.toList());
+        return repository.saveAndFlush(entity);
     }
 
 }

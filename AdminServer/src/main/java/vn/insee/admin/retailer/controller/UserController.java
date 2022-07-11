@@ -156,7 +156,8 @@ public class UserController {
             UserEntity userEntity = userService.updateStatus(uid, status, note);
             //approved chao ban moi
             if (userEntity.getStatus() == StatusUser.APPROVED && status != StatusUser.APPROVED) {
-                checkAndActiveGreetingNewFriendPromotion(userEntity);
+                List<GreetingFriendPromotionEntity> promotionEntities = greetingFriendPromotionService.findActive(userEntity);
+                greetingFriendFormService.checkAndActiveGreetingNewFriendPromotion(userEntity, promotionEntities);
             }
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -233,11 +234,6 @@ public class UserController {
             }
             entityList = entityList.stream().filter(user -> userService.findByPhone(user.getPhone()) == null)
                     .collect(Collectors.toList());
-//            for (UserEntity user : entityList) {
-//                if (userService.findByPhone(user.getPhone()) != null) {
-//                    throw new Exception("phone is exits : "  + user.getPhone());
-//                }
-//            }
             for (UserEntity user: entityList) {
                 user.setRoleId(Permission.RETAILER.getId());
                 user.setStatus(UserStatus.WAITING_ACTIVE);
@@ -251,12 +247,4 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    private void checkAndActiveGreetingNewFriendPromotion(UserEntity userEntity) {
-        List<GreetingFriendPromotionEntity> list = greetingFriendPromotionService.findActive(userEntity);
-        if (list != null) {
-            list.forEach(entity -> {
-                greetingFriendFormService.activeGreetingNewFriendPromotion(entity, userEntity);
-            });
-        }
-    }
 }

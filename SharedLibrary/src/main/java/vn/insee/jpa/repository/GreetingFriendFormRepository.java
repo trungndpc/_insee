@@ -5,5 +5,6 @@ import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
 
 
 public interface GreetingFriendFormRepository extends JpaRepository<GreetingFriendFormEntity, Integer> {
+    GreetingFriendFormEntity findByUserIdAndPromotionId(int userId, int promotionId);
 
 }

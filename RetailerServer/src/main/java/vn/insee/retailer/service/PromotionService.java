@@ -7,18 +7,17 @@ import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.repository.PromotionRepository;
+import vn.insee.service.PromotionServiceCommon;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PromotionService {
+public class PromotionService extends PromotionServiceCommon {
 
-    @Autowired
-    private PromotionRepository promotionRepository;
 
     public List<PromotionEntity> findPromotion(int type, UserEntity userEntity) {
-        List<PromotionEntity> promotionEntities = promotionRepository.findAllByOrderByUpdatedTimeDesc();
+        List<PromotionEntity> promotionEntities = repository.findAllByOrderByUpdatedTimeDesc();
         return promotionEntities.stream().filter(promotion -> promotion.getType() == type)
                 .filter(promotion -> promotion.getStatus() == StatusPromotion.APPROVED)
                 .filter(promotion -> {
@@ -36,6 +35,6 @@ public class PromotionService {
     }
 
     public PromotionEntity get(int id) {
-        return promotionRepository.getOne(id);
+        return repository.getOne(id);
     }
 }

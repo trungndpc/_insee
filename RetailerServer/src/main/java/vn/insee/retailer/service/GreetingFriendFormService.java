@@ -1,31 +1,23 @@
 package vn.insee.retailer.service;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.insee.common.status.StatusForm;
-import vn.insee.jpa.entity.UserEntity;
+import vn.insee.common.status.StatusStockForm;
+import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
-import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
+import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.repository.GreetingFriendFormRepository;
+import vn.insee.jpa.repository.StockFormRepository;
+import vn.insee.service.GreetingFriendFormServiceCommon;
 
 @Service
-public class GreetingFriendFormService {
+public class GreetingFriendFormService extends GreetingFriendFormServiceCommon {
 
-    @Autowired
-    private GreetingFriendFormRepository repository;
-
-    public GreetingFriendFormEntity createOrUpdate(GreetingFriendFormEntity entity) {
-        entity.setStatus(StatusForm.INIT);
-        return repository.saveAndFlush(entity);
+    public GreetingFriendFormEntity create(GreetingFriendFormEntity entity) {
+        entity.setStatus(StatusStockForm.INIT);
+        entity.setType(TypePromotion.GREETING_FRIEND);
+        entity = repository.saveAndFlush(entity);
+        return entity;
     }
 
-    public GreetingFriendFormEntity activeGreetingNewFriendPromotion(GreetingFriendPromotionEntity promotionEntity,
-                                                                     UserEntity userEntity) {
-        GreetingFriendFormEntity form = new GreetingFriendFormEntity();
-        form.setStatus(StatusForm.INIT);
-        form.setUserId(userEntity.getId());
-        form.setPromotionId(promotionEntity.getId());
-        return createOrUpdate(form);
-    }
 }

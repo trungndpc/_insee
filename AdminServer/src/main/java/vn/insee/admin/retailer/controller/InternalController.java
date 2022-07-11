@@ -41,7 +41,8 @@ public class InternalController {
         try{
             UserEntity userEntity = userService.updateStatus(uid, UserStatus.APPROVED, null);
             if (userEntity.getStatus() == StatusUser.APPROVED) {
-                checkAndActiveGreetingNewFriendPromotion(userEntity);
+                List<GreetingFriendPromotionEntity> promotionEntities = greetingFriendPromotionService.findActive(userEntity);
+                greetingFriendFormService.checkAndActiveGreetingNewFriendPromotion(userEntity, promotionEntities);
             }
             response.setError(0);
         }catch (Exception e) {
@@ -52,12 +53,5 @@ public class InternalController {
         return ResponseEntity.ok(response);
     }
 
-    private void checkAndActiveGreetingNewFriendPromotion(UserEntity userEntity) {
-        List<GreetingFriendPromotionEntity> list = greetingFriendPromotionService.findActive(userEntity);
-        if (list != null) {
-            list.forEach(entity -> {
-                greetingFriendFormService.activeGreetingNewFriendPromotion(entity, userEntity);
-            });
-        }
-    }
+
 }

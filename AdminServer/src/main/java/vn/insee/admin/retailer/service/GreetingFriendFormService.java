@@ -7,19 +7,10 @@ import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
 import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.jpa.repository.GreetingFriendFormRepository;
+import vn.insee.service.GreetingFriendFormServiceCommon;
 
 @Service
-public class GreetingFriendFormService {
+public class GreetingFriendFormService extends GreetingFriendFormServiceCommon {
 
-    @Autowired
-    private GreetingFriendFormRepository repository;
 
-    public GreetingFriendFormEntity activeGreetingNewFriendPromotion(GreetingFriendPromotionEntity promotionEntity,
-                                                                     UserEntity userEntity) {
-        GreetingFriendFormEntity form = new GreetingFriendFormEntity();
-        form.setStatus(StatusForm.INIT);
-        form.setUserId(userEntity.getId());
-        form.setPromotionId(promotionEntity.getId());
-        return repository.saveAndFlush(form);
-    }
 }
