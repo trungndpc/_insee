@@ -54,26 +54,26 @@ public class FormController {
     @Autowired
     private PromotionService promotionService;
 
-    @GetMapping(path = "/find-by-promotion")
-    public ResponseEntity<BaseResponse> list( @RequestParam(required = true) int promotionId,
-            @RequestParam(required = false) Integer city,
-            @RequestParam(required = false) Integer status,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "10") int pageSize) {
-        BaseResponse response = new BaseResponse();
-        try{
-            Page<FormEntity> formEntities = formService.findByPromotionId(promotionId, status, city, search, page, pageSize);
-            PageDTO<FormDTO> promotionDTOPageDTO =
-                    formConverter.convertToPageDTO(formEntities);
-            response.setData(promotionDTOPageDTO);
-        }catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            response.setError(ErrorCode.FAILED);
-            response.setMsg(e.getMessage());
-        }
-        return ResponseEntity.ok(response);
-    }
+//    @GetMapping(path = "/find-by-promotion")
+//    public ResponseEntity<BaseResponse> list( @RequestParam(required = true) int promotionId,
+//            @RequestParam(required = false) Integer city,
+//            @RequestParam(required = false) Integer status,
+//            @RequestParam(required = false) String search,
+//            @RequestParam(required = false, defaultValue = "0") int page,
+//            @RequestParam(required = false, defaultValue = "10") int pageSize) {
+//        BaseResponse response = new BaseResponse();
+//        try{
+//            Page<FormEntity> formEntities = formService.findByPromotionId(promotionId, status, city, search, page, pageSize);
+//            PageDTO<FormDTO> promotionDTOPageDTO =
+//                    formConverter.convertToPageDTO(formEntities);
+//            response.setData(promotionDTOPageDTO);
+//        }catch (Exception e) {
+//            LOGGER.error(e.getMessage(), e);
+//            response.setError(ErrorCode.FAILED);
+//            response.setMsg(e.getMessage());
+//        }
+//        return ResponseEntity.ok(response);
+//    }
 
     @GetMapping(path = "/find-by-promotions")
     public ResponseEntity<BaseResponse> list( @RequestParam(required = true) List<Integer> promotionIds,

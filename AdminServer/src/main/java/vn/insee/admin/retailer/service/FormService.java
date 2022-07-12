@@ -45,74 +45,41 @@ public class FormService {
     @Autowired
     private FormSpecification formSpecification;
 
-    public Page<FormEntity> findByPromotionId(int promotionId, Integer status, Integer city,
-                                              String search, int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "created_time"));
-        Specification<FormEntity> specs =  Specification.where(null);
-        specs = specs.and(formSpecification.isPromotion(promotionId));
-        if (status != null) {
-            specs = specs.and(formSpecification.isStatus(status));
-        }
-        List<FormEntity> all = formRepository.findAll(specs);
-        if (all != null && !all.isEmpty()) {
-            if (city != null || search != null ) {
-                all = all.stream().filter(formEntity -> {
-                    UserEntity userEntity = userService.findById(formEntity.getUserId());
-                    boolean is = false;
-                    if (city != null) {
-                        is = userEntity.getCityId() == city;
-                    }
-                    if (search != null) {
-                        is = userEntity.getName().contains(search) || userEntity.getPhone().contains(search);
-                    }
-                    return is;
-                }).sorted((t1, t2) -> t1.getUpdatedTime().compareTo(t2.getUpdatedTime()))
-                        .collect(Collectors.toList());
-            }
-
-            final int start = (int)pageable.getOffset();
-            final int end = Math.min((start + pageable.getPageSize()), all.size());
-            return new PageImpl<>(all.subList(start, end), pageable, all.size());
-        }
-        return Page.empty();
-    }
-
     public List<StockFormEntity> findByPromotionId(int promotionId) {
         return stockFormRepository.findByPromotionId(promotionId);
     }
 
-    public List<FormEntity> findByPromotionIds(int promotionId) {
-        return formRepository.findByPromotionId(promotionId);
-    }
-
     public Page<FormEntity> findByPromotions(List<Integer> promotionIds, Integer status, Integer city,
-                                              String search, int page, int pageSize) {
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
-        Specification<FormEntity> specs =  Specification.where(null);
+                                             String search, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "created_time"));
+        Specification<FormEntity> specs = Specification.where(null);
         specs = specs.and(formSpecification.inPromotions(promotionIds));
         if (status != null) {
             specs = specs.and(formSpecification.isStatus(status));
         }
-        List<FormEntity> all = formRepository.findAll(specs);
-        if (all != null && !all.isEmpty()) {
-            if (city != null || search != null ) {
-                all = all.stream().filter(formEntity -> {
-                    UserEntity userEntity = userService.findById(formEntity.getUserId());
-                    boolean is = false;
-                    if (city != null) {
-                        is = userEntity.getCityId() == city;
-                    }
-                    if (search != null) {
-                        is = userEntity.getName().contains(search) || userEntity.getPhone().contains(search);
-                    }
-                    return is;
-                }).collect(Collectors.toList());
-            }
-            final int start = (int)pageable.getOffset();
-            final int end = Math.min((start + pageable.getPageSize()), all.size());
-            return new PageImpl<>(all.subList(start, end), pageable, all.size());
+        List<FormEntity> list = formRepository.findAll(specs);
+        if (list == null || list.isEmpty()) {
+            return Page.empty();
         }
-        return Page.empty();
+        if (city != null || search != null) {
+            list = list.stream().filter(formEntity -> {
+                UserEntity userEntity = userService.findById(formEntity.getUserId());
+                boolean is = false;
+                if (city != null) {
+                    is = userEntity.getCityId() == city;
+                }
+
+                if (search != null) {
+                    is = userEntity.getName().contains(search)
+                            || userEntity.getPhone().contains(search);
+                }
+                return is;
+            }).collect(Collectors.toList());
+        }
+        list = list.stream().sorted((t1, t2) -> t2.getCreatedTime().compareTo(t1.getCreatedTime())).collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     public FormEntity getById(int id) {
@@ -158,7 +125,7 @@ public class FormService {
     }
 
     public long count(List<Integer> promotionIds, Integer status) {
-        Specification<FormEntity> specs =  Specification.where(null);
+        Specification<FormEntity> specs = Specification.where(null);
         if (promotionIds != null) {
             specs = specs.and(formSpecification.inPromotions(promotionIds));
         }
@@ -183,6 +150,14 @@ public class FormService {
 
     public List<Integer> findDistinctUid() {
         return formRepository.findDistinctUid();
+    }
+
+    public void deleteByUid(int uid) {
+        List<FormEntity> formEntities = formRepository.findByUserId(uid);
+        if (formEntities != null) {
+            formRepository.deleteAll(formEntities);
+            System.out.println("DELETE FORM: " + formEntities.size());
+        }
     }
 
 //    @EventListener

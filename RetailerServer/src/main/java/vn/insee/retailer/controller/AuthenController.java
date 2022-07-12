@@ -8,10 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.common.Permission;
-import vn.insee.common.status.StatusForm;
 import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
 import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.retailer.common.AppCommon;
 import vn.insee.retailer.service.GreetingFriendFormService;
@@ -185,7 +183,10 @@ public class AuthenController {
             }
 
             //chao ban moi
-            checkAndActiveGreetingNewFriendPromotion(userEntity);
+            List<GreetingFriendPromotionEntity> promotionEntities = greetingFriendPromotionService.findActive(userEntity);
+            if (promotionEntities != null) {
+                greetingFriendFormService.checkAndActiveGreetingNewFriendPromotion(userEntity, promotionEntities);
+            }
             userService.createOrUpdate(userEntity);
             return userEntity;
         }
@@ -218,13 +219,5 @@ public class AuthenController {
         return newUserEntity;
     }
 
-    private void checkAndActiveGreetingNewFriendPromotion(UserEntity userEntity) {
-        List<GreetingFriendPromotionEntity> list = greetingFriendPromotionService.findActive(userEntity);
-        if (list != null) {
-            list.forEach(entity -> {
-                greetingFriendFormService.activeGreetingNewFriendPromotion(entity, userEntity);
-            });
-        }
-    }
 
 }

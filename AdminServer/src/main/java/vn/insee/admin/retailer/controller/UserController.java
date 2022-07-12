@@ -3,6 +3,8 @@ package vn.insee.admin.retailer.controller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import vn.insee.admin.retailer.controller.dto.metric.UserDataMetricDTO;
 import vn.insee.admin.retailer.controller.exporter.UserExcelExporter;
 import vn.insee.admin.retailer.controller.form.CustomerForm;
 import vn.insee.admin.retailer.controller.importer.CustomerExcelImporter;
+import vn.insee.admin.retailer.service.FormService;
 import vn.insee.admin.retailer.service.GreetingFriendFormService;
 import vn.insee.admin.retailer.service.GreetingFriendPromotionService;
 import vn.insee.admin.retailer.service.UserService;
@@ -53,6 +56,9 @@ public class UserController {
 
     @Autowired
     private GreetingFriendFormService greetingFriendFormService;
+
+    @Autowired
+    private FormService formService;
 
 
     @GetMapping(path = "/get")
@@ -155,7 +161,8 @@ public class UserController {
         try{
             UserEntity userEntity = userService.updateStatus(uid, status, note);
             //approved chao ban moi
-            if (userEntity.getStatus() == StatusUser.APPROVED && status != StatusUser.APPROVED) {
+            if (status == StatusUser.APPROVED) {
+                LOGGER.error("CHAO BAN MOI");
                 List<GreetingFriendPromotionEntity> promotionEntities = greetingFriendPromotionService.findActive(userEntity);
                 greetingFriendFormService.checkAndActiveGreetingNewFriendPromotion(userEntity, promotionEntities);
             }
@@ -247,4 +254,14 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+    private void safeDelete(int uid) {
+        formService.deleteByUid(uid);
+        userService.delete(uid);
+    }
+
+    @EventListener
+    public void main(ContextRefreshedEvent event) {
+        safeDelete(6926);
+    }
 }

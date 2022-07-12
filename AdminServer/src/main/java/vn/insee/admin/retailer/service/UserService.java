@@ -175,4 +175,10 @@ public class UserService {
         }
         return userRepository.count(specs);
     }
+
+    public void delete(int uid) {
+        userRepository.deleteById(uid);
+    }
+
+
 }

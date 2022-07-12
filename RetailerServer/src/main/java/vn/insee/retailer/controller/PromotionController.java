@@ -54,9 +54,9 @@ public class PromotionController {
             if (promotionEntity == null) {
                 throw new Exception("promotion is not exits!");
             }
-            if (promotionService.isOpen(promotionEntity)) {
+            if (!promotionService.isOpen(promotionEntity)) {
                 response.setError(ErrorCommon.CLOSED_PROMOTION);
-            } else if (promotionService.isOpenFor(promotionEntity, user)) {
+            } else if (!promotionService.isOpenFor(promotionEntity, user)) {
                 response.setError(ErrorCommon.INVALID_LOCATION_PROMOTION);
             } else {
                 if (promotionEntity.getType() == TypePromotion.GREETING_FRIEND) {
