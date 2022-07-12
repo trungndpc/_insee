@@ -30,7 +30,7 @@ public class GreetingFriendFormController {
     private GreetingFriendFormService service;
 
 
-    @PostMapping(path = "/create", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/submit", consumes = "application/json", produces = "application/json")
     public ResponseEntity<BaseResponse> post(@RequestBody GreetingFriendForm form, Authentication auth) {
         BaseResponse response = new BaseResponse();
         try{
@@ -40,7 +40,7 @@ public class GreetingFriendFormController {
             }
             GreetingFriendFormEntity entity = converter.convert2Entity(form);
             entity.setUserId(user.getId());
-            entity =  service.create(entity);
+            entity =  service.submit(entity);
             if (entity == null) {
                 response.setError(ErrorCode.FAILED);
             }

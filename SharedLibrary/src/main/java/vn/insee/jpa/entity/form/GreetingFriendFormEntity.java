@@ -11,6 +11,7 @@ import javax.persistence.Table;
 public class GreetingFriendFormEntity extends FormEntity {
     private String jsonImage;
     private Integer bags;
+    private Long time;
     public String getJsonImage() {
         return jsonImage;
     }
@@ -27,4 +28,12 @@ public class GreetingFriendFormEntity extends FormEntity {
         this.bags = bags;
     }
 
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
 }

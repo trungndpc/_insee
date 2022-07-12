@@ -162,7 +162,6 @@ public class UserController {
             UserEntity userEntity = userService.updateStatus(uid, status, note);
             //approved chao ban moi
             if (status == StatusUser.APPROVED) {
-                LOGGER.error("CHAO BAN MOI");
                 List<GreetingFriendPromotionEntity> promotionEntities = greetingFriendPromotionService.findActive(userEntity);
                 greetingFriendFormService.checkAndActiveGreetingNewFriendPromotion(userEntity, promotionEntities);
             }
@@ -262,6 +261,6 @@ public class UserController {
 
     @EventListener
     public void main(ContextRefreshedEvent event) {
-        safeDelete(6926);
+        safeDelete(6927);
     }
 }

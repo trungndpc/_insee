@@ -1,7 +1,8 @@
 package vn.insee.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusGreetingFriendForm;
+import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
 import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
@@ -22,9 +23,10 @@ public abstract class GreetingFriendFormServiceCommon {
         List<Integer> res = new ArrayList<>();
         promotionEntities.forEach(entity -> {
             GreetingFriendFormEntity form = new GreetingFriendFormEntity();
-            form.setStatus(StatusForm.INIT);
+            form.setStatus(StatusGreetingFriendForm.WAITING_SUBMIT_FORM);
             form.setUserId(userEntity.getId());
             form.setPromotionId(entity.getId());
+            form.setType(TypePromotion.GREETING_FRIEND);
             form = repository.saveAndFlush(form);
             res.add(form.getId());
         });

@@ -3,8 +3,6 @@ package vn.insee.admin.retailer.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -12,11 +10,9 @@ import vn.insee.admin.retailer.message.ApprovedStockPromotionMessage;
 import vn.insee.admin.retailer.message.RejectedStockFormMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusForm;
-import vn.insee.common.status.StatusPromotion;
 import vn.insee.common.status.StatusStockForm;
 import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
-import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
 import vn.insee.jpa.entity.form.StockFormEntity;
 import vn.insee.jpa.metric.FormCityMetric;
@@ -26,7 +22,7 @@ import vn.insee.jpa.repository.FormRepository;
 import vn.insee.jpa.repository.StockFormRepository;
 import vn.insee.jpa.specification.FormSpecification;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +40,37 @@ public class FormService {
 
     @Autowired
     private FormSpecification formSpecification;
+
+    public Page<FormEntity> findByPromotionId(int promotionId, Integer status, Integer city,
+                                              String search, int page, int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "created_time"));
+        Specification<FormEntity> specs = Specification.where(null);
+        specs = specs.and(formSpecification.isPromotion(promotionId));
+        if (status != null) {
+            specs = specs.and(formSpecification.isStatus(status));
+        }
+        List<FormEntity> list = formRepository.findAll(specs);
+        if (list == null || list.isEmpty()) {
+            return Page.empty();
+        }
+        if (city != null || search != null) {
+            list = list.stream().filter(formEntity -> {
+                        UserEntity userEntity = userService.findById(formEntity.getUserId());
+                        boolean is = false;
+                        if (city != null) {
+                            is = userEntity.getCityId() == city;
+                        }
+                        if (search != null) {
+                            is = userEntity.getName().contains(search) || userEntity.getPhone().contains(search);
+                        }
+                        return is;
+                    }).collect(Collectors.toList());
+        }
+        list = list.stream().sorted((t1, t2) -> t2.getCreatedTime().compareTo(t1.getCreatedTime())).collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }
 
     public List<StockFormEntity> findByPromotionId(int promotionId) {
         return stockFormRepository.findByPromotionId(promotionId);

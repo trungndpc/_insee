@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.common.Permission;
+import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
@@ -73,13 +74,19 @@ public class HomeController {
     public String stockPromotion(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws
             IOException {
         UserEntity authUser = AuthenticationUtils.getAuthUser(auth);
-        if (authUser == null) {
+        if (authUser == null || authUser.getStatus() == StatusUser.WAIT_COMPLETE_PROFILE) {
             String continueUrl = HttpUtil.getFullURL(request);
             response.sendRedirect("/dang-ky?continueUrl=" + HttpUtil.encodeUrl(continueUrl));
             return "OK";
         }
+
         if (!isRetailer(authUser)) {
             response.sendRedirect("/oops");
+            return "OK";
+        }
+
+        if (authUser.getStatus() != StatusUser.APPROVED) {
+            response.sendRedirect("/");
             return "OK";
         }
 
