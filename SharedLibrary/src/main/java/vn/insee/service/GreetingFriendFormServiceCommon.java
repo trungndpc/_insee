@@ -37,6 +37,18 @@ public abstract class GreetingFriendFormServiceCommon {
         return repository.findByUserIdAndPromotionId(uid, promotionId);
     }
 
+    public GreetingFriendFormEntity get(int id) {
+        return repository.getOne(id);
+    }
+
+    public GreetingFriendFormEntity saveOrUpdate(GreetingFriendFormEntity entity) {
+        return repository.saveAndFlush(entity);
+    }
+
+    public List<GreetingFriendFormEntity> findByPromotion(int promotionId) {
+        return  repository.findByPromotionId(promotionId);
+    }
+
     public boolean isActive(GreetingFriendFormEntity entity) {
         ZonedDateTime createdTime = entity.getCreatedTime();
         ZonedDateTime now = ZonedDateTime.now();
