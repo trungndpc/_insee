@@ -16,14 +16,12 @@ import vn.insee.common.status.StatusUser;
 import vn.insee.jpa.entity.PostEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
+import vn.insee.jpa.entity.promotion.GreetingFriendPromotionEntity;
 import vn.insee.jpa.entity.promotion.LightingQuizPromotionEntity;
 import vn.insee.jpa.repository.LightingQuizPromotionRepository;
 import vn.insee.retailer.controller.converter.UserConverter;
 import vn.insee.retailer.controller.dto.UserDTO;
-import vn.insee.retailer.service.LightingQuizPromotionService;
-import vn.insee.retailer.service.PostService;
-import vn.insee.retailer.service.StockPromotionService;
-import vn.insee.retailer.service.UserService;
+import vn.insee.retailer.service.*;
 import vn.insee.retailer.util.AuthenticationUtils;
 import vn.insee.retailer.util.RenderUtils;
 import vn.insee.util.HttpUtil;
@@ -60,19 +58,51 @@ public class HomeController {
     @Autowired
     private PostService postService;
 
-    @GetMapping(value = "/gioi-thieu-chuong-trinh-moi", produces = MediaType.TEXT_HTML_VALUE)
+    @Autowired
+    private GreetingFriendPromotionService greetingFriendPromotionService;
+
+
+    @GetMapping(value = "/chao-ban-moi", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String introduce(HttpServletResponse response) throws
-            IOException {
+    public void greetingNewFriendPage(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        UserEntity authUser = AuthenticationUtils.getAuthUser(auth);
+        if (authUser == null || authUser.getStatus() == StatusUser.WAIT_COMPLETE_PROFILE) {
+            String continueUrl = HttpUtil.getFullURL(request);
+            response.sendRedirect("/dang-ky?continueUrl=" + HttpUtil.encodeUrl(continueUrl));
+            return;
+        }
+
+        if (!isRetailer(authUser)) {
+            response.sendRedirect("/oops");
+            return;
+        }
+
+        if (authUser.getStatus() != StatusUser.APPROVED) {
+            response.sendRedirect("/");
+            return;
+        }
+
+        List<GreetingFriendPromotionEntity> promotionServiceActives = greetingFriendPromotionService.findActive(authUser);
+        if (promotionServiceActives == null || promotionServiceActives.isEmpty()) {
+            response.sendRedirect("/khuyen-mai");
+            return;
+        }
+
+        GreetingFriendPromotionEntity promotionEntity = promotionServiceActives.get(0);
+        PostEntity postEntity = postService.findPost(promotionEntity.getId(), authUser);
+        if (postEntity != null) {
+            response.sendRedirect("/bai-viet/" + postEntity.getId());
+            return;
+        }
+
         response.sendRedirect("/");
-        return "OK";
+        return;
     }
 
 
     @GetMapping(value = "/khoe-kho-nhan-qua", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String stockPromotion(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws
-            IOException {
+    public String stockPromotion(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserEntity authUser = AuthenticationUtils.getAuthUser(auth);
         if (authUser == null || authUser.getStatus() == StatusUser.WAIT_COMPLETE_PROFILE) {
             String continueUrl = HttpUtil.getFullURL(request);
@@ -104,8 +134,7 @@ public class HomeController {
 
     @GetMapping(value = "/**", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
-    public String index(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws
-            IOException {
+    public String index(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserEntity authUser = AuthenticationUtils.getAuthUser(auth);
         if (authUser == null) {
             String continueUrl = HttpUtil.getFullURL(request);

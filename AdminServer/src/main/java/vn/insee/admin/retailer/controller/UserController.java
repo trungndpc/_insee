@@ -261,6 +261,6 @@ public class UserController {
 
     @EventListener
     public void main(ContextRefreshedEvent event) {
-        safeDelete(6927);
+//        safeDelete(6984);
     }
 }

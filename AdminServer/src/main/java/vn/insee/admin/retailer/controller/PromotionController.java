@@ -52,7 +52,7 @@ public class PromotionController {
     private FootballPromotionService footballPromotionService;
 
     @Autowired
-    private GreetingFriendConverter greetingFriendConverter;
+    private GreetingFriendPromotionConverter greetingFriendPromotionConverter;
 
     @Autowired
     private GreetingFriendPromotionService greetingFriendPromotionService;
@@ -79,7 +79,7 @@ public class PromotionController {
                     response.setData(promotionConverter.convert2DTO(footballPromotionEntity));
                     break;
                 case TypePromotion.GREETING_FRIEND:
-                    GreetingFriendPromotionEntity greetingFriendPromotionEntity = greetingFriendConverter.convert2Entity(form);
+                    GreetingFriendPromotionEntity greetingFriendPromotionEntity = greetingFriendPromotionConverter.convert2Entity(form);
                     greetingFriendPromotionEntity.setStatus(StatusPromotion.INIT);
                     greetingFriendPromotionEntity = greetingFriendPromotionService.create(greetingFriendPromotionEntity);
                     response.setData(promotionConverter.convert2DTO(greetingFriendPromotionEntity));

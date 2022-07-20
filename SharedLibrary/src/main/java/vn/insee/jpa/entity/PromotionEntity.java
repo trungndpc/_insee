@@ -36,7 +36,6 @@ public abstract class PromotionEntity extends BaseEntity {
     @Column(name = "district_ids",columnDefinition = "integer[]")
     private List<Integer> districtIds;
 
-
     public Integer getId() {
         return id;
     }

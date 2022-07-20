@@ -28,4 +28,8 @@ public class FormService {
             }
         }
     }
+
+    public List<FormEntity> findByUserIdAndPromotionId(int userId, int promotionId) {
+        return formRepository.findByPromotionIdAndUserId(promotionId, userId);
+    }
 }

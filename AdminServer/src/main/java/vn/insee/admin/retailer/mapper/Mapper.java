@@ -30,6 +30,7 @@ public class Mapper {
         mapper.getConfiguration().setSkipNullEnabled(true);
         mapper.addMappings(new UserEntity2UserDTO());
         mapper.addMappings(new MatchFootballEntity2MatchFootballDTO());
+        mapper.addMappings(new GreetingFriendEntity2GreetingFriendDTO());
     }
     public <S, D> void map(S source, D destination) {
         mapper.map(source, destination);

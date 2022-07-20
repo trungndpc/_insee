@@ -10,23 +10,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vn.insee.common.ErrorCommon;
-import vn.insee.common.type.TypePromotion;
-import vn.insee.jpa.entity.PostEntity;
+import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.entity.UserEntity;
-import vn.insee.jpa.entity.form.GreetingFriendFormEntity;
 import vn.insee.retailer.common.BaseResponse;
 import vn.insee.retailer.common.ErrorCode;
-import vn.insee.retailer.controller.converter.PostConverter;
+import vn.insee.retailer.controller.converter.FormConverter;
 import vn.insee.retailer.controller.converter.PromotionConverter;
-import vn.insee.retailer.service.GreetingFriendFormService;
-import vn.insee.retailer.service.PostService;
+import vn.insee.retailer.controller.dto.FormDTO;
+import vn.insee.retailer.controller.dto.PromotionDTO;
+import vn.insee.retailer.service.FormService;
 import vn.insee.retailer.service.PromotionService;
 import vn.insee.retailer.util.AuthenticationUtils;
 
 import java.util.List;
 
-import static vn.insee.common.ErrorCommon.INVALID_FOR_YOU_GREETING_FRIEND_PROMOTION;
 
 @RestController
 @RequestMapping("/api/promotion")
@@ -39,11 +37,15 @@ public class PromotionController {
     @Autowired
     private PromotionConverter promotionConverter;
 
+
     @Autowired
-    private GreetingFriendFormService friendFormService;
+    private FormConverter formConverter;
+
+    @Autowired
+    private FormService formService;
 
     @GetMapping(path = "/get")
-    public ResponseEntity<BaseResponse> getById(@RequestParam(required = true) int id, Authentication auth) {
+    public ResponseEntity<BaseResponse> get(@RequestParam(required = true) int id, Authentication auth) {
         BaseResponse response = new BaseResponse();
         try {
             UserEntity user = AuthenticationUtils.getAuthUser(auth);
@@ -54,22 +56,19 @@ public class PromotionController {
             if (promotionEntity == null) {
                 throw new Exception("promotion is not exits!");
             }
+
+            PromotionDTO promotionDTO = promotionConverter.convert2DTO(promotionEntity);
+            List<FormEntity> formEntities = formService.findByUserIdAndPromotionId(user.getId(), promotionEntity.getId());
+            if (formEntities != null) {
+                List<FormDTO> formDTOS = formConverter.convert2ListDTO(formEntities);
+                promotionDTO.setForms(formDTOS);
+            }
+            response.setData(promotionDTO);
             if (!promotionService.isOpen(promotionEntity)) {
                 response.setError(ErrorCommon.CLOSED_PROMOTION);
             } else if (!promotionService.isOpenFor(promotionEntity, user)) {
                 response.setError(ErrorCommon.INVALID_LOCATION_PROMOTION);
-            } else {
-                if (promotionEntity.getType() == TypePromotion.GREETING_FRIEND) {
-                    GreetingFriendFormEntity formEntity = friendFormService.getForm(user.getId(), promotionEntity.getId());
-                    if (formEntity == null) {
-                        response.setError(INVALID_FOR_YOU_GREETING_FRIEND_PROMOTION);
-                    }else if (!friendFormService.isActive(formEntity)) {
-                        response.setError(ErrorCommon.CLOSED_GREETING_FRIEND_PROMOTION);
-                    }
-                }
-
             }
-            response.setData(promotionConverter.convert2DTO(promotionEntity));
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             response.setError(ErrorCode.FAILED);

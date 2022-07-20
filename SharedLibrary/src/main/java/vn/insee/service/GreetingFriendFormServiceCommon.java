@@ -1,5 +1,7 @@
 package vn.insee.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import vn.insee.common.status.StatusGreetingFriendForm;
 import vn.insee.common.type.TypePromotion;
@@ -49,7 +51,12 @@ public abstract class GreetingFriendFormServiceCommon {
         return  repository.findByPromotionId(promotionId);
     }
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public boolean isActive(GreetingFriendFormEntity entity) {
+        if (entity.getStatus() != StatusGreetingFriendForm.WAITING_SUBMIT_FORM) {
+            return false;
+        }
         ZonedDateTime createdTime = entity.getCreatedTime();
         ZonedDateTime now = ZonedDateTime.now();
         Duration between = Duration.between(createdTime, now);

@@ -27,8 +27,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping(path = "/me")
-    public ResponseEntity<BaseResponse> get(Authentication auth) {
+    @GetMapping(path = "/check-login")
+    public ResponseEntity<BaseResponse> checkLogin(Authentication auth) {
         BaseResponse response = new BaseResponse();
         try{
             UserEntity user = AuthenticationUtils.getAuthUser(auth);

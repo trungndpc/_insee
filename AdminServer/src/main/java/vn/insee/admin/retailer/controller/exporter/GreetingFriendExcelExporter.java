@@ -14,10 +14,15 @@ import vn.insee.util.insee.CementManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class GreetingFriendExcelExporter {
+    private static final DateFormat dateFormatter = new SimpleDateFormat("HH:mm yyyy-MM-dd");
+
     private XSSFWorkbook workbook;
     private XSSFSheet sheet;
     private List<GreetingFriendFormDTO> dtos;
@@ -45,7 +50,9 @@ public class GreetingFriendExcelExporter {
         createCell(row, 5, "STATUS", style);
         createCell(row, 6, "BAGS", style);
         createCell(row, 7, "CEMENTS", style);
-        createCell(row, 8, "PHOTOS", style);
+        createCell(row, 8, "REGISTERED TIME", style);
+        createCell(row, 9, "SUBMIT TIME", style);
+
     }
 
     private void writeDataLines() {
@@ -73,7 +80,8 @@ public class GreetingFriendExcelExporter {
             }else {
                 createCell(row, columnCount++, "", style);
             }
-            createCell(row, columnCount++, dto.getJsonImgs(), style);
+            createCell(row, columnCount++, dateFormatter.format(new Date(dto.getCreatedTime() * 1000)), style);
+            createCell(row, columnCount++, dateFormatter.format(new Date(dto.getTime() * 1000)), style);
         }
     }
 

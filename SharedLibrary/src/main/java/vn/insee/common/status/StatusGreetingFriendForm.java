@@ -3,6 +3,7 @@ package vn.insee.common.status;
 public class StatusGreetingFriendForm {
     public static final int WAITING_SUBMIT_FORM = 0;
     public static final int WAITING_APPROVAL = 1;
+
     public static final int APPROVED = 2;
     public static final int REJECTED = 3;
 

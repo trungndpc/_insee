@@ -20,4 +20,6 @@ public interface FormRepository extends JpaRepository<FormEntity, Integer>, JpaS
 
     @Query("SELECT DISTINCT userId FROM FormEntity")
     List<Integer> findDistinctUid();
+
+    List<FormEntity> findByPromotionIdAndUserId(int promotionId, int userId);
 }

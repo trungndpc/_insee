@@ -13,8 +13,11 @@ public class GreetingFriendFormDTO extends FormDTO {
     private List<Integer> cements;
     private Integer bags;
     private String note;
-
     private Long time;
+
+    private long createdTime;
+
+    private long updatedTime;
 
     public String getJsonImgs() {
         return jsonImgs;
@@ -56,5 +59,21 @@ public class GreetingFriendFormDTO extends FormDTO {
     @Override
     public void setTime(Long time) {
         this.time = time;
+    }
+
+    public long getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public long getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(long updatedTime) {
+        this.updatedTime = updatedTime;
     }
 }

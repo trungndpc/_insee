@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.insee.admin.retailer.common.BaseResponse;
 import vn.insee.admin.retailer.common.ErrorCode;
-import vn.insee.admin.retailer.controller.converter.GreetingFriendConverter;
+import vn.insee.admin.retailer.controller.converter.GreetingFriendFormConverter;
 import vn.insee.admin.retailer.controller.dto.GreetingFriendFormDTO;
 import vn.insee.admin.retailer.controller.dto.PageDTO;
 import vn.insee.admin.retailer.controller.exporter.GreetingFriendExcelExporter;
@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/greeting-friend")
+@RequestMapping("/api/form/greeting-friend")
 public class GreetingFriendFormController {
     private static final Logger LOGGER = LogManager.getLogger(GreetingFriendFormController.class);
 
@@ -31,7 +31,7 @@ public class GreetingFriendFormController {
     private GreetingFriendFormService service;
 
     @Autowired
-    private GreetingFriendConverter converter;
+    private GreetingFriendFormConverter converter;
 
     @GetMapping(path = "/find-by-promotion")
     public ResponseEntity<BaseResponse> list(@RequestParam(required = true) int promotionId, @RequestParam(required = false) Integer city, @RequestParam(required = false) Integer status, @RequestParam(required = false) String search, @RequestParam(required = false, defaultValue = "0") int page, @RequestParam(required = false, defaultValue = "10") int pageSize) {
@@ -66,7 +66,6 @@ public class GreetingFriendFormController {
     @GetMapping(path = "/export-excel")
     public void exportExcel(@RequestParam(required = false) int promotionId, HttpServletResponse response) {
         try {
-
             List<GreetingFriendFormEntity> entities = service.findByPromotion(promotionId);
             if (entities == null || entities.isEmpty()) {
                 throw new Exception("list form empty");

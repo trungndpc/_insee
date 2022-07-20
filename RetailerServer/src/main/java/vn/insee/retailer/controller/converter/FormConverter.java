@@ -6,10 +6,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import vn.insee.common.type.TypePromotion;
 import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.PromotionEntity;
 import vn.insee.jpa.repository.PromotionRepository;
+import vn.insee.retailer.controller.dto.FormDTO;
 import vn.insee.retailer.controller.dto.FormHistoryDTO;
+import vn.insee.retailer.controller.dto.form.GreetingFriendFormDTO;
 import vn.insee.retailer.mapper.Mapper;
 
 import java.sql.Date;
@@ -41,6 +44,11 @@ public class FormConverter {
 
     public List<FormHistoryDTO> convert2ListFormHistoryDTO(List<FormEntity> formEntityList) {
         return formEntityList.stream().map(this::convert2FormHistoryDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<FormDTO> convert2ListDTO(List<FormEntity> formEntities) {
+        return formEntities.stream().map(formEntity -> mapper.map(formEntity, GreetingFriendFormDTO.class))
                 .collect(Collectors.toList());
     }
 }

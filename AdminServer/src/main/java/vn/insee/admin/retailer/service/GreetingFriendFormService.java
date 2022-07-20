@@ -8,6 +8,7 @@ import vn.insee.admin.retailer.message.ApprovedStockPromotionMessage;
 import vn.insee.admin.retailer.message.RejectedStockFormMessage;
 import vn.insee.admin.retailer.message.User;
 import vn.insee.common.status.StatusForm;
+import vn.insee.common.status.StatusGreetingFriendForm;
 import vn.insee.common.status.StatusStockForm;
 import vn.insee.jpa.entity.FormEntity;
 import vn.insee.jpa.entity.UserEntity;
@@ -75,12 +76,12 @@ public class GreetingFriendFormService extends GreetingFriendFormServiceCommon {
         UserEntity userEntity = userService.findById(entity.getUserId());
         User user = new User(userEntity.getId(), userEntity.getFollowerId(), userEntity.getName());
 
-        if (status == StatusStockForm.APPROVED) {
+        if (status == StatusGreetingFriendForm.APPROVED) {
             ApprovedStockPromotionMessage approvedStockPromotionMessage = new ApprovedStockPromotionMessage(user, userEntity.getName());
             approvedStockPromotionMessage.send();
         }
 
-        if (status == StatusStockForm.REJECTED) {
+        if (status == StatusGreetingFriendForm.REJECTED) {
             entity.setNote(note);
             RejectedStockFormMessage rejectedStockFormMessage = new RejectedStockFormMessage(user, note);
             rejectedStockFormMessage.send();

@@ -15,6 +15,8 @@ public class PromotionDTO {
     private List<Integer> cements;
     private List<Integer> locations;
 
+    private List<FormDTO> forms;
+
     public Integer getId() {
         return id;
     }
@@ -77,5 +79,13 @@ public class PromotionDTO {
 
     public void setLocations(List<Integer> locations) {
         this.locations = locations;
+    }
+
+    public List<FormDTO> getForms() {
+        return forms;
+    }
+
+    public void setForms(List<FormDTO> forms) {
+        this.forms = forms;
     }
 }
